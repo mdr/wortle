@@ -3,7 +3,7 @@ import { assert } from "tsafe"
 
 import { TipWithGlossary } from "@/components/puzzle/TipWithGlossary"
 import { Card } from "@/components/shadcn/Card"
-import { AttemptFeedback } from "@/lib/AttemptFeedback"
+import { AttemptResult } from "@/lib/AttemptResult"
 import { DailyResult } from "@/lib/gameStorage/GameState"
 import { getResultMedal } from "@/lib/resultMedal"
 import { getSpecies } from "@/lib/species/plants"
@@ -13,7 +13,7 @@ import { usePuzzleState } from "@/services/puzzle/puzzleServiceHooks"
 
 import { AnswerTestIds } from "./PuzzleTestIds"
 
-const getHintText = (attempt: AttemptFeedback): string | undefined => {
+const getHintText = (attempt: AttemptResult): string | undefined => {
   if (attempt.isCorrect) return undefined
   if (attempt.genusMatch) return "Right genus!"
   if (attempt.familyMatch) return "Right family!"

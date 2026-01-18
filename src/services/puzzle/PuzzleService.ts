@@ -1,6 +1,6 @@
 import { assert } from "tsafe"
 
-import { AttemptFeedback, createAttemptFeedback } from "@/lib/AttemptFeedback"
+import { AttemptResult, createAttemptResult } from "@/lib/AttemptResult"
 import { calculateDailyStatsSummary, DailyStatsSummary } from "@/lib/gameStorage/dailyStatsSummary"
 import { DailyResult } from "@/lib/gameStorage/GameState"
 import { GameStorage } from "@/lib/gameStorage/GameStorage"
@@ -55,7 +55,7 @@ export interface PuzzleServiceState {
 
   outcome: Option<PuzzleOutcome>
 
-  attempts: AttemptFeedback[]
+  attempts: AttemptResult[]
   searchQuery: string
   selectedSpeciesId: Option<SpeciesId>
   incorrectFeedbackText?: string
@@ -83,7 +83,7 @@ export class PuzzleService extends AbstractService<PuzzleServiceState> implement
     const attemptedSpeciesIds = existingRecord?.attemptedSpeciesIds ?? []
     const attempts = attemptedSpeciesIds.map((speciesId) => {
       const species = getSpecies(speciesId)
-      return createAttemptFeedback(species, correctSpecies)
+      return createAttemptResult(species, correctSpecies)
     })
 
     const computeInitialOutcome = (): Option<PuzzleOutcome> => {
@@ -128,7 +128,7 @@ export class PuzzleService extends AbstractService<PuzzleServiceState> implement
     })
   }
 
-  addAttempt = (attempt: AttemptFeedback): void =>
+  addAttempt = (attempt: AttemptResult): void =>
     this.updateState((draft) => {
       draft.attempts.push(attempt)
     })
@@ -171,24 +171,24 @@ export class PuzzleService extends AbstractService<PuzzleServiceState> implement
   submitAttempt = (speciesId: SpeciesId): boolean => {
     const species = getSpecies(speciesId)
     const correctSpecies = getSpecies(this.state.puzzle.speciesId)
-    const feedback = createAttemptFeedback(species, correctSpecies)
-    const nextAttempts = [...this.state.attempts, feedback]
-    const incorrectFeedbackText = feedback.isCorrect
+    const attemptResult = createAttemptResult(species, correctSpecies)
+    const nextAttempts = [...this.state.attempts, attemptResult]
+    const incorrectFeedbackText = attemptResult.isCorrect
       ? undefined
-      : feedback.genusMatch
+      : attemptResult.genusMatch
         ? "Right genus - you're close!"
-        : feedback.familyMatch
+        : attemptResult.familyMatch
           ? "That's in the right family - have another go."
           : "That's not it - have another go."
-    const isComplete = feedback.isCorrect || nextAttempts.length >= MAX_ATTEMPTS
-    const result = isComplete ? (feedback.isCorrect ? DailyResult.PASS : DailyResult.FAIL) : undefined
-    const outcome = feedback.isCorrect
+    const isComplete = attemptResult.isCorrect || nextAttempts.length >= MAX_ATTEMPTS
+    const result = isComplete ? (attemptResult.isCorrect ? DailyResult.PASS : DailyResult.FAIL) : undefined
+    const outcome = attemptResult.isCorrect
       ? PuzzleOutcome.CORRECT
       : nextAttempts.length >= MAX_ATTEMPTS
         ? PuzzleOutcome.OUT_OF_ATTEMPTS
         : undefined
     this.updateState((draft) => {
-      draft.attempts.push(feedback)
+      draft.attempts.push(attemptResult)
       draft.incorrectFeedbackText = incorrectFeedbackText
       draft.selectedSpeciesId = undefined
       draft.outcome = outcome
@@ -197,7 +197,7 @@ export class PuzzleService extends AbstractService<PuzzleServiceState> implement
       nextAttempts.map((attempt) => attempt.speciesId),
       result,
     )
-    return feedback.isCorrect
+    return attemptResult.isCorrect
   }
 
   giveUp = (): void => {

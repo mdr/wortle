@@ -1,21 +1,21 @@
 import { Card } from "@/components/shadcn/Card"
-import { AttemptFeedback } from "@/lib/AttemptFeedback"
+import { AttemptResult } from "@/lib/AttemptResult"
 import { getSpecies } from "@/lib/species/plants"
 
 import { AttemptHistoryTestIds } from "./PuzzleTestIds"
 
 interface AttemptHistoryProps {
-  attempts: AttemptFeedback[]
+  attempts: AttemptResult[]
 }
 
-const getHintText = (attempt: AttemptFeedback): string | undefined => {
+const getHintText = (attempt: AttemptResult): string | undefined => {
   if (attempt.isCorrect) return undefined
   if (attempt.genusMatch) return "Right genus!"
   if (attempt.familyMatch) return "Right family!"
   return undefined
 }
 
-const getAttemptStyles = (attempt: AttemptFeedback): string => {
+const getAttemptStyles = (attempt: AttemptResult): string => {
   if (attempt.isCorrect) return "border-primary bg-primary/10"
   if (attempt.genusMatch || attempt.familyMatch) return "border-border bg-muted/60"
   return "border-destructive bg-destructive/10"

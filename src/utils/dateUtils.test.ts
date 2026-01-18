@@ -6,19 +6,19 @@ import { formatDate, formatDuration, getNextDay, toDateFromIso8601Date, toIso860
 
 describe("formatDate", () => {
   it("formats with long style by default", () => {
-    expect(formatDate(Iso8601Date("2025-12-21"), "en-GB")).toBe("21 December 2025")
+    expect(formatDate(Iso8601Date("2025-12-21"), { locale: "en-GB" })).toBe("21 December 2025")
   })
 
   it("handles single digit day", () => {
-    expect(formatDate(Iso8601Date("2025-01-05"), "en-GB")).toBe("5 January 2025")
+    expect(formatDate(Iso8601Date("2025-01-05"), { locale: "en-GB" })).toBe("5 January 2025")
   })
 
   it("formats with medium style", () => {
-    expect(formatDate(Iso8601Date("2025-12-21"), "en-GB", "medium")).toBe("21 Dec 2025")
+    expect(formatDate(Iso8601Date("2025-12-21"), { locale: "en-GB", dateStyle: "medium" })).toBe("21 Dec 2025")
   })
 
   it("formats with short style", () => {
-    expect(formatDate(Iso8601Date("2025-12-21"), "en-GB", "short")).toBe("21/12/2025")
+    expect(formatDate(Iso8601Date("2025-12-21"), { locale: "en-GB", dateStyle: "short" })).toBe("21/12/2025")
   })
 })
 
