@@ -5,7 +5,7 @@ import { TransformComponent, TransformWrapper } from "react-zoom-pan-pinch"
 import { Button } from "@/components/shadcn/Button"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/shadcn/Popover"
 import { usePuzzleServiceActions, usePuzzleState } from "@/services/puzzle/puzzleServiceHooks"
-import { ImageIndex } from "@/utils/brandedTypes"
+import { ImageIndex, Pixels } from "@/utils/brandedTypes"
 import { imageSrcSet, imageUrl, srcSetPresets } from "@/utils/imageUrls"
 
 import { FullScreenViewer } from "./FullScreenViewer"
@@ -41,7 +41,7 @@ export const ImageGallery = () => {
           >
             <TransformComponent wrapperClass="!w-full !h-full" contentClass="!w-full !h-full">
               <img
-                src={imageUrl(puzzleId, images[imageGalleryIndex].imageKey, 800)}
+                src={imageUrl(puzzleId, images[imageGalleryIndex].imageKey, Pixels(800))}
                 srcSet={imageSrcSet(puzzleId, images[imageGalleryIndex].imageKey, srcSetPresets.viewer)}
                 sizes="(max-width: 640px) 100vw, 800px"
                 aria-labelledby={captionId}
@@ -138,7 +138,7 @@ export const ImageGallery = () => {
                 data-testid={GalleryTestIds.thumbnail}
               >
                 <img
-                  src={imageUrl(puzzleId, image.imageKey, 200)}
+                  src={imageUrl(puzzleId, image.imageKey, Pixels(200))}
                   srcSet={imageSrcSet(puzzleId, image.imageKey, srcSetPresets.thumbnail)}
                   sizes="25vw"
                   alt={image.caption}

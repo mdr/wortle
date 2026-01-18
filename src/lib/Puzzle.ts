@@ -25,6 +25,11 @@ export interface PuzzleImage {
   caption: string
 }
 
+export interface PhotoAttribution {
+  photographer: string
+  license: string
+}
+
 export interface Puzzle {
   id: PuzzleId
   speciesId: SpeciesId
@@ -32,8 +37,5 @@ export interface Puzzle {
   location: Location
   habitat: string
   images: PuzzleImage[]
-  photoAttribution: {
-    photographer: string
-    license: string
-  }
+  photoAttribution: PhotoAttribution
 }

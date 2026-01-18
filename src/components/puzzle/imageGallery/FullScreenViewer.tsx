@@ -5,6 +5,7 @@ import { TransformComponent, TransformWrapper } from "react-zoom-pan-pinch"
 
 import { Button } from "@/components/shadcn/Button"
 import { usePuzzleServiceActions, usePuzzleState } from "@/services/puzzle/puzzleServiceHooks"
+import { Pixels } from "@/utils/brandedTypes"
 import { imageSrcSet, imageUrl, srcSetPresets } from "@/utils/imageUrls"
 
 import { FullscreenKeyboardShortcuts } from "./FullscreenKeyboardShortcuts"
@@ -78,7 +79,7 @@ export const FullScreenViewer = () => {
             contentClass="!w-full !h-full flex items-center justify-center"
           >
             <img
-              src={imageUrl(puzzleId, images[imageGalleryIndex].imageKey, 1600)}
+              src={imageUrl(puzzleId, images[imageGalleryIndex].imageKey, Pixels(1600))}
               srcSet={imageSrcSet(puzzleId, images[imageGalleryIndex].imageKey, srcSetPresets.fullscreen)}
               sizes="100vw"
               aria-labelledby={captionId}
