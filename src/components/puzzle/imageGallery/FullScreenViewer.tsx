@@ -1,5 +1,6 @@
 import { FocusTrap } from "focus-trap-react"
 import { ChevronLeft, ChevronRight, X } from "lucide-react"
+import { useId } from "react"
 import { TransformComponent, TransformWrapper } from "react-zoom-pan-pinch"
 
 import { Button } from "@/components/shadcn/Button"
@@ -11,6 +12,7 @@ import { FullscreenTestIds } from "./GalleryTestIds"
 import { ZoomControls } from "./ZoomControls"
 
 export const FullScreenViewer = () => {
+  const captionId = useId()
   const { id: puzzleId, images } = usePuzzleState((state) => state.puzzle)
   const imageGalleryIndex = usePuzzleState((state) => state.imageGalleryIndex)
   const puzzleActions = usePuzzleServiceActions()
@@ -79,14 +81,14 @@ export const FullScreenViewer = () => {
               src={imageUrl(puzzleId, images[imageGalleryIndex].imageKey, 1600)}
               srcSet={imageSrcSet(puzzleId, images[imageGalleryIndex].imageKey, srcSetPresets.fullscreen)}
               sizes="100vw"
-              aria-labelledby="fullscreen-caption"
+              aria-labelledby={captionId}
               className="max-h-full max-w-full object-contain"
             />
           </TransformComponent>
 
           <div className="absolute bottom-4 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-2">
             <p
-              id="fullscreen-caption"
+              id={captionId}
               className="rounded bg-black/50 px-3 py-1 text-sm text-white"
               data-testid={FullscreenTestIds.caption}
             >

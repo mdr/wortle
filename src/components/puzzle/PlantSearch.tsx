@@ -1,5 +1,5 @@
 import { clsx } from "clsx"
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useId, useRef, useState } from "react"
 
 import {
   Command,
@@ -22,7 +22,7 @@ export const PlantSearch = () => {
   const [query, setQuery] = useState("")
   const [open, setOpen] = useState(false)
   const { containerRef, handleFocus, handleBlur } = useScrollToLabelOnFocus(open)
-  const inputId = "plant-search-input"
+  const inputId = useId()
 
   const allSpecies = getAllSpecies()
 

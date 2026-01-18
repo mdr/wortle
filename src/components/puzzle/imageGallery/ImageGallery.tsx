@@ -1,4 +1,5 @@
 import { ChevronLeft, ChevronRight, Copyright, Maximize2 } from "lucide-react"
+import { useId } from "react"
 import { TransformComponent, TransformWrapper } from "react-zoom-pan-pinch"
 
 import { Button } from "@/components/shadcn/Button"
@@ -10,6 +11,7 @@ import { FullScreenViewer } from "./FullScreenViewer"
 import { GalleryTestIds } from "./GalleryTestIds"
 
 export const ImageGallery = () => {
+  const captionId = useId()
   const { id: puzzleId, images, photoAttribution } = usePuzzleState((state) => state.puzzle)
   const { imageGalleryIndex, isFullscreenImageMode } = usePuzzleState((state) => state)
   const puzzleActions = usePuzzleServiceActions()
@@ -41,7 +43,7 @@ export const ImageGallery = () => {
                 src={imageUrl(puzzleId, images[imageGalleryIndex].imageKey, 800)}
                 srcSet={imageSrcSet(puzzleId, images[imageGalleryIndex].imageKey, srcSetPresets.viewer)}
                 sizes="(max-width: 640px) 100vw, 800px"
-                aria-labelledby="gallery-caption"
+                aria-labelledby={captionId}
                 className="h-full w-full object-contain"
               />
             </TransformComponent>
@@ -118,11 +120,7 @@ export const ImageGallery = () => {
           </Popover>
         </div>
 
-        <p
-          id="gallery-caption"
-          className="text-muted-foreground text-center text-sm"
-          data-testid={GalleryTestIds.caption}
-        >
+        <p id={captionId} className="text-muted-foreground text-center text-sm" data-testid={GalleryTestIds.caption}>
           {images[imageGalleryIndex].caption}
         </p>
 
