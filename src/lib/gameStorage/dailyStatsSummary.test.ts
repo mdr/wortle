@@ -8,7 +8,7 @@ import { createPuzzleAttempt } from "./HistoryStore.testUtils"
 
 describe("calculateDailyStatsSummary", () => {
   it("returns empty summary when history is empty", () => {
-    const summary = calculateDailyStatsSummary([])
+    const summary = calculateDailyStatsSummary([], Iso8601Date("2026-06-08"))
     expect(summary).toEqual({
       played: 0,
       wins: 0,
@@ -24,7 +24,7 @@ describe("calculateDailyStatsSummary", () => {
       createPuzzleAttempt({ date: Iso8601Date("2026-06-09"), result: PassOrFail.PASS }),
     ]
 
-    expect(calculateDailyStatsSummary(history)).toEqual({
+    expect(calculateDailyStatsSummary(history, Iso8601Date("2026-06-09"))).toEqual({
       played: 2,
       wins: 2,
       winRate: 1,
@@ -39,7 +39,7 @@ describe("calculateDailyStatsSummary", () => {
       createPuzzleAttempt({ date: Iso8601Date("2026-06-10"), result: PassOrFail.FAIL }),
     ]
 
-    expect(calculateDailyStatsSummary(history)).toEqual({
+    expect(calculateDailyStatsSummary(history, Iso8601Date("2026-06-10"))).toEqual({
       played: 2,
       wins: 1,
       winRate: 0.5,
@@ -55,7 +55,7 @@ describe("calculateDailyStatsSummary", () => {
       createPuzzleAttempt({ date: Iso8601Date("2026-06-10"), result: PassOrFail.PASS }),
     ]
 
-    expect(calculateDailyStatsSummary(history)).toEqual({
+    expect(calculateDailyStatsSummary(history, Iso8601Date("2026-06-10"))).toEqual({
       played: 3,
       wins: 2,
       winRate: 2 / 3,
@@ -64,15 +64,32 @@ describe("calculateDailyStatsSummary", () => {
     })
   })
 
-  it("counts records without result in played total", () => {
-    const history = [createPuzzleAttempt({ date: Iso8601Date("2026-06-08"), result: undefined })]
+  it("counts abandoned past records without result in played total", () => {
+    const history = [createPuzzleAttempt({ date: Iso8601Date("2026-06-07"), result: undefined })]
 
-    expect(calculateDailyStatsSummary(history)).toEqual({
+    // 2026-06-08 is "today", so the 06-07 record is a past abandoned attempt
+    expect(calculateDailyStatsSummary(history, Iso8601Date("2026-06-08"))).toEqual({
       played: 1,
       wins: 0,
       winRate: 0,
       currentStreak: 0,
       maxStreak: 0,
+    })
+  })
+
+  it("excludes in-progress puzzle on today's date from stats entirely", () => {
+    const history = [
+      createPuzzleAttempt({ date: Iso8601Date("2026-06-08"), result: PassOrFail.PASS }),
+      createPuzzleAttempt({ date: Iso8601Date("2026-06-09"), result: PassOrFail.PASS }),
+      createPuzzleAttempt({ date: Iso8601Date("2026-06-10"), result: undefined }), // today, in progress
+    ]
+
+    expect(calculateDailyStatsSummary(history, Iso8601Date("2026-06-10"))).toEqual({
+      played: 2,
+      wins: 2,
+      winRate: 1,
+      currentStreak: 2,
+      maxStreak: 2,
     })
   })
 })

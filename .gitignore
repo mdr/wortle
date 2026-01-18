@@ -24,6 +24,10 @@ yarn-error.log*
 /test-results
 .pnpm-store/
 
+# stryker
+.stryker-tmp/
+/reports/
+
 # wrangler
 .wrangler/
 

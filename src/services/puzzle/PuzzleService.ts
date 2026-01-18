@@ -13,6 +13,41 @@ import { Option } from "@/utils/types/Option"
 
 export const MAX_ATTEMPTS = 3
 
+export interface ExistingAttempt {
+  result?: PassOrFail
+}
+
+export const computeInitialOutcome = (
+  mode: PuzzleMode,
+  existingAttempt: ExistingAttempt | undefined,
+  attemptsCount: number,
+): Option<PuzzleOutcome> => {
+  if (mode === PuzzleMode.REVIEW) return undefined
+
+  if (mode === PuzzleMode.ARCHIVE && !existingAttempt) {
+    return PuzzleOutcome.DID_NOT_ATTEMPT
+  }
+
+  if (!existingAttempt) return undefined
+
+  const { result } = existingAttempt
+
+  if (result === PassOrFail.PASS) {
+    return PuzzleOutcome.CORRECT
+  }
+
+  if (result === PassOrFail.FAIL) {
+    return attemptsCount >= MAX_ATTEMPTS ? PuzzleOutcome.OUT_OF_ATTEMPTS : PuzzleOutcome.GAVE_UP
+  }
+
+  // result is undefined - in progress or not completed
+  if (mode === PuzzleMode.ARCHIVE) {
+    return PuzzleOutcome.NOT_COMPLETED
+  }
+
+  return undefined
+}
+
 export enum PuzzleMode {
   DAILY = "DAILY",
   REVIEW = "REVIEW",
@@ -86,40 +121,14 @@ export class PuzzleService extends AbstractService<PuzzleServiceState> implement
       return createAttemptResult(species, correctSpecies)
     })
 
-    const computeInitialOutcome = (): Option<PuzzleOutcome> => {
-      if (mode === PuzzleMode.REVIEW) return undefined
-
-      if (mode === PuzzleMode.ARCHIVE && !existingAttempt) {
-        return PuzzleOutcome.DID_NOT_ATTEMPT
-      }
-
-      if (!existingAttempt) return undefined
-
-      const { result } = existingAttempt
-
-      if (result === PassOrFail.PASS) {
-        return PuzzleOutcome.CORRECT
-      }
-
-      if (result === PassOrFail.FAIL) {
-        return attempts.length >= MAX_ATTEMPTS ? PuzzleOutcome.OUT_OF_ATTEMPTS : PuzzleOutcome.GAVE_UP
-      }
-
-      // result is undefined - in progress or not completed
-      if (mode === PuzzleMode.ARCHIVE) {
-        return PuzzleOutcome.NOT_COMPLETED
-      }
-
-      return undefined
-    }
-
-    const statsSummary = mode === PuzzleMode.DAILY ? calculateDailyStatsSummary(pastAttempts) : undefined
+    const statsSummary =
+      mode === PuzzleMode.DAILY ? calculateDailyStatsSummary(pastAttempts, scheduledDate!) : undefined
     super({
       puzzle,
       scheduledDate,
       mode,
       attempts,
-      outcome: computeInitialOutcome(),
+      outcome: computeInitialOutcome(mode, existingAttempt, attempts.length),
       incorrectFeedbackText: undefined,
       selectedSpeciesId: undefined,
       searchQuery: "",
@@ -127,11 +136,6 @@ export class PuzzleService extends AbstractService<PuzzleServiceState> implement
       statsSummary,
     })
   }
-
-  addAttempt = (attempt: AttemptResult): void =>
-    this.updateState((draft) => {
-      draft.attempts.push(attempt)
-    })
 
   selectSpecies = (speciesId: SpeciesId): void => {
     this.setState({ selectedSpeciesId: speciesId, searchQuery: "", incorrectFeedbackText: undefined })
@@ -217,7 +221,7 @@ export class PuzzleService extends AbstractService<PuzzleServiceState> implement
         result,
         submittedSpecies,
       })
-      this.setState({ statsSummary: calculateDailyStatsSummary(nextHistory.attempts) })
+      this.setState({ statsSummary: calculateDailyStatsSummary(nextHistory.attempts, scheduledDate) })
     }
   }
 }

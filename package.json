@@ -52,6 +52,8 @@
     "@axe-core/playwright": "4.11.0",
     "@playwright/experimental-ct-react": "1.57.0",
     "@playwright/test": "1.57.0",
+    "@stryker-mutator/core": "9.4.0",
+    "@stryker-mutator/vitest-runner": "9.4.0",
     "@tailwindcss/postcss": "4.1.18",
     "@tanstack/router-plugin": "1.147.0",
     "@types/canvas-confetti": "1.9.0",

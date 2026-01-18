@@ -27,6 +27,7 @@ Run `task check` to verify work before finishing (runs tsc, lint, format, and te
 - `task format:check`: check formatting.
 - `task test:unit`: run unit tests.
 - `task test:ct`: run component tests.
+- `task stryker`: run mutation testing.
 - `task build`: build.
 - `task analyze`: build with bundle analysis.
 - `task knip`: unused code scan.

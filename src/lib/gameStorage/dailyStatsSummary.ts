@@ -22,7 +22,7 @@ const getIsoDateWithOffset = (isoDate: Iso8601Date, days: number): Iso8601Date =
   return Iso8601Date(`${year}-${month}-${day}`)
 }
 
-export const calculateDailyStatsSummary = (attempts: PuzzleAttempt[]): DailyStatsSummary => {
+export const calculateDailyStatsSummary = (attempts: PuzzleAttempt[], today: Iso8601Date): DailyStatsSummary => {
   const emptySummary: DailyStatsSummary = {
     played: 0,
     wins: 0,
@@ -31,16 +31,21 @@ export const calculateDailyStatsSummary = (attempts: PuzzleAttempt[]): DailyStat
     maxStreak: 0,
   }
 
-  if (attempts.length === 0) {
+  // Exclude today's in-progress attempt from all calculations
+  const isInProgressToday = (attempt: PuzzleAttempt): boolean => attempt.date === today && attempt.result === undefined
+
+  const countableAttempts = attempts.filter((attempt) => !isInProgressToday(attempt))
+
+  if (countableAttempts.length === 0) {
     return emptySummary
   }
 
-  const played = attempts.length
-  const wins = attempts.filter((attempt) => attempt.result === PassOrFail.PASS).length
-  const winRate = played === 0 ? 0 : wins / played
+  const played = countableAttempts.length
+  const wins = countableAttempts.filter((attempt) => attempt.result === PassOrFail.PASS).length
+  const winRate = wins / played
 
   const attemptsByDate = new Map<Iso8601Date, PuzzleAttempt>()
-  attempts.forEach((attempt) => {
+  countableAttempts.forEach((attempt) => {
     attemptsByDate.set(attempt.date, attempt)
   })
 
@@ -69,6 +74,7 @@ export const calculateDailyStatsSummary = (attempts: PuzzleAttempt[]): DailyStat
 
   let currentStreak = 0
   const latestDate = sortedDates[sortedDates.length - 1]
+
   if (latestDate) {
     let cursor: Option<Iso8601Date> = latestDate
     while (cursor) {

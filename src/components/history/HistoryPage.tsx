@@ -17,7 +17,7 @@ export const HistoryPage = () => {
   const clock = useClock()
   const today = clock.todayIso()
   const history = useMemo(() => storage.load(), [storage])
-  const summary = useMemo(() => calculateDailyStatsSummary(history.attempts), [history.attempts])
+  const summary = useMemo(() => calculateDailyStatsSummary(history.attempts, today), [history.attempts, today])
   const sortedAttempts = useMemo(
     () => [...history.attempts].sort((a, b) => b.date.localeCompare(a.date)),
     [history.attempts],

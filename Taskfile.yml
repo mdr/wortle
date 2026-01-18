@@ -51,6 +51,11 @@ tasks:
     cmds:
       - pnpm test:unit
 
+  stryker:
+    desc: Run mutation testing with Stryker
+    cmds:
+      - pnpm exec stryker run
+
   build:
     desc: Build the project
     cmds:
