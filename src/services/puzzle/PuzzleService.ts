@@ -27,9 +27,10 @@ export interface PuzzleServiceActions {
   goToPreviousImage: () => void
   enterFullscreenImageMode: () => void
   exitFullscreenImageMode: () => void
+
+  setSearchQuery: (query: string) => void
   selectSpecies: (speciesId: SpeciesId) => void
   chooseDifferentPlant: () => void
-  setSearchQuery: (query: string) => void
   submitAttempt: (speciesId: SpeciesId) => boolean
   giveUp: () => void
 }
@@ -41,16 +42,20 @@ export interface ImageGalleryState {
 
 export interface PuzzleServiceState {
   puzzle: Puzzle
-  scheduledDate?: Iso8601Date
   mode: PuzzleMode
-  attempts: AttemptFeedback[]
+  scheduledDate?: Iso8601Date
+
+  imageGallery: ImageGalleryState
+
   gaveUp: boolean
   didNotAttempt: boolean
-  incorrectFeedbackText?: string
-  selectedSpeciesId: Option<SpeciesId>
+
+  attempts: AttemptFeedback[]
   searchQuery: string
+  selectedSpeciesId: Option<SpeciesId>
+  incorrectFeedbackText?: string
+
   statsSummary?: DailyStatsSummary
-  imageGallery: ImageGalleryState
 }
 
 export class PuzzleService extends AbstractService<PuzzleServiceState> implements PuzzleServiceActions {
@@ -66,7 +71,7 @@ export class PuzzleService extends AbstractService<PuzzleServiceState> implement
 
     // Handle in-progress state for daily mode
     const dailyInProgress = gameState?.dailyInProgress
-    if (dailyInProgress && scheduledDate && dailyInProgress.date !== scheduledDate) {
+    if (mode === PuzzleMode.DAILY && dailyInProgress && scheduledDate && dailyInProgress.date !== scheduledDate) {
       gameStorage.clearDailyInProgress()
     }
     const matchingInProgress = dailyInProgress && scheduledDate === dailyInProgress.date ? dailyInProgress : undefined

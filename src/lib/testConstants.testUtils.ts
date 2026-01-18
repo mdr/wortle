@@ -48,3 +48,5 @@ export const TestSpecies = {
   devilsBitScabious: getSpecies(TestSpeciesIds.devilsBitScabious),
   herbRobert: getSpecies(TestSpeciesIds.herbRobert),
 }
+
+export const TestDate = Iso8601Date("2026-06-08")
