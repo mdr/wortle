@@ -1,6 +1,6 @@
 import { TestDate, TestPuzzles, TestSpeciesIds } from "@/lib/testConstants.testUtils"
 
-import { type DailyInProgressRecord, type DailyPuzzleRecord, DailyResult } from "./GameState"
+import { type DailyPuzzleRecord, DailyResult } from "./GameState"
 import { GameStorage } from "./GameStorage"
 import { createMemoryStorage } from "./storage.testUtils"
 
@@ -14,8 +14,9 @@ export const createDailyPuzzleRecord = (overrides: Partial<DailyPuzzleRecord> = 
   ...overrides,
 })
 
-export const createDailyInProgressRecord = (overrides: Partial<DailyInProgressRecord> = {}): DailyInProgressRecord => ({
+export const createInProgressRecord = (overrides: Partial<DailyPuzzleRecord> = {}): DailyPuzzleRecord => ({
   date: TestDate,
+  puzzleId: TestPuzzles.daisy.id,
   attemptedSpeciesIds: [TestSpeciesIds.alexanders],
   ...overrides,
 })

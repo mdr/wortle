@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router"
 import { ArrowLeft, Calendar } from "lucide-react"
 import { useMemo } from "react"
 
-import { useGameStorage } from "@/components/app/GlobalDependenciesProvider"
+import { useClock, useGameStorage } from "@/components/app/GlobalDependenciesProvider"
 import { Button } from "@/components/shadcn/Button"
 import { Card } from "@/components/shadcn/Card"
 import { StatsSummaryGrid } from "@/components/shared/StatsSummaryGrid"
@@ -14,6 +14,8 @@ import { HistoryTestIds } from "./HistoryTestIds"
 
 export const HistoryPage = () => {
   const storage = useGameStorage()
+  const clock = useClock()
+  const today = clock.todayIso()
   const stats = useMemo(() => storage.load(), [storage])
   const summary = useMemo(() => calculateDailyStatsSummary(stats.history), [stats.history])
   const sortedHistory = useMemo(() => [...stats.history].sort((a, b) => b.date.localeCompare(a.date)), [stats.history])
@@ -52,7 +54,7 @@ export const HistoryPage = () => {
             ) : (
               <div className="space-y-3">
                 {sortedHistory.map((record) => (
-                  <HistoryItem key={record.date} record={record} />
+                  <HistoryItem key={record.date} record={record} isToday={record.date === today} />
                 ))}
               </div>
             )}

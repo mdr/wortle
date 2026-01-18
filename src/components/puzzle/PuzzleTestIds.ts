@@ -15,6 +15,7 @@ export const AnswerTestIds = {
   incorrect: "Answer.incorrect",
   gaveUp: "Answer.gaveUp",
   didNotAttempt: "Answer.didNotAttempt",
+  notCompleted: "Answer.notCompleted",
 } as const
 
 export const AttemptHistoryTestIds = {

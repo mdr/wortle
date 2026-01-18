@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest"
 
 import { Iso8601Date } from "@/utils/brandedTypes"
 
-import { formatDate, formatDuration, toDateFromIso8601Date, toIso8601Date } from "./dateUtils"
+import { formatDate, formatDuration, getNextDay, toDateFromIso8601Date, toIso8601Date } from "./dateUtils"
 
 describe("formatDate", () => {
   it("formats with long style by default", () => {
@@ -69,5 +69,19 @@ describe("toDateFromIso8601Date", () => {
   it("parses ISO date into a Date at UTC midnight", () => {
     const date = toDateFromIso8601Date(Iso8601Date("2025-06-08"))
     expect(date.toISOString()).toBe("2025-06-08T00:00:00.000Z")
+  })
+})
+
+describe("getNextDay", () => {
+  it("returns the next day", () => {
+    expect(getNextDay(Iso8601Date("2025-06-08"))).toBe("2025-06-09")
+  })
+
+  it("handles month boundaries", () => {
+    expect(getNextDay(Iso8601Date("2025-01-31"))).toBe("2025-02-01")
+  })
+
+  it("handles year boundaries", () => {
+    expect(getNextDay(Iso8601Date("2025-12-31"))).toBe("2026-01-01")
   })
 })

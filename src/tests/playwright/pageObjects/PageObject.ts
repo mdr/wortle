@@ -4,6 +4,8 @@ import { Locator, Page } from "@playwright/test"
 import { platform } from "os"
 import { assert } from "tsafe"
 
+import { Iso8601Date } from "@/utils/brandedTypes"
+
 import { expect, test } from "../fixtures"
 
 type TestId = string
@@ -57,4 +59,7 @@ export abstract class PageObject {
       const accessibilityScanResults = await new AxeBuilder({ page: this.page }).analyze()
       expect(accessibilityScanResults.violations).toEqual([])
     }).toPass()
+
+  setClockDate = (date: Iso8601Date): Promise<void> =>
+    this.step(`setClockDate(${date})`, () => this.page.evaluate((d) => window.testHooks?.setClockDate(d), date))
 }

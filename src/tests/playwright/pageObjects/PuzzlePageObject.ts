@@ -1,7 +1,11 @@
 import { AnswerTestIds, AttemptHistoryTestIds, PuzzleTestIds } from "@/components/puzzle/PuzzleTestIds"
+import { SharedTestIds } from "@/components/shared/SharedTestIds"
+import { getSpecies } from "@/lib/species/plants"
+import { SpeciesId } from "@/lib/species/Species"
 
 import { expect } from "../fixtures"
 import { GalleryPageObject } from "./GalleryPageObject"
+import { HistoryPageObject } from "./HistoryPageObject"
 import { HomePageObject } from "./HomePageObject"
 import { PageObject } from "./PageObject"
 
@@ -18,7 +22,16 @@ export class PuzzlePageObject extends PageObject {
   selectFirstPlantOption = (): Promise<void> =>
     this.step("selectFirstPlantOption", () => this.get(PuzzleTestIds.plantOption).first().click())
 
-  submitAnswer = (): Promise<void> => this.step("submitAnswer", () => this.get(PuzzleTestIds.submitAnswer).click())
+  confirmSelection = (): Promise<void> =>
+    this.step("confirmSelection", () => this.get(PuzzleTestIds.submitAnswer).click())
+
+  submitAnswer = (speciesId: SpeciesId): Promise<void> =>
+    this.step(`submitAnswer(${speciesId})`, async () => {
+      const species = getSpecies(speciesId)
+      await this.searchForPlant(species.commonName)
+      await this.selectFirstPlantOption()
+      await this.confirmSelection()
+    })
 
   chooseDifferentPlant = (): Promise<void> =>
     this.step("chooseDifferentPlant", () => this.get(PuzzleTestIds.chooseDifferentPlant).click())
@@ -36,6 +49,9 @@ export class PuzzlePageObject extends PageObject {
 
   verifyDidNotAttempt = (): Promise<void> =>
     this.step("verifyDidNotAttempt", () => expect(this.get(AnswerTestIds.didNotAttempt)).toBeVisible())
+
+  verifyNotCompleted = (): Promise<void> =>
+    this.step("verifyNotCompleted", () => expect(this.get(AnswerTestIds.notCompleted)).toBeVisible())
 
   verifyAttemptHistory = (count: number): Promise<void> =>
     this.step(`verifyAttemptHistory(${count})`, async () => {
@@ -67,4 +83,10 @@ export class PuzzlePageObject extends PageObject {
 
   gallery = (): Promise<GalleryPageObject> =>
     this.step("gallery", () => new GalleryPageObject(this.mountResult).verifyIsShown())
+
+  goToHistory = (): Promise<HistoryPageObject> =>
+    this.step("goToHistory", async () => {
+      await this.get(SharedTestIds.headerHistoryLink).click()
+      return new HistoryPageObject(this.mountResult).verifyIsShown()
+    })
 }

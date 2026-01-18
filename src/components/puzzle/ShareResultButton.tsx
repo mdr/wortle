@@ -2,8 +2,9 @@ import { Check, Share2 } from "lucide-react"
 import { useState } from "react"
 
 import { Button } from "@/components/shadcn/Button"
+import { DailyResult } from "@/lib/gameStorage/GameState"
 import { getResultMedal } from "@/lib/resultMedal"
-import { selectIsCorrect } from "@/services/puzzle/puzzleSelectors"
+import { PuzzleOutcome } from "@/services/puzzle/PuzzleService"
 import { usePuzzleState } from "@/services/puzzle/puzzleServiceHooks"
 import { Iso8601Date } from "@/utils/brandedTypes"
 import { formatDate } from "@/utils/dateUtils"
@@ -15,14 +16,12 @@ const getOrdinal = (n: number): string => {
   return `${n}th`
 }
 
-const generateShareText = (
-  scheduledDate: Iso8601Date,
-  attemptCount: number,
-  isCorrect: boolean,
-  gaveUp: boolean,
-): string => {
-  const medal = gaveUp ? "❌" : getResultMedal({ attemptCount, isCorrect })
-  const attemptText = gaveUp ? "gave up" : `${getOrdinal(attemptCount)} try`
+const generateShareText = (scheduledDate: Iso8601Date, attemptCount: number, outcome: PuzzleOutcome): string => {
+  const isCorrect = outcome === PuzzleOutcome.CORRECT
+  const isGaveUpOrNotCompleted = outcome === PuzzleOutcome.GAVE_UP || outcome === PuzzleOutcome.NOT_COMPLETED
+  const result = isCorrect ? DailyResult.PASS : DailyResult.FAIL
+  const medal = isGaveUpOrNotCompleted ? "❌" : getResultMedal({ attemptCount, result })
+  const attemptText = isGaveUpOrNotCompleted ? "gave up" : `${getOrdinal(attemptCount)} try`
 
   return `Wortle ${formatDate(scheduledDate, undefined, "medium")} ${medal} ${attemptText}
 
@@ -32,13 +31,12 @@ https://wortle.app`
 const canShare = (): boolean => "share" in navigator && typeof navigator.share === "function"
 
 export const ShareResultButton = () => {
-  const { scheduledDate, attempts, gaveUp } = usePuzzleState()
-  const isCorrect = usePuzzleState(selectIsCorrect)
+  const { scheduledDate, attempts, outcome } = usePuzzleState()
   const [copied, setCopied] = useState(false)
 
-  if (!scheduledDate) return null
+  if (!scheduledDate || !outcome) return null
 
-  const shareText = generateShareText(scheduledDate, attempts.length, isCorrect, gaveUp)
+  const shareText = generateShareText(scheduledDate, attempts.length, outcome)
 
   const handleShare = () => {
     const doShare = async () => {

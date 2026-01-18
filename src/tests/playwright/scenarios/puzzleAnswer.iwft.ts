@@ -6,51 +6,39 @@ test("can navigate to puzzle and answer correctly on first try", async ({ homePa
   const puzzlePage = await homePage.clickPuzzle(0)
   await puzzlePage.checkScreenshot("puzzle-page")
   await puzzlePage.verifyAttemptCounter(1, 3)
-  await puzzlePage.searchForPlant(TestPuzzles.daisy.correctAnswer)
-  await puzzlePage.selectFirstPlantOption()
-  await puzzlePage.submitAnswer()
+  await puzzlePage.submitAnswer(TestPuzzles.daisy.speciesId)
   await puzzlePage.verifyCorrectAnswer()
 })
 
 test("can answer correctly after wrong attempts", async ({ homePage }) => {
   const puzzlePage = await homePage.clickPuzzle(0)
 
-  // First wrong attempt
-  await puzzlePage.searchForPlant(TestPuzzles.tansy.correctAnswer)
-  await puzzlePage.selectFirstPlantOption()
-  await puzzlePage.submitAnswer()
+  await puzzlePage.submitAnswer(TestPuzzles.tansy.speciesId)
   await puzzlePage.verifyAttemptHistory(1)
   await puzzlePage.verifyAttemptCounter(2, 3)
 
-  // Second wrong attempt
   await puzzlePage.searchForPlant("Chicory")
   await puzzlePage.selectFirstPlantOption()
-  await puzzlePage.submitAnswer()
+  await puzzlePage.confirmSelection()
   await puzzlePage.verifyAttemptHistory(2)
   await puzzlePage.verifyAttemptCounter(3, 3)
 
-  // Correct attempt
-  await puzzlePage.searchForPlant(TestPuzzles.daisy.correctAnswer)
-  await puzzlePage.selectFirstPlantOption()
-  await puzzlePage.submitAnswer()
+  await puzzlePage.submitAnswer(TestPuzzles.daisy.speciesId)
   await puzzlePage.verifyCorrectAnswer()
 })
 
 test("fails after 3 wrong attempts", async ({ homePage }) => {
   const puzzlePage = await homePage.clickPuzzle(0)
 
-  // Make 3 wrong attempts
-  await puzzlePage.searchForPlant(TestPuzzles.tansy.correctAnswer)
-  await puzzlePage.selectFirstPlantOption()
-  await puzzlePage.submitAnswer()
+  await puzzlePage.submitAnswer(TestPuzzles.tansy.speciesId)
 
   await puzzlePage.searchForPlant("Chicory")
   await puzzlePage.selectFirstPlantOption()
-  await puzzlePage.submitAnswer()
+  await puzzlePage.confirmSelection()
 
   await puzzlePage.searchForPlant("Bluebell")
   await puzzlePage.selectFirstPlantOption()
-  await puzzlePage.submitAnswer()
+  await puzzlePage.confirmSelection()
 
   await puzzlePage.verifyIncorrectAnswer()
 })
@@ -74,9 +62,7 @@ test("can choose a different plant", async ({ homePage }) => {
 
 test("daily puzzle stays completed after leaving and returning", async ({ homePage }) => {
   const dailyPuzzle = await homePage.clickDailyPuzzle()
-  await dailyPuzzle.searchForPlant(TestPuzzles.devilsBitScabious.correctAnswer)
-  await dailyPuzzle.selectFirstPlantOption()
-  await dailyPuzzle.submitAnswer()
+  await dailyPuzzle.submitAnswer(TestPuzzles.devilsBitScabious.speciesId)
   await dailyPuzzle.verifyCorrectAnswer()
 
   const backHome = await dailyPuzzle.goHome()

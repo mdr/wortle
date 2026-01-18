@@ -1,16 +1,13 @@
 import { getSpecies } from "@/lib/species/plants"
 import { Species } from "@/lib/species/Species"
 
-import { MAX_ATTEMPTS } from "./PuzzleService"
-import { PuzzleServiceState } from "./PuzzleService"
+import { PuzzleOutcome, PuzzleServiceState } from "./PuzzleService"
 
 export const selectCorrectSpecies = (state: PuzzleServiceState): Species => getSpecies(state.puzzle.speciesId)
 
-export const selectIsCorrect = (state: PuzzleServiceState): boolean =>
-  state.attempts.some((attempt) => attempt.isCorrect)
+export const selectIsCorrect = (state: PuzzleServiceState): boolean => state.outcome === PuzzleOutcome.CORRECT
 
-export const selectIsResolved = (state: PuzzleServiceState): boolean =>
-  state.gaveUp || state.didNotAttempt || selectIsCorrect(state) || state.attempts.length >= MAX_ATTEMPTS
+export const selectIsResolved = (state: PuzzleServiceState): boolean => state.outcome !== undefined
 
 export const selectShowAttemptHistory = (state: PuzzleServiceState): boolean =>
-  state.attempts.length > 0 && !state.gaveUp
+  state.attempts.length > 0 && state.outcome !== PuzzleOutcome.GAVE_UP

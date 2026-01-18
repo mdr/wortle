@@ -22,3 +22,9 @@ export const toIso8601Date = (date: Date): Iso8601Date => {
 }
 
 export const toDateFromIso8601Date = (isoDate: Iso8601Date): Date => new Date(`${isoDate}T00:00:00Z`)
+
+export const getNextDay = (date: Iso8601Date): Iso8601Date => {
+  const d = new Date(`${date}T00:00:00`)
+  d.setDate(d.getDate() + 1)
+  return toIso8601Date(d)
+}

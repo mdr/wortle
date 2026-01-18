@@ -47,4 +47,32 @@ describe("calculateDailyStatsSummary", () => {
       maxStreak: 1,
     })
   })
+
+  it("treats records without result (abandoned) as failures for streaks", () => {
+    const history = [
+      createDailyPuzzleRecord({ date: Iso8601Date("2026-06-08"), result: DailyResult.PASS }),
+      createDailyPuzzleRecord({ date: Iso8601Date("2026-06-09"), result: undefined }),
+      createDailyPuzzleRecord({ date: Iso8601Date("2026-06-10"), result: DailyResult.PASS }),
+    ]
+
+    expect(calculateDailyStatsSummary(history)).toEqual({
+      played: 3,
+      wins: 2,
+      winRate: 2 / 3,
+      currentStreak: 1,
+      maxStreak: 1,
+    })
+  })
+
+  it("counts records without result in played total", () => {
+    const history = [createDailyPuzzleRecord({ date: Iso8601Date("2026-06-08"), result: undefined })]
+
+    expect(calculateDailyStatsSummary(history)).toEqual({
+      played: 1,
+      wins: 0,
+      winRate: 0,
+      currentStreak: 0,
+      maxStreak: 0,
+    })
+  })
 })

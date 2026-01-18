@@ -1,10 +1,16 @@
+import { DailyResult } from "./gameStorage/GameState"
+
 interface ResultArgs {
   attemptCount: number
-  isCorrect: boolean
+  result?: DailyResult
+  isToday?: boolean
 }
 
-export const getResultMedal = ({ attemptCount, isCorrect }: ResultArgs): string => {
-  if (!isCorrect) return "❌"
+export const getResultMedal = ({ attemptCount, result, isToday }: ResultArgs): string => {
+  if (result === undefined) {
+    return isToday ? "⏳" : "—"
+  }
+  if (result !== DailyResult.PASS) return "❌"
   if (attemptCount === 1) return "🥇"
   if (attemptCount === 2) return "🥈"
   return "🥉"
@@ -17,7 +23,10 @@ const getOrdinal = (n: number): string => {
   return `${n}th`
 }
 
-export const getResultDescription = ({ attemptCount, isCorrect }: ResultArgs): string => {
-  if (!isCorrect) return "Incorrect"
+export const getResultDescription = ({ attemptCount, result, isToday }: ResultArgs): string => {
+  if (result === undefined) {
+    return isToday ? "In progress" : "Not completed"
+  }
+  if (result !== DailyResult.PASS) return "Incorrect"
   return `Correct on ${getOrdinal(attemptCount)} try`
 }

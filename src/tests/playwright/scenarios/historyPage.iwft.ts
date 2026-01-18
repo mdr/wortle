@@ -10,9 +10,7 @@ test("history page shows empty state when no puzzles completed", async ({ histor
 
 test("history page shows completed puzzle", async ({ homePage }) => {
   const puzzlePage = await homePage.clickDailyPuzzle()
-  await puzzlePage.searchForPlant(TestPuzzles.devilsBitScabious.correctAnswer)
-  await puzzlePage.selectFirstPlantOption()
-  await puzzlePage.submitAnswer()
+  await puzzlePage.submitAnswer(TestPuzzles.devilsBitScabious.speciesId)
   await puzzlePage.verifyCorrectAnswer()
 
   const home = await puzzlePage.goHome()

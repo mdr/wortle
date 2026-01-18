@@ -2,9 +2,9 @@ import { z } from "zod"
 
 import { logger } from "@/utils/Logger"
 
-import { DailyInProgressRecord, DailyPuzzleRecord, GameState, gameStateSchema } from "./GameState"
+import { DailyPuzzleRecord, GameState, gameStateSchema } from "./GameState"
 
-const STORAGE_KEY = "wortle:temp:3:stats"
+const STORAGE_KEY = "wortle:temp:4:stats"
 
 const upsertRecord = (history: DailyPuzzleRecord[], record: DailyPuzzleRecord): DailyPuzzleRecord[] =>
   [...history.filter((r) => r.date !== record.date), record].sort((a, b) => a.date.localeCompare(b.date))
@@ -52,18 +52,9 @@ export class GameStorage {
     return next
   }
 
-  saveDailyInProgress = (record: DailyInProgressRecord): void => {
-    this.update((current) => ({ ...current, dailyInProgress: record }))
-  }
-
-  clearDailyInProgress = (): void => {
-    this.update((current) => ({ ...current, dailyInProgress: undefined }))
-  }
-
-  recordDailyCompletion = (record: DailyPuzzleRecord): GameState =>
+  saveRecord = (record: DailyPuzzleRecord): GameState =>
     this.update((current) => ({
       history: upsertRecord(current.history, record),
-      dailyInProgress: undefined,
     }))
 
   clear = (): void => {

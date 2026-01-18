@@ -4,7 +4,7 @@ import { TestPuzzles, TestSpeciesIds } from "@/lib/testConstants.testUtils"
 import { Iso8601Date } from "@/utils/brandedTypes"
 
 import { DailyResult } from "./GameState"
-import { createDailyPuzzleRecord, createGameStorage } from "./GameStorage.testUtils"
+import { createDailyPuzzleRecord, createGameStorage, createInProgressRecord } from "./GameStorage.testUtils"
 
 describe("GameStorage", () => {
   it("returns default state when empty", () => {
@@ -14,15 +14,11 @@ describe("GameStorage", () => {
 
   it("persists and loads state", () => {
     const gameStorage = createGameStorage()
-    gameStorage.recordDailyCompletion({
+    gameStorage.saveRecord({
       date: Iso8601Date("2026-06-08"),
       puzzleId: TestPuzzles.daisy.id,
       result: DailyResult.PASS,
       attemptedSpeciesIds: [TestSpeciesIds.birdsFootTrefoil, TestPuzzles.herbRobert.speciesId],
-    })
-    gameStorage.saveDailyInProgress({
-      date: Iso8601Date("2026-06-09"),
-      attemptedSpeciesIds: [TestSpeciesIds.feverfew],
     })
 
     expect(gameStorage.load()).toEqual({
@@ -34,70 +30,45 @@ describe("GameStorage", () => {
           attemptedSpeciesIds: [TestSpeciesIds.birdsFootTrefoil, TestPuzzles.herbRobert.speciesId],
         },
       ],
-      dailyInProgress: {
-        date: Iso8601Date("2026-06-09"),
-        attemptedSpeciesIds: [TestSpeciesIds.feverfew],
-      },
     })
   })
 
   it("clears stored state", () => {
     const gameStorage = createGameStorage()
-    gameStorage.recordDailyCompletion(createDailyPuzzleRecord())
+    gameStorage.saveRecord(createDailyPuzzleRecord())
 
     gameStorage.clear()
 
     expect(gameStorage.load()).toEqual({ history: [] })
   })
 
-  it("saves daily in-progress", () => {
+  it("saves in-progress record (without result)", () => {
     const gameStorage = createGameStorage()
 
-    gameStorage.saveDailyInProgress({
-      date: Iso8601Date("2026-06-08"),
-      attemptedSpeciesIds: [TestSpeciesIds.birdsFootTrefoil],
-    })
+    gameStorage.saveRecord(createInProgressRecord())
 
-    expect(gameStorage.load()).toMatchObject({
-      dailyInProgress: {
-        date: Iso8601Date("2026-06-08"),
-        attemptedSpeciesIds: [TestSpeciesIds.birdsFootTrefoil],
-      },
+    expect(gameStorage.load()).toEqual({
+      history: [createInProgressRecord()],
     })
   })
 
-  it("clears daily in-progress", () => {
+  it("updates in-progress record to completed", () => {
     const gameStorage = createGameStorage()
-    gameStorage.saveDailyInProgress({
-      date: Iso8601Date("2026-06-08"),
-      attemptedSpeciesIds: [TestSpeciesIds.birdsFootTrefoil],
-    })
+    const date = Iso8601Date("2026-06-08")
+    gameStorage.saveRecord(createInProgressRecord({ date }))
 
-    gameStorage.clearDailyInProgress()
+    gameStorage.saveRecord(createDailyPuzzleRecord({ date, result: DailyResult.PASS }))
 
-    expect(gameStorage.load()).toEqual({ history: [] })
-  })
-
-  it("records daily completion and clears in-progress", () => {
-    const gameStorage = createGameStorage()
-    gameStorage.saveDailyInProgress({
-      date: Iso8601Date("2026-06-08"),
-      attemptedSpeciesIds: [TestSpeciesIds.birdsFootTrefoil],
-    })
-    const record = createDailyPuzzleRecord()
-
-    gameStorage.recordDailyCompletion(record)
-
-    expect(gameStorage.load().dailyInProgress).toBeUndefined()
-    expect(gameStorage.load().history).toEqual([record])
+    expect(gameStorage.load().history).toHaveLength(1)
+    expect(gameStorage.load().history[0]?.result).toBe(DailyResult.PASS)
   })
 
   it("replaces existing record for same date", () => {
     const gameStorage = createGameStorage()
     const date = Iso8601Date("2026-06-08")
-    gameStorage.recordDailyCompletion(createDailyPuzzleRecord({ date, result: DailyResult.FAIL }))
+    gameStorage.saveRecord(createDailyPuzzleRecord({ date, result: DailyResult.FAIL }))
 
-    gameStorage.recordDailyCompletion(createDailyPuzzleRecord({ date, result: DailyResult.PASS }))
+    gameStorage.saveRecord(createDailyPuzzleRecord({ date, result: DailyResult.PASS }))
 
     expect(gameStorage.load().history).toHaveLength(1)
     expect(gameStorage.load().history[0]?.result).toBe(DailyResult.PASS)
@@ -108,9 +79,9 @@ describe("GameStorage", () => {
     const earliest = Iso8601Date("2026-06-08")
     const middle = Iso8601Date("2026-06-09")
     const latest = Iso8601Date("2026-06-10")
-    gameStorage.recordDailyCompletion(createDailyPuzzleRecord({ date: middle }))
-    gameStorage.recordDailyCompletion(createDailyPuzzleRecord({ date: latest }))
-    gameStorage.recordDailyCompletion(createDailyPuzzleRecord({ date: earliest }))
+    gameStorage.saveRecord(createDailyPuzzleRecord({ date: middle }))
+    gameStorage.saveRecord(createDailyPuzzleRecord({ date: latest }))
+    gameStorage.saveRecord(createDailyPuzzleRecord({ date: earliest }))
 
     const history = gameStorage.load().history
     expect(history.map((r) => r.date)).toEqual([earliest, middle, latest])

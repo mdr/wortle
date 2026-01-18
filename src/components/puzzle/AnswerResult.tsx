@@ -1,11 +1,14 @@
 import { Info } from "lucide-react"
+import { assert } from "tsafe"
 
 import { TipWithGlossary } from "@/components/puzzle/TipWithGlossary"
 import { Card } from "@/components/shadcn/Card"
 import { AttemptFeedback } from "@/lib/AttemptFeedback"
+import { DailyResult } from "@/lib/gameStorage/GameState"
 import { getResultMedal } from "@/lib/resultMedal"
 import { getSpecies } from "@/lib/species/plants"
-import { selectCorrectSpecies, selectIsCorrect } from "@/services/puzzle/puzzleSelectors"
+import { selectCorrectSpecies } from "@/services/puzzle/puzzleSelectors"
+import { PuzzleOutcome } from "@/services/puzzle/PuzzleService"
 import { usePuzzleState } from "@/services/puzzle/puzzleServiceHooks"
 
 import { AnswerTestIds } from "./PuzzleTestIds"
@@ -17,57 +20,79 @@ const getHintText = (attempt: AttemptFeedback): string | undefined => {
   return undefined
 }
 
+const outcomeToTestId: Record<PuzzleOutcome, string> = {
+  [PuzzleOutcome.CORRECT]: AnswerTestIds.correct,
+  [PuzzleOutcome.OUT_OF_ATTEMPTS]: AnswerTestIds.incorrect,
+  [PuzzleOutcome.GAVE_UP]: AnswerTestIds.gaveUp,
+  [PuzzleOutcome.NOT_COMPLETED]: AnswerTestIds.notCompleted,
+  [PuzzleOutcome.DID_NOT_ATTEMPT]: AnswerTestIds.didNotAttempt,
+}
+
 export const AnswerResult = () => {
-  const isCorrect = usePuzzleState(selectIsCorrect)
   const correctSpecies = usePuzzleState(selectCorrectSpecies)
-  const { attempts, gaveUp, didNotAttempt } = usePuzzleState()
-  const getHeading = () => {
-    if (isCorrect) return "Correct!"
-    if (didNotAttempt || gaveUp) return "Here's the answer"
-    return "Out of attempts"
-  }
+  const { attempts, outcome } = usePuzzleState()
+  assert(outcome, "AnswerResult requires an outcome")
 
-  const getSubheading = () => {
-    if (isCorrect) {
-      const attemptCount = attempts.length
-      if (attemptCount === 1) return "Got it on your first try!"
-      return `Got it in ${attemptCount} attempts`
+  const isCorrect = outcome === PuzzleOutcome.CORRECT
+
+  const getHeading = (): string => {
+    switch (outcome) {
+      case PuzzleOutcome.CORRECT:
+        return "Correct!"
+      case PuzzleOutcome.OUT_OF_ATTEMPTS:
+        return "Out of attempts"
+      case PuzzleOutcome.GAVE_UP:
+      case PuzzleOutcome.NOT_COMPLETED:
+      case PuzzleOutcome.DID_NOT_ATTEMPT:
+        return "Here's the answer"
     }
-    if (didNotAttempt) return "You didn't attempt this puzzle, but here's the answer"
-    if (gaveUp) return "Better luck with the next one"
-    return "You'll get the next one!"
   }
 
-  const getCardStyle = () => {
-    if (isCorrect) return "border-primary bg-primary/5"
-    if (didNotAttempt) return "border-border bg-muted/30"
-    return "border-destructive bg-destructive/5"
+  const getSubheading = (): string => {
+    switch (outcome) {
+      case PuzzleOutcome.CORRECT: {
+        const attemptCount = attempts.length
+        if (attemptCount === 1) return "Got it on your first try!"
+        return `Got it in ${attemptCount} attempts`
+      }
+      case PuzzleOutcome.OUT_OF_ATTEMPTS:
+        return "You'll get the next one!"
+      case PuzzleOutcome.GAVE_UP:
+        return "Better luck with the next one"
+      case PuzzleOutcome.NOT_COMPLETED:
+        return "You didn't finish this puzzle"
+      case PuzzleOutcome.DID_NOT_ATTEMPT:
+        return "You didn't attempt this puzzle, but here's the answer"
+    }
+  }
+
+  const getCardStyle = (): string => {
+    switch (outcome) {
+      case PuzzleOutcome.CORRECT:
+        return "border-primary bg-primary/5"
+      case PuzzleOutcome.DID_NOT_ATTEMPT:
+      case PuzzleOutcome.NOT_COMPLETED:
+        return "border-border bg-muted/30"
+      case PuzzleOutcome.OUT_OF_ATTEMPTS:
+      case PuzzleOutcome.GAVE_UP:
+        return "border-destructive bg-destructive/5"
+    }
   }
 
   const renderIcon = () => {
-    if (didNotAttempt) {
+    if (outcome === PuzzleOutcome.DID_NOT_ATTEMPT || outcome === PuzzleOutcome.NOT_COMPLETED) {
       return (
         <div className="bg-muted text-muted-foreground flex size-12 items-center justify-center rounded-full">
           <Info className="size-6" />
         </div>
       )
     }
-    return <span className="text-5xl">{getResultMedal({ attemptCount: attempts.length, isCorrect })}</span>
+    const result = isCorrect ? DailyResult.PASS : DailyResult.FAIL
+    return <span className="text-5xl">{getResultMedal({ attemptCount: attempts.length, result })}</span>
   }
 
   return (
-    <Card
-      className={`p-6 ${getCardStyle()}`}
-      data-testid={
-        isCorrect
-          ? AnswerTestIds.correct
-          : didNotAttempt
-            ? AnswerTestIds.didNotAttempt
-            : gaveUp
-              ? AnswerTestIds.gaveUp
-              : AnswerTestIds.incorrect
-      }
-    >
+    <Card className={`p-6 ${getCardStyle()}`} data-testid={outcomeToTestId[outcome]}>
       <div className="mb-4 flex items-center gap-3">
         {renderIcon()}
         <div>

@@ -13,32 +13,19 @@ export enum DailyResult {
 export interface DailyPuzzleRecord {
   readonly date: Iso8601Date
   readonly puzzleId: PuzzleId
-  readonly result: DailyResult
-  readonly attemptedSpeciesIds: SpeciesId[]
-}
-
-export interface DailyInProgressRecord {
-  readonly date: Iso8601Date
+  readonly result?: DailyResult
   readonly attemptedSpeciesIds: SpeciesId[]
 }
 
 export interface GameState {
   readonly history: DailyPuzzleRecord[]
-  readonly dailyInProgress?: DailyInProgressRecord
 }
 
 const dailyPuzzleRecordSchema: z.ZodType<DailyPuzzleRecord> = z
   .strictObject({
     date: z.string().transform(Iso8601Date),
     puzzleId: z.number().int().transform(PuzzleId),
-    result: z.enum([DailyResult.PASS, DailyResult.FAIL]),
-    attemptedSpeciesIds: z.array(z.string().transform(SpeciesId)),
-  })
-  .readonly()
-
-const dailyInProgressRecordSchema: z.ZodType<DailyInProgressRecord> = z
-  .strictObject({
-    date: z.string().transform(Iso8601Date),
+    result: z.enum([DailyResult.PASS, DailyResult.FAIL]).optional(),
     attemptedSpeciesIds: z.array(z.string().transform(SpeciesId)),
   })
   .readonly()
@@ -46,7 +33,6 @@ const dailyInProgressRecordSchema: z.ZodType<DailyInProgressRecord> = z
 export const gameStateSchema: z.ZodType<GameState> = z
   .strictObject({
     history: z.array(dailyPuzzleRecordSchema),
-    dailyInProgress: dailyInProgressRecordSchema.optional(),
   })
   .readonly()
 

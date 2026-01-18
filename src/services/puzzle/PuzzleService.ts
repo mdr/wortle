@@ -11,14 +11,20 @@ import { ImageIndex, Iso8601Date } from "@/utils/brandedTypes"
 import { AbstractService } from "@/utils/providerish/AbstractService"
 import { Option } from "@/utils/types/Option"
 
-import { PuzzleCompletion } from "./puzzleTypes"
-
 export const MAX_ATTEMPTS = 3
 
 export enum PuzzleMode {
   DAILY = "DAILY",
   REVIEW = "REVIEW",
   ARCHIVE = "ARCHIVE",
+}
+
+export enum PuzzleOutcome {
+  CORRECT = "CORRECT",
+  OUT_OF_ATTEMPTS = "OUT_OF_ATTEMPTS",
+  GAVE_UP = "GAVE_UP",
+  NOT_COMPLETED = "NOT_COMPLETED",
+  DID_NOT_ATTEMPT = "DID_NOT_ATTEMPT",
 }
 
 export interface PuzzleServiceActions {
@@ -47,8 +53,7 @@ export interface PuzzleServiceState {
 
   imageGallery: ImageGalleryState
 
-  gaveUp: boolean
-  didNotAttempt: boolean
+  outcome: Option<PuzzleOutcome>
 
   attempts: AttemptFeedback[]
   searchQuery: string
@@ -69,35 +74,52 @@ export class PuzzleService extends AbstractService<PuzzleServiceState> implement
     const history = gameState?.history ?? []
     const correctSpecies = getSpecies(puzzle.speciesId)
 
-    // Handle in-progress state for daily mode
-    const dailyInProgress = gameState?.dailyInProgress
-    if (mode === PuzzleMode.DAILY && dailyInProgress && scheduledDate && dailyInProgress.date !== scheduledDate) {
-      gameStorage.clearDailyInProgress()
-    }
-    const matchingInProgress = dailyInProgress && scheduledDate === dailyInProgress.date ? dailyInProgress : undefined
-
-    const completedRecord =
+    // Find existing record for this date (may be in-progress or completed)
+    const existingRecord =
       mode !== PuzzleMode.REVIEW && scheduledDate
         ? history.find((record) => record.date === scheduledDate && record.puzzleId === puzzle.id)
         : undefined
 
-    const attemptedSpeciesIds = completedRecord?.attemptedSpeciesIds ?? matchingInProgress?.attemptedSpeciesIds ?? []
+    const attemptedSpeciesIds = existingRecord?.attemptedSpeciesIds ?? []
     const attempts = attemptedSpeciesIds.map((speciesId) => {
       const species = getSpecies(speciesId)
       return createAttemptFeedback(species, correctSpecies)
     })
 
-    const gaveUp =
-      completedRecord !== undefined && completedRecord.result === DailyResult.FAIL && attempts.length < MAX_ATTEMPTS
-    const didNotAttempt = mode === PuzzleMode.ARCHIVE && completedRecord === undefined
-    const statsSummary = mode === PuzzleMode.DAILY ? calculateDailyStatsSummary(gameStorage.load().history) : undefined
+    const computeInitialOutcome = (): Option<PuzzleOutcome> => {
+      if (mode === PuzzleMode.REVIEW) return undefined
+
+      if (mode === PuzzleMode.ARCHIVE && !existingRecord) {
+        return PuzzleOutcome.DID_NOT_ATTEMPT
+      }
+
+      if (!existingRecord) return undefined
+
+      const { result } = existingRecord
+
+      if (result === DailyResult.PASS) {
+        return PuzzleOutcome.CORRECT
+      }
+
+      if (result === DailyResult.FAIL) {
+        return attempts.length >= MAX_ATTEMPTS ? PuzzleOutcome.OUT_OF_ATTEMPTS : PuzzleOutcome.GAVE_UP
+      }
+
+      // result is undefined - in progress or not completed
+      if (mode === PuzzleMode.ARCHIVE) {
+        return PuzzleOutcome.NOT_COMPLETED
+      }
+
+      return undefined
+    }
+
+    const statsSummary = mode === PuzzleMode.DAILY ? calculateDailyStatsSummary(history) : undefined
     super({
       puzzle,
       scheduledDate,
       mode,
       attempts,
-      gaveUp,
-      didNotAttempt,
+      outcome: computeInitialOutcome(),
       incorrectFeedbackText: undefined,
       selectedSpeciesId: undefined,
       searchQuery: "",
@@ -158,51 +180,39 @@ export class PuzzleService extends AbstractService<PuzzleServiceState> implement
         : feedback.familyMatch
           ? "That's in the right family - have another go."
           : "That's not it - have another go."
-    const completion =
-      feedback.isCorrect || nextAttempts.length >= MAX_ATTEMPTS
-        ? ({
-            result: feedback.isCorrect ? DailyResult.PASS : DailyResult.FAIL,
-            attemptedSpeciesIds: nextAttempts.map((attempt) => attempt.speciesId),
-          } satisfies PuzzleCompletion)
+    const isComplete = feedback.isCorrect || nextAttempts.length >= MAX_ATTEMPTS
+    const result = isComplete ? (feedback.isCorrect ? DailyResult.PASS : DailyResult.FAIL) : undefined
+    const outcome = feedback.isCorrect
+      ? PuzzleOutcome.CORRECT
+      : nextAttempts.length >= MAX_ATTEMPTS
+        ? PuzzleOutcome.OUT_OF_ATTEMPTS
         : undefined
     this.updateState((draft) => {
       draft.attempts.push(feedback)
       draft.incorrectFeedbackText = incorrectFeedbackText
       draft.selectedSpeciesId = undefined
+      draft.outcome = outcome
     })
-    if (completion) {
-      this.updateStats(completion.result, completion.attemptedSpeciesIds)
-    } else {
-      this.saveDailyInProgress(nextAttempts.map((attempt) => attempt.speciesId))
-    }
+    this.saveRecord(
+      nextAttempts.map((attempt) => attempt.speciesId),
+      result,
+    )
     return feedback.isCorrect
   }
 
   giveUp = (): void => {
-    this.setState({ gaveUp: true, incorrectFeedbackText: undefined, selectedSpeciesId: undefined })
-    const completion = {
-      result: DailyResult.FAIL,
-      attemptedSpeciesIds: this.state.attempts.map((attempt) => attempt.speciesId),
-    }
-    this.updateStats(completion.result, completion.attemptedSpeciesIds)
+    this.setState({ outcome: PuzzleOutcome.GAVE_UP, incorrectFeedbackText: undefined, selectedSpeciesId: undefined })
+    this.saveRecord(
+      this.state.attempts.map((attempt) => attempt.speciesId),
+      DailyResult.FAIL,
+    )
   }
 
-  private readonly saveDailyInProgress = (attemptedSpeciesIds: SpeciesId[]): void => {
+  private readonly saveRecord = (attemptedSpeciesIds: SpeciesId[], result?: DailyResult): void => {
     if (this.mode === PuzzleMode.DAILY) {
       const scheduledDate = this.state.scheduledDate
       assert(scheduledDate, "PuzzleService requires a scheduled date in daily mode.")
-      this.gameStorage.saveDailyInProgress({
-        date: scheduledDate,
-        attemptedSpeciesIds,
-      })
-    }
-  }
-
-  private readonly updateStats = (result: DailyResult, attemptedSpeciesIds: SpeciesId[]): void => {
-    if (this.mode === PuzzleMode.DAILY) {
-      const scheduledDate = this.state.scheduledDate
-      assert(scheduledDate, "PuzzleService requires a scheduled date in daily mode.")
-      const nextStats = this.gameStorage.recordDailyCompletion({
+      const nextStats = this.gameStorage.saveRecord({
         date: scheduledDate,
         puzzleId: this.state.puzzle.id,
         result,

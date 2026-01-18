@@ -2,6 +2,7 @@ import type { MountResult } from "@playwright/experimental-ct-react"
 import { expect, test as ctBase } from "@playwright/experimental-ct-react"
 
 import { TestPuzzles } from "@/lib/testConstants.testUtils"
+import { Iso8601Date } from "@/utils/brandedTypes"
 
 import { ErrorPageObject } from "./pageObjects/ErrorPageObject"
 import { HistoryPageObject } from "./pageObjects/HistoryPageObject"
@@ -18,12 +19,20 @@ const launchApp = async (mount: MountFunction, initialPath = "/"): Promise<Mount
   return await mount(<TestApp initialPath={initialPath} />)
 }
 
+interface LaunchHomePageOptions {
+  today?: Iso8601Date
+}
+
 class Launcher {
   constructor(private readonly mount: MountFunction) {}
 
-  launchHomePage = async (): Promise<HomePageObject> => {
+  launchHomePage = async (options?: LaunchHomePageOptions): Promise<HomePageObject> => {
     const mountResult = await launchApp(this.mount)
-    return new HomePageObject(mountResult).verifyIsShown()
+    const homePage = await new HomePageObject(mountResult).verifyIsShown()
+    if (options?.today) {
+      await homePage.setClockDate(options.today)
+    }
+    return homePage
   }
 
   launchReviewPage = async (puzzleId: number): Promise<PuzzlePageObject> => {
