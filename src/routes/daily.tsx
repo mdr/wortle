@@ -6,7 +6,6 @@ import { NotFoundPage } from "@/components/notFound/NotFoundPage"
 import { PuzzlePage } from "@/components/puzzle/PuzzlePage"
 import { Puzzle } from "@/lib/Puzzle"
 import { findPuzzle } from "@/lib/puzzles"
-import { findSpecies } from "@/lib/species/plants"
 import { PuzzleMode } from "@/services/puzzle/PuzzleService"
 import { PuzzleServiceProvider } from "@/services/puzzle/PuzzleServiceProvider"
 import { Iso8601Date } from "@/utils/brandedTypes"
@@ -27,10 +26,6 @@ export const Route = createFileRoute("/daily")({
 
     const puzzle = findPuzzle(puzzleId)
     if (!puzzle) {
-      // eslint-disable-next-line @typescript-eslint/only-throw-error -- TanStack Router pattern
-      throw notFound()
-    }
-    if (!findSpecies(puzzle.speciesId)) {
       // eslint-disable-next-line @typescript-eslint/only-throw-error -- TanStack Router pattern
       throw notFound()
     }

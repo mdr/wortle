@@ -6,7 +6,6 @@ import { NotFoundPage } from "@/components/notFound/NotFoundPage"
 import { PuzzlePage } from "@/components/puzzle/PuzzlePage"
 import { PuzzleId } from "@/lib/Puzzle"
 import { findPuzzle } from "@/lib/puzzles"
-import { findSpecies } from "@/lib/species/plants"
 import { PuzzleMode } from "@/services/puzzle/PuzzleService"
 import { PuzzleServiceProvider } from "@/services/puzzle/PuzzleServiceProvider"
 
@@ -15,10 +14,6 @@ export const Route = createFileRoute("/review/$puzzleId")({
     const puzzleId = PuzzleId(parseInt(params.puzzleId, 10))
     const puzzle = findPuzzle(puzzleId)
     if (!puzzle) {
-      // eslint-disable-next-line @typescript-eslint/only-throw-error -- TanStack Router pattern
-      throw notFound()
-    }
-    if (!findSpecies(puzzle.speciesId)) {
       // eslint-disable-next-line @typescript-eslint/only-throw-error -- TanStack Router pattern
       throw notFound()
     }

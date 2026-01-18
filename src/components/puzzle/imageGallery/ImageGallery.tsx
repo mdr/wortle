@@ -5,6 +5,7 @@ import { TransformComponent, TransformWrapper } from "react-zoom-pan-pinch"
 import { Button } from "@/components/shadcn/Button"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/shadcn/Popover"
 import { usePuzzleServiceActions, usePuzzleState } from "@/services/puzzle/puzzleServiceHooks"
+import { ImageIndex } from "@/utils/brandedTypes"
 import { imageSrcSet, imageUrl, srcSetPresets } from "@/utils/imageUrls"
 
 import { FullScreenViewer } from "./FullScreenViewer"
@@ -128,7 +129,7 @@ export const ImageGallery = () => {
           {images.map((image, index) => (
             <div key={image.imageKey} className="flex flex-col items-center">
               <button
-                onClick={() => puzzleActions.selectImageIndex(index)}
+                onClick={() => puzzleActions.selectImageIndex(ImageIndex(index))}
                 className={`relative aspect-square w-full overflow-hidden rounded-md border transition-all ${
                   index === imageGalleryIndex
                     ? "border-muted-foreground/30"

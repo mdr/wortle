@@ -2,12 +2,12 @@ import { assert } from "tsafe"
 
 import { AttemptFeedback, createAttemptFeedback } from "@/lib/AttemptFeedback"
 import { calculateDailyStatsSummary, DailyStatsSummary } from "@/lib/gameStorage/dailyStatsSummary"
-import { DailyPuzzleRecord, DailyResult } from "@/lib/gameStorage/GameState"
+import { DailyResult } from "@/lib/gameStorage/GameState"
 import { GameStorage } from "@/lib/gameStorage/GameStorage"
 import { Puzzle } from "@/lib/Puzzle"
 import { getSpecies } from "@/lib/species/plants"
 import { SpeciesId } from "@/lib/species/Species"
-import { Iso8601Date } from "@/utils/brandedTypes"
+import { ImageIndex, Iso8601Date } from "@/utils/brandedTypes"
 import { AbstractService } from "@/utils/providerish/AbstractService"
 import { Option } from "@/utils/types/Option"
 
@@ -22,7 +22,7 @@ export enum PuzzleMode {
 }
 
 export interface PuzzleServiceActions {
-  selectImageIndex: (index: number) => void
+  selectImageIndex: (index: ImageIndex) => void
   goToNextImage: () => void
   goToPreviousImage: () => void
   enterFullscreenImageMode: () => void
@@ -34,14 +34,8 @@ export interface PuzzleServiceActions {
   giveUp: () => void
 }
 
-interface PuzzleServiceOptions {
-  mode: PuzzleMode
-  gameStorage: GameStorage
-  completionRecord?: DailyPuzzleRecord
-}
-
 export interface ImageGalleryState {
-  index: number
+  index: ImageIndex
   isFullscreen: boolean
 }
 
@@ -59,36 +53,28 @@ export interface PuzzleServiceState {
   imageGallery: ImageGalleryState
 }
 
-interface PuzzleServiceBaseState {
-  puzzle: Puzzle
-  scheduledDate?: Iso8601Date
-}
-
 export class PuzzleService extends AbstractService<PuzzleServiceState> implements PuzzleServiceActions {
   constructor(
-    state: PuzzleServiceBaseState,
-    private readonly options: PuzzleServiceOptions,
+    puzzle: Puzzle,
+    scheduledDate: Option<Iso8601Date>,
+    private readonly mode: PuzzleMode,
+    private readonly gameStorage: GameStorage,
   ) {
-    const { gameStorage, completionRecord: providedCompletionRecord } = options
-    const hasDailyStats = options.mode === PuzzleMode.DAILY
-    const gameState = hasDailyStats ? gameStorage.load() : undefined
+    const gameState = mode !== PuzzleMode.REVIEW ? gameStorage.load() : undefined
     const history = gameState?.history ?? []
-    const correctSpecies = getSpecies(state.puzzle.speciesId)
+    const correctSpecies = getSpecies(puzzle.speciesId)
 
     // Handle in-progress state for daily mode
     const dailyInProgress = gameState?.dailyInProgress
-    if (dailyInProgress && state.scheduledDate && dailyInProgress.date !== state.scheduledDate) {
+    if (dailyInProgress && scheduledDate && dailyInProgress.date !== scheduledDate) {
       gameStorage.clearDailyInProgress()
     }
-    const matchingInProgress =
-      dailyInProgress && state.scheduledDate === dailyInProgress.date ? dailyInProgress : undefined
+    const matchingInProgress = dailyInProgress && scheduledDate === dailyInProgress.date ? dailyInProgress : undefined
 
     const completedRecord =
-      options.mode === PuzzleMode.ARCHIVE
-        ? providedCompletionRecord
-        : hasDailyStats && state.scheduledDate
-          ? history.find((record) => record.date === state.scheduledDate && record.puzzleId === state.puzzle.id)
-          : undefined
+      mode !== PuzzleMode.REVIEW && scheduledDate
+        ? history.find((record) => record.date === scheduledDate && record.puzzleId === puzzle.id)
+        : undefined
 
     const attemptedSpeciesIds = completedRecord?.attemptedSpeciesIds ?? matchingInProgress?.attemptedSpeciesIds ?? []
     const attempts = attemptedSpeciesIds.map((speciesId) => {
@@ -98,19 +84,19 @@ export class PuzzleService extends AbstractService<PuzzleServiceState> implement
 
     const gaveUp =
       completedRecord !== undefined && completedRecord.result === DailyResult.FAIL && attempts.length < MAX_ATTEMPTS
-    const didNotAttempt = options.mode === PuzzleMode.ARCHIVE && completedRecord === undefined
-    const statsSummary =
-      options.mode === PuzzleMode.DAILY ? calculateDailyStatsSummary(options.gameStorage.load().history) : undefined
+    const didNotAttempt = mode === PuzzleMode.ARCHIVE && completedRecord === undefined
+    const statsSummary = mode === PuzzleMode.DAILY ? calculateDailyStatsSummary(gameStorage.load().history) : undefined
     super({
-      ...state,
-      mode: options.mode,
+      puzzle,
+      scheduledDate,
+      mode,
       attempts,
       gaveUp: gaveUp || didNotAttempt,
       didNotAttempt,
       incorrectFeedbackText: undefined,
       selectedSpeciesId: undefined,
       searchQuery: "",
-      imageGallery: { index: 0, isFullscreen: false },
+      imageGallery: { index: ImageIndex(0), isFullscreen: false },
       statsSummary,
     })
   }
@@ -132,19 +118,19 @@ export class PuzzleService extends AbstractService<PuzzleServiceState> implement
     this.setState({ searchQuery: query })
   }
 
-  selectImageIndex = (index: number): void => {
-    assert(index >= 0 && index < this.state.puzzle.images.length, `Invalid image index: ${index}`)
+  selectImageIndex = (index: ImageIndex): void => {
+    assert(index < this.state.puzzle.images.length, `Invalid image index: ${index}`)
     this.setState({ imageGallery: { index } })
   }
 
   goToNextImage = (): void => {
     const { imageGallery, puzzle } = this.state
-    this.selectImageIndex(imageGallery.index === puzzle.images.length - 1 ? 0 : imageGallery.index + 1)
+    this.selectImageIndex(ImageIndex(imageGallery.index === puzzle.images.length - 1 ? 0 : imageGallery.index + 1))
   }
 
   goToPreviousImage = (): void => {
     const { imageGallery, puzzle } = this.state
-    this.selectImageIndex(imageGallery.index === 0 ? puzzle.images.length - 1 : imageGallery.index - 1)
+    this.selectImageIndex(ImageIndex(imageGallery.index === 0 ? puzzle.images.length - 1 : imageGallery.index - 1))
   }
 
   enterFullscreenImageMode = (): void => {
@@ -197,11 +183,10 @@ export class PuzzleService extends AbstractService<PuzzleServiceState> implement
   }
 
   private readonly saveDailyInProgress = (attemptedSpeciesIds: SpeciesId[]): void => {
-    if (this.options.mode === PuzzleMode.DAILY) {
-      const { gameStorage } = this.options
+    if (this.mode === PuzzleMode.DAILY) {
       const scheduledDate = this.state.scheduledDate
       assert(scheduledDate, "PuzzleService requires a scheduled date in daily mode.")
-      gameStorage.saveDailyInProgress({
+      this.gameStorage.saveDailyInProgress({
         date: scheduledDate,
         attemptedSpeciesIds,
       })
@@ -209,12 +194,10 @@ export class PuzzleService extends AbstractService<PuzzleServiceState> implement
   }
 
   private readonly updateStats = (result: DailyResult, attemptedSpeciesIds: SpeciesId[]): void => {
-    if (this.options.mode === PuzzleMode.DAILY) {
-      const { gameStorage } = this.options
-      assert(gameStorage, "PuzzleService requires stats storage in daily mode.")
+    if (this.mode === PuzzleMode.DAILY) {
       const scheduledDate = this.state.scheduledDate
       assert(scheduledDate, "PuzzleService requires a scheduled date in daily mode.")
-      const nextStats = gameStorage.recordDailyCompletion({
+      const nextStats = this.gameStorage.recordDailyCompletion({
         date: scheduledDate,
         puzzleId: this.state.puzzle.id,
         result,

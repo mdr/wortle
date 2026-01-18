@@ -6,7 +6,7 @@ import { createMemoryStorage } from "@/lib/gameStorage/storage.testUtils"
 import { Puzzle } from "@/lib/Puzzle"
 import { getPuzzle } from "@/lib/puzzles"
 import { TestPuzzles, TestSpeciesIds } from "@/lib/testConstants.testUtils"
-import { Iso8601Date } from "@/utils/brandedTypes"
+import { ImageIndex, Iso8601Date } from "@/utils/brandedTypes"
 
 import { MAX_ATTEMPTS, PuzzleMode, PuzzleService } from "./PuzzleService"
 
@@ -17,7 +17,7 @@ const getPuzzleData = (): Puzzle => getPuzzle(puzzleId)
 const makePuzzleService = (options: Partial<{ mode: PuzzleMode; gameStorage: GameStorage }> = {}): PuzzleService => {
   const puzzle = getPuzzleData()
   const gameStorage = options.gameStorage ?? new GameStorage(createMemoryStorage())
-  return new PuzzleService({ puzzle, scheduledDate }, { mode: options.mode ?? PuzzleMode.REVIEW, gameStorage })
+  return new PuzzleService(puzzle, scheduledDate, options.mode ?? PuzzleMode.REVIEW, gameStorage)
 }
 
 describe("PuzzleService", () => {
@@ -190,7 +190,7 @@ describe("PuzzleService", () => {
     it("sets the current image index", () => {
       const service = makePuzzleService()
 
-      service.selectImageIndex(2)
+      service.selectImageIndex(ImageIndex(2))
 
       expect(service.state.imageGallery.index).toBe(2)
     })
@@ -198,9 +198,17 @@ describe("PuzzleService", () => {
     it("throws for out-of-bounds indices", () => {
       const puzzle = getPuzzleData()
       const service = makePuzzleService()
-      const outOfBoundsIndex = puzzle.images.length + 2
+      const outOfBoundsIndex = ImageIndex(puzzle.images.length + 2)
 
       expect(() => service.selectImageIndex(outOfBoundsIndex)).toThrow("Invalid image index")
+    })
+
+    it("rejects negative indices via branded type", () => {
+      expect(() => ImageIndex(-1)).toThrow()
+    })
+
+    it("rejects non-integer indices via branded type", () => {
+      expect(() => ImageIndex(1.5)).toThrow()
     })
   })
 
@@ -212,7 +220,7 @@ describe("PuzzleService", () => {
       service.goToNextImage()
       expect(service.state.imageGallery.index).toBe(1)
 
-      service.selectImageIndex(puzzle.images.length - 1)
+      service.selectImageIndex(ImageIndex(puzzle.images.length - 1))
       service.goToNextImage()
       expect(service.state.imageGallery.index).toBe(0)
     })
@@ -226,7 +234,7 @@ describe("PuzzleService", () => {
       service.goToPreviousImage()
       expect(service.state.imageGallery.index).toBe(puzzle.images.length - 1)
 
-      service.selectImageIndex(1)
+      service.selectImageIndex(ImageIndex(1))
       service.goToPreviousImage()
       expect(service.state.imageGallery.index).toBe(0)
     })
