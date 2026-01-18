@@ -5,6 +5,15 @@ import { Url } from "@/utils/brandedTypes"
 export type SpeciesId = string & Brand.Brand<"SpeciesId">
 export const SpeciesId = Brand.nominal<SpeciesId>()
 
+export type ScientificName = string & Brand.Brand<"ScientificName">
+export const ScientificName = Brand.nominal<ScientificName>()
+
+export type CommonName = string & Brand.Brand<"CommonName">
+export const CommonName = Brand.nominal<CommonName>()
+
+export type Genus = string & Brand.Brand<"Genus">
+export const Genus = Brand.nominal<Genus>()
+
 export interface SpeciesLink {
   name: string
   url: Url
@@ -12,15 +21,15 @@ export interface SpeciesLink {
 
 export interface Species {
   id: SpeciesId
-  scientificName: string
+  scientificName: ScientificName
   family: string
-  commonName: string
-  alternativeCommonNames: string[]
+  commonName: CommonName
+  alternativeCommonNames: CommonName[]
   links: SpeciesLink[]
   idTips: string[]
 }
 
-export const getGenus = (scientificName: string): string => scientificName.split(" ")[0]
+export const getGenus = (scientificName: ScientificName): Genus => Genus(scientificName.split(" ")[0])
 
 const matchesQuery = (species: Species, query: string): boolean => {
   const lowerQuery = query.toLowerCase()

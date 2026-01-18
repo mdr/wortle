@@ -2,34 +2,34 @@ import { describe, expect, it } from "vitest"
 
 import { TestSpeciesIds } from "@/lib/testConstants.testUtils"
 
-import { filterSpecies, getGenus } from "./Species"
+import { CommonName, filterSpecies, Genus, getGenus, ScientificName } from "./Species"
 import { createTestSpecies } from "./Species.testUtils"
 
 describe("getGenus", () => {
   it("extracts genus from two-part scientific name", () => {
-    expect(getGenus("Bellis perennis")).toBe("Bellis")
+    expect(getGenus(ScientificName("Bellis perennis"))).toEqual(Genus("Bellis"))
   })
 
   it("extracts genus from three-part scientific name", () => {
-    expect(getGenus("Rubus fruticosus agg.")).toBe("Rubus")
+    expect(getGenus(ScientificName("Rubus fruticosus agg."))).toEqual(Genus("Rubus"))
   })
 
   it("returns the whole string when no space present", () => {
-    expect(getGenus("Bellis")).toBe("Bellis")
+    expect(getGenus(ScientificName("Bellis"))).toEqual(Genus("Bellis"))
   })
 })
 
 describe("filterSpecies", () => {
   const daisy = createTestSpecies({
     id: TestSpeciesIds.daisy,
-    scientificName: "Bellis perennis",
-    commonName: "Daisy",
+    scientificName: ScientificName("Bellis perennis"),
+    commonName: CommonName("Daisy"),
   })
 
   const plantWithAltName = createTestSpecies({
     id: TestSpeciesIds.feverfew,
-    commonName: "Primary Name",
-    alternativeCommonNames: ["Alternate Name"],
+    commonName: CommonName("Primary Name"),
+    alternativeCommonNames: [CommonName("Alternate Name")],
   })
 
   const allSpecies = [daisy, plantWithAltName]

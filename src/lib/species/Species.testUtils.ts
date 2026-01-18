@@ -1,9 +1,9 @@
-import { Species, SpeciesId } from "./Species"
+import { CommonName, ScientificName, Species, SpeciesId } from "./Species"
 
 export const createTestSpecies = (overrides: Partial<Species> & { id: SpeciesId }): Species => ({
-  scientificName: "Genus species",
+  scientificName: ScientificName("Genus species"),
   family: "Family",
-  commonName: "Common",
+  commonName: CommonName("Common"),
   alternativeCommonNames: [],
   links: [],
   idTips: [],
