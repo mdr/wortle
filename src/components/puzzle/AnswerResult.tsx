@@ -19,7 +19,7 @@ const getHintText = (attempt: AttemptFeedback): string | undefined => {
 
 export const AnswerResult = () => {
   const isCorrect = usePuzzleState(selectIsCorrect)
-  const { attempts, correctSpecies, gaveUp, didNotAttempt } = usePuzzleState((state) => state)
+  const { attempts, correctSpecies, gaveUp, didNotAttempt } = usePuzzleState()
   const getHeading = () => {
     if (isCorrect) return "Correct!"
     if (gaveUp) return "Here's the answer"

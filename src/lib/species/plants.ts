@@ -5,6 +5,8 @@ import { Option } from "@/utils/types/Option"
 
 import { CommonName, ScientificName, type Species, SpeciesId } from "./Species"
 
+export { filterSpecies } from "./Species"
+
 const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.23w"),

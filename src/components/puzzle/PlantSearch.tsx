@@ -9,35 +9,20 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/shadcn/Command"
-import { getAllSpecies } from "@/lib/species/plants"
-import { filterSpecies, Species } from "@/lib/species/Species"
+import { filterSpecies, getAllSpecies } from "@/lib/species/plants"
 import { usePuzzleServiceActions, usePuzzleState } from "@/services/puzzle/puzzleServiceHooks"
 
 import { PuzzleTestIds } from "./PuzzleTestIds"
 
 export const PlantSearch = () => {
-  const { attempts, selectedSpecies } = usePuzzleState((state) => state)
+  const { attempts, selectedSpecies, searchQuery } = usePuzzleState()
   const puzzleActions = usePuzzleServiceActions()
   const excludedSpeciesIds = attempts.map((attempt) => attempt.speciesId)
-  const [query, setQuery] = useState("")
-  const [open, setOpen] = useState(false)
+  const open = searchQuery.length > 0
   const { containerRef, handleFocus, handleBlur } = useScrollToLabelOnFocus(open)
   const inputId = useId()
 
-  const allSpecies = getAllSpecies()
-
-  const handleSelect = (species: Species) => {
-    puzzleActions.selectSpecies(species.id)
-    setQuery("")
-    setOpen(false)
-  }
-
-  const filteredSpecies = filterSpecies(allSpecies, query, excludedSpeciesIds)
-
-  const handleClear = () => {
-    puzzleActions.chooseDifferentPlant()
-    setQuery("")
-  }
+  const filteredSpecies = filterSpecies(getAllSpecies(), searchQuery, excludedSpeciesIds)
 
   if (selectedSpecies) {
     return (
@@ -53,7 +38,7 @@ export const PlantSearch = () => {
         </div>
         <button
           type="button"
-          onClick={handleClear}
+          onClick={puzzleActions.chooseDifferentPlant}
           className="text-primary text-sm underline-offset-4 hover:underline"
           data-testid={PuzzleTestIds.chooseDifferentPlant}
         >
@@ -72,18 +57,10 @@ export const PlantSearch = () => {
         <CommandInput
           id={inputId}
           placeholder="Type common or scientific name..."
-          value={query}
-          onValueChange={(value) => {
-            setQuery(value)
-            setOpen(value.length > 0)
-          }}
-          onFocus={() => {
-            handleFocus()
-            if (query.length > 0) setOpen(true)
-          }}
-          onBlur={() => {
-            handleBlur()
-          }}
+          value={searchQuery}
+          onValueChange={puzzleActions.setSearchQuery}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
           data-testid={PuzzleTestIds.searchInput}
         />
         <CommandList className={clsx({ hidden: !open })}>
@@ -93,7 +70,7 @@ export const PlantSearch = () => {
               <CommandItem
                 key={species.id}
                 value={species.commonName}
-                onSelect={() => handleSelect(species)}
+                onSelect={() => puzzleActions.selectSpecies(species.id)}
                 className="group"
                 data-testid={PuzzleTestIds.plantOption}
               >

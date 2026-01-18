@@ -17,7 +17,7 @@ const SHAKE_TRANSITION: AnimationOptions = { duration: 0.35, ease: "easeInOut" }
 export const AnswerInputCard = () => {
   const [scope, animate] = useAnimate()
   const puzzleActions = usePuzzleServiceActions()
-  const { attempts, incorrectFeedbackText, selectedSpecies } = usePuzzleState((state) => state)
+  const { attempts, incorrectFeedbackText, selectedSpecies } = usePuzzleState()
 
   const shake = useCallback(() => {
     animate(scope.current, SHAKE_ANIMATION, SHAKE_TRANSITION)

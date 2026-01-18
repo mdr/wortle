@@ -13,7 +13,7 @@ import { GalleryTestIds } from "./GalleryTestIds"
 export const ImageGallery = () => {
   const captionId = useId()
   const { id: puzzleId, images, photoAttribution } = usePuzzleState((state) => state.puzzle)
-  const { imageGalleryIndex, isFullscreenImageMode } = usePuzzleState((state) => state)
+  const { imageGalleryIndex, isFullscreenImageMode } = usePuzzleState()
   const puzzleActions = usePuzzleServiceActions()
 
   const goToPrevious = () => {

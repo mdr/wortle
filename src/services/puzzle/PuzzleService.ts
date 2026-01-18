@@ -28,6 +28,7 @@ export interface PuzzleServiceActions {
   exitFullscreenImageMode: () => void
   selectSpecies: (speciesId: SpeciesId) => void
   chooseDifferentPlant: () => void
+  setSearchQuery: (query: string) => void
   submitAttempt: (speciesId: SpeciesId) => boolean
   giveUp: () => void
 }
@@ -48,6 +49,7 @@ export interface PuzzleServiceState {
   didNotAttempt: boolean
   incorrectFeedbackText?: string
   selectedSpecies?: Species
+  searchQuery: string
   statsSummary?: DailyStatsSummary
   imageGalleryIndex: number
   isFullscreenImageMode: boolean
@@ -103,6 +105,7 @@ export class PuzzleService extends AbstractService<PuzzleServiceState> implement
       didNotAttempt,
       incorrectFeedbackText: undefined,
       selectedSpecies: undefined,
+      searchQuery: "",
       imageGalleryIndex: 0,
       isFullscreenImageMode: false,
       statsSummary,
@@ -116,11 +119,15 @@ export class PuzzleService extends AbstractService<PuzzleServiceState> implement
 
   selectSpecies = (speciesId: SpeciesId): void => {
     const species = getSpecies(speciesId)
-    this.setState({ selectedSpecies: species, incorrectFeedbackText: undefined })
+    this.setState({ selectedSpecies: species, searchQuery: "", incorrectFeedbackText: undefined })
   }
 
   chooseDifferentPlant = (): void => {
-    this.setState({ selectedSpecies: undefined, incorrectFeedbackText: undefined })
+    this.setState({ selectedSpecies: undefined, searchQuery: "", incorrectFeedbackText: undefined })
+  }
+
+  setSearchQuery = (query: string): void => {
+    this.setState({ searchQuery: query })
   }
 
   selectImageIndex = (index: number): void => {
