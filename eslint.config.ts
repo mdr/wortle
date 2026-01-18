@@ -8,7 +8,7 @@ import simpleImportSort from "eslint-plugin-simple-import-sort"
 
 const config = [
   {
-    ignores: ["dist/", "node_modules/", "playwright/.cache/", "src/routeTree.gen.ts", "*.config.*"],
+    ignores: ["dist/", "node_modules/", "playwright/.cache/", "src/routeTree.gen.ts", "*.config.*", ".stryker-tmp/"],
   },
   ...tseslint.configs.strictTypeChecked,
   {

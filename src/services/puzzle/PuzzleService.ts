@@ -122,7 +122,7 @@ export class PuzzleService extends AbstractService<PuzzleServiceState> implement
     })
 
     const statsSummary =
-      mode === PuzzleMode.DAILY ? calculateDailyStatsSummary(pastAttempts, scheduledDate!) : undefined
+      mode === PuzzleMode.DAILY && scheduledDate ? calculateDailyStatsSummary(pastAttempts, scheduledDate) : undefined
     super({
       puzzle,
       scheduledDate,
