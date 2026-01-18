@@ -8,7 +8,7 @@ import { getPuzzle } from "@/lib/puzzles"
 import { TestDate, TestPuzzles, TestSpeciesIds } from "@/lib/testConstants.testUtils"
 import { ImageIndex, Iso8601Date } from "@/utils/brandedTypes"
 
-import { MAX_ATTEMPTS, PuzzleMode, PuzzleService } from "./PuzzleService"
+import { PuzzleMode, PuzzleService } from "./PuzzleService"
 
 const puzzle = getPuzzle(TestPuzzles.daisy.id)
 
@@ -124,7 +124,7 @@ describe("PuzzleService", () => {
 
       expect(service.state).toMatchObject({
         attempts: [],
-        gaveUp: true,
+        gaveUp: false,
         didNotAttempt: true,
       })
     })

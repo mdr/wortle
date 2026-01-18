@@ -23,7 +23,7 @@ export const AnswerResult = () => {
   const { attempts, gaveUp, didNotAttempt } = usePuzzleState()
   const getHeading = () => {
     if (isCorrect) return "Correct!"
-    if (gaveUp) return "Here's the answer"
+    if (didNotAttempt || gaveUp) return "Here's the answer"
     return "Out of attempts"
   }
 
@@ -58,7 +58,15 @@ export const AnswerResult = () => {
   return (
     <Card
       className={`p-6 ${getCardStyle()}`}
-      data-testid={isCorrect ? AnswerTestIds.correct : gaveUp ? AnswerTestIds.gaveUp : AnswerTestIds.incorrect}
+      data-testid={
+        isCorrect
+          ? AnswerTestIds.correct
+          : didNotAttempt
+            ? AnswerTestIds.didNotAttempt
+            : gaveUp
+              ? AnswerTestIds.gaveUp
+              : AnswerTestIds.incorrect
+      }
     >
       <div className="mb-4 flex items-center gap-3">
         {renderIcon()}

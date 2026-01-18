@@ -96,7 +96,7 @@ export class PuzzleService extends AbstractService<PuzzleServiceState> implement
       scheduledDate,
       mode,
       attempts,
-      gaveUp: gaveUp || didNotAttempt,
+      gaveUp,
       didNotAttempt,
       incorrectFeedbackText: undefined,
       selectedSpeciesId: undefined,

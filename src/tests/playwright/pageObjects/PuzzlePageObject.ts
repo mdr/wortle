@@ -34,6 +34,9 @@ export class PuzzlePageObject extends PageObject {
   verifyGaveUp = (): Promise<void> =>
     this.step("verifyGaveUp", () => expect(this.get(AnswerTestIds.gaveUp)).toBeVisible())
 
+  verifyDidNotAttempt = (): Promise<void> =>
+    this.step("verifyDidNotAttempt", () => expect(this.get(AnswerTestIds.didNotAttempt)).toBeVisible())
+
   verifyAttemptHistory = (count: number): Promise<void> =>
     this.step(`verifyAttemptHistory(${count})`, async () => {
       await expect(this.get(AttemptHistoryTestIds.container)).toBeVisible()

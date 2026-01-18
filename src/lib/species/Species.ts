@@ -14,6 +14,9 @@ export const CommonName = Brand.nominal<CommonName>()
 export type Genus = string & Brand.Brand<"Genus">
 export const Genus = Brand.nominal<Genus>()
 
+export type Family = string & Brand.Brand<"Family">
+export const Family = Brand.nominal<Family>()
+
 export interface SpeciesLink {
   name: string
   url: Url
@@ -22,7 +25,7 @@ export interface SpeciesLink {
 export interface Species {
   id: SpeciesId
   scientificName: ScientificName
-  family: string
+  family: Family
   commonName: CommonName
   alternativeCommonNames: CommonName[]
   links: SpeciesLink[]

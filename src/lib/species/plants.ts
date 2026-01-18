@@ -3,7 +3,7 @@ import { assert } from "tsafe"
 import { Url } from "@/utils/brandedTypes"
 import { Option } from "@/utils/types/Option"
 
-import { CommonName, ScientificName, type Species, SpeciesId } from "./Species"
+import { CommonName, Family, ScientificName, type Species, SpeciesId } from "./Species"
 
 export { filterSpecies } from "./Species"
 
@@ -11,7 +11,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.23w"),
     scientificName: ScientificName("Succisa pratensis"),
-    family: "Caprifoliaceae",
+    family: Family("Caprifoliaceae"),
     commonName: CommonName("Devil's-bit Scabious"),
     alternativeCommonNames: [CommonName("Devil's-bit")],
     links: [
@@ -28,7 +28,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.9b1"),
     scientificName: ScientificName("Tanacetum vulgare"),
-    family: "Asteraceae",
+    family: Family("Asteraceae"),
     commonName: CommonName("Tansy"),
     alternativeCommonNames: [],
     links: [
@@ -49,7 +49,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.yhw"),
     scientificName: ScientificName("Tanacetum parthenium"),
-    family: "Asteraceae",
+    family: Family("Asteraceae"),
     commonName: CommonName("Feverfew"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.yhw") }],
@@ -58,7 +58,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.xyv"),
     scientificName: ScientificName("Knautia arvensis"),
-    family: "Caprifoliaceae",
+    family: Family("Caprifoliaceae"),
     commonName: CommonName("Field Scabious"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.xyv") }],
@@ -67,7 +67,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.fpk"),
     scientificName: ScientificName("Scabiosa columbaria"),
-    family: "Caprifoliaceae",
+    family: Family("Caprifoliaceae"),
     commonName: CommonName("Small Scabious"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.fpk") }],
@@ -76,7 +76,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.z9"),
     scientificName: ScientificName("Hyacinthoides non-scripta"),
-    family: "Asparagaceae",
+    family: Family("Asparagaceae"),
     commonName: CommonName("Bluebell"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.z9") }],
@@ -85,7 +85,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.bys"),
     scientificName: ScientificName("Campanula rotundifolia"),
-    family: "Campanulaceae",
+    family: Family("Campanulaceae"),
     commonName: CommonName("Harebell"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.bys") }],
@@ -94,7 +94,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.xgb"),
     scientificName: ScientificName("Cichorium intybus"),
-    family: "Asteraceae",
+    family: Family("Asteraceae"),
     commonName: CommonName("Chicory"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.xgb") }],
@@ -103,7 +103,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.vk1"),
     scientificName: ScientificName("Jasione montana"),
-    family: "Campanulaceae",
+    family: Family("Campanulaceae"),
     commonName: CommonName("Sheep's-bit"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.vk1") }],
@@ -112,7 +112,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.cfz"),
     scientificName: ScientificName("Ranunculus acris"),
-    family: "Ranunculaceae",
+    family: Family("Ranunculaceae"),
     commonName: CommonName("Meadow Buttercup"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.cfz") }],
@@ -121,7 +121,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.1e3"),
     scientificName: ScientificName("Lotus corniculatus"),
-    family: "Fabaceae",
+    family: Family("Fabaceae"),
     commonName: CommonName("Bird's-foot Trefoil"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.1e3") }],
@@ -130,7 +130,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.94n"),
     scientificName: ScientificName("Primula farinosa"),
-    family: "Primulaceae",
+    family: Family("Primulaceae"),
     commonName: CommonName("Bird's-eye Primrose"),
     alternativeCommonNames: [],
     links: [
@@ -142,7 +142,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.94t"),
     scientificName: ScientificName("Primula veris"),
-    family: "Primulaceae",
+    family: Family("Primulaceae"),
     commonName: CommonName("Cowslip"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.94t") }],
@@ -151,7 +151,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.8nb"),
     scientificName: ScientificName("Geranium robertianum"),
-    family: "Geraniaceae",
+    family: Family("Geraniaceae"),
     commonName: CommonName("Herb-Robert"),
     alternativeCommonNames: [CommonName("Stinking Bob")],
     links: [
@@ -168,7 +168,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.xxr"),
     scientificName: ScientificName("Geranium lucidum"),
-    family: "Geraniaceae",
+    family: Family("Geraniaceae"),
     commonName: CommonName("Shining Crane's-bill"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.xxr") }],
@@ -177,7 +177,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.xbs"),
     scientificName: ScientificName("Bellis perennis"),
-    family: "Asteraceae",
+    family: Family("Asteraceae"),
     commonName: CommonName("Daisy"),
     alternativeCommonNames: [],
     links: [
@@ -194,7 +194,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.bwy"),
     scientificName: ScientificName("Agrimonia eupatoria"),
-    family: "Rosaceae",
+    family: Family("Rosaceae"),
     commonName: CommonName("Agrimony"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.bwy") }],
@@ -203,7 +203,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.21r"),
     scientificName: ScientificName("Smyrnium olusatrum"),
-    family: "Apiaceae",
+    family: Family("Apiaceae"),
     commonName: CommonName("Alexanders"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.21r") }],
@@ -212,7 +212,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.x8s"),
     scientificName: ScientificName("Alchemilla alpina"),
-    family: "Rosaceae",
+    family: Family("Rosaceae"),
     commonName: CommonName("Alpine Lady's-mantle"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.x8s") }],
@@ -221,7 +221,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.yxr"),
     scientificName: ScientificName("Fraxinus excelsior"),
-    family: "Oleaceae",
+    family: Family("Oleaceae"),
     commonName: CommonName("Ash"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.yxr") }],
@@ -230,7 +230,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.fa2"),
     scientificName: ScientificName("Fagus sylvatica"),
-    family: "Fagaceae",
+    family: Family("Fagaceae"),
     commonName: CommonName("Beech"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.fa2") }],
@@ -239,7 +239,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.537"),
     scientificName: ScientificName("Erica cinerea"),
-    family: "Ericaceae",
+    family: Family("Ericaceae"),
     commonName: CommonName("Bell Heather"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.537") }],
@@ -248,7 +248,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.w50"),
     scientificName: ScientificName("Vaccinium myrtillus"),
-    family: "Ericaceae",
+    family: Family("Ericaceae"),
     commonName: CommonName("Bilberry"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.w50") }],
@@ -257,7 +257,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.90z"),
     scientificName: ScientificName("Narthecium ossifragum"),
-    family: "Nartheciaceae",
+    family: Family("Nartheciaceae"),
     commonName: CommonName("Bog Asphodel"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.90z") }],
@@ -266,7 +266,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.1g4"),
     scientificName: ScientificName("Menyanthes trifoliata"),
-    family: "Menyanthaceae",
+    family: Family("Menyanthaceae"),
     commonName: CommonName("Bogbean"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.1g4") }],
@@ -275,7 +275,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.y9r"),
     scientificName: ScientificName("Pteridium aquilinum"),
-    family: "Dennstaedtiaceae",
+    family: Family("Dennstaedtiaceae"),
     commonName: CommonName("Bracken"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.y9r") }],
@@ -284,7 +284,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.vzf"),
     scientificName: ScientificName("Rubus fruticosus"),
-    family: "Rosaceae",
+    family: Family("Rosaceae"),
     commonName: CommonName("Bramble"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.vzf") }],
@@ -293,7 +293,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.cxx"),
     scientificName: ScientificName("Sparganium erectum"),
-    family: "Typhaceae",
+    family: Family("Typhaceae"),
     commonName: CommonName("Branched Bur-reed"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.cxx") }],
@@ -302,7 +302,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.p9t"),
     scientificName: ScientificName("Veronica beccabunga"),
-    family: "Plantaginaceae",
+    family: Family("Plantaginaceae"),
     commonName: CommonName("Brooklime"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.p9t") }],
@@ -311,7 +311,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.m2y"),
     scientificName: ScientificName("Cytisus scoparius"),
-    family: "Fabaceae",
+    family: Family("Fabaceae"),
     commonName: CommonName("Broom"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.m2y") }],
@@ -320,7 +320,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.p05"),
     scientificName: ScientificName("Plantago coronopus"),
-    family: "Plantaginaceae",
+    family: Family("Plantaginaceae"),
     commonName: CommonName("Buck's-horn Plantain"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.p05") }],
@@ -329,7 +329,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.xy"),
     scientificName: ScientificName("Buddleja davidii"),
-    family: "Scrophulariaceae",
+    family: Family("Scrophulariaceae"),
     commonName: CommonName("Butterfly-bush"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.xy") }],
@@ -338,7 +338,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.ez4"),
     scientificName: ScientificName("Ajuga reptans"),
-    family: "Lamiaceae",
+    family: Family("Lamiaceae"),
     commonName: CommonName("Bugle"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.ez4") }],
@@ -347,7 +347,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.5w9"),
     scientificName: ScientificName("Ranunculus bulbosus"),
-    family: "Ranunculaceae",
+    family: Family("Ranunculaceae"),
     commonName: CommonName("Bulbous Buttercup"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.5w9") }],
@@ -356,7 +356,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.yzx"),
     scientificName: ScientificName("Petasites hybridus"),
-    family: "Asteraceae",
+    family: Family("Asteraceae"),
     commonName: CommonName("Butterbur"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.yzx") }],
@@ -365,7 +365,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.ymq"),
     scientificName: ScientificName("Galium aparine"),
-    family: "Rubiaceae",
+    family: Family("Rubiaceae"),
     commonName: CommonName("Cleavers"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.ymq") }],
@@ -374,7 +374,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.258"),
     scientificName: ScientificName("Tussilago farfara"),
-    family: "Asteraceae",
+    family: Family("Asteraceae"),
     commonName: CommonName("Colt's-foot"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.258") }],
@@ -383,7 +383,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.p02"),
     scientificName: ScientificName("Pinguicula vulgaris"),
-    family: "Lentibulariaceae",
+    family: Family("Lentibulariaceae"),
     commonName: CommonName("Common Butterwort"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.p02") }],
@@ -392,7 +392,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.w2r"),
     scientificName: ScientificName("Stellaria media"),
-    family: "Caryophyllaceae",
+    family: Family("Caryophyllaceae"),
     commonName: CommonName("Common Chickweed"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.w2r") }],
@@ -401,7 +401,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.yrz"),
     scientificName: ScientificName("Melampyrum pratense"),
-    family: "Orobanchaceae",
+    family: Family("Orobanchaceae"),
     commonName: CommonName("Common Cow-wheat"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.yrz") }],
@@ -410,7 +410,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.93r"),
     scientificName: ScientificName("Polygala vulgaris"),
-    family: "Polygalaceae",
+    family: Family("Polygalaceae"),
     commonName: CommonName("Common Milkwort"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.93r") }],
@@ -419,7 +419,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.9c0"),
     scientificName: ScientificName("Urtica dioica"),
-    family: "Urticaceae",
+    family: Family("Urticaceae"),
     commonName: CommonName("Common Nettle"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.9c0") }],
@@ -428,7 +428,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.yzc"),
     scientificName: ScientificName("Papaver rhoeas"),
-    family: "Papaveraceae",
+    family: Family("Papaveraceae"),
     commonName: CommonName("Common Poppy"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.yzc") }],
@@ -437,7 +437,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.4ms"),
     scientificName: ScientificName("Alisma plantago-aquatica"),
-    family: "Alismataceae",
+    family: Family("Alismataceae"),
     commonName: CommonName("Water-plantain"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.4ms") }],
@@ -446,7 +446,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.v7e"),
     scientificName: ScientificName("Anthriscus sylvestris"),
-    family: "Apiaceae",
+    family: Family("Apiaceae"),
     commonName: CommonName("Cow Parsley"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.v7e") }],
@@ -455,7 +455,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.26d"),
     scientificName: ScientificName("Vaccinium vitis-idaea"),
-    family: "Ericaceae",
+    family: Family("Ericaceae"),
     commonName: CommonName("Cowberry"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.26d") }],
@@ -464,7 +464,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.vt4"),
     scientificName: ScientificName("Ranunculus repens"),
-    family: "Ranunculaceae",
+    family: Family("Ranunculaceae"),
     commonName: CommonName("Creeping Buttercup"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.vt4") }],
@@ -473,7 +473,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.c00"),
     scientificName: ScientificName("Erica tetralix"),
-    family: "Ericaceae",
+    family: Family("Ericaceae"),
     commonName: CommonName("Cross-leaved Heath"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.c00") }],
@@ -482,7 +482,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.veg"),
     scientificName: ScientificName("Empetrum nigrum"),
-    family: "Ericaceae",
+    family: Family("Ericaceae"),
     commonName: CommonName("Crowberry"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.veg") }],
@@ -491,7 +491,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.ywh"),
     scientificName: ScientificName("Digitalis purpurea"),
-    family: "Plantaginaceae",
+    family: Family("Plantaginaceae"),
     commonName: CommonName("Foxglove"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.ywh") }],
@@ -500,7 +500,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.c87"),
     scientificName: ScientificName("Lycopus europaeus"),
-    family: "Lamiaceae",
+    family: Family("Lamiaceae"),
     commonName: CommonName("Gypsywort"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.c87") }],
@@ -509,7 +509,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.p9b"),
     scientificName: ScientificName("Ulex europaeus"),
-    family: "Fabaceae",
+    family: Family("Fabaceae"),
     commonName: CommonName("Gorse"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.p9b") }],
@@ -518,7 +518,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.vep"),
     scientificName: ScientificName("Epilobium hirsutum"),
-    family: "Onagraceae",
+    family: Family("Onagraceae"),
     commonName: CommonName("Great Willowherb"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.vep") }],
@@ -527,7 +527,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.p08"),
     scientificName: ScientificName("Plantago major"),
-    family: "Plantaginaceae",
+    family: Family("Plantaginaceae"),
     commonName: CommonName("Greater Plantain"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.p08") }],
@@ -536,7 +536,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.6y7dfc"),
     scientificName: ScientificName("Asplenium scolopendrium"),
-    family: "Aspleniaceae",
+    family: Family("Aspleniaceae"),
     commonName: CommonName("Hart's-tongue"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.6y7dfc") }],
@@ -545,7 +545,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.f6c"),
     scientificName: ScientificName("Crataegus monogyna"),
-    family: "Rosaceae",
+    family: Family("Rosaceae"),
     commonName: CommonName("Hawthorn"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.f6c") }],
@@ -554,7 +554,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.yea"),
     scientificName: ScientificName("Calluna vulgaris"),
-    family: "Ericaceae",
+    family: Family("Ericaceae"),
     commonName: CommonName("Heather"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.yea") }],
@@ -563,7 +563,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.231"),
     scientificName: ScientificName("Stachys sylvatica"),
-    family: "Lamiaceae",
+    family: Family("Lamiaceae"),
     commonName: CommonName("Hedge Woundwort"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.231") }],
@@ -572,7 +572,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.brm"),
     scientificName: ScientificName("Conium maculatum"),
-    family: "Apiaceae",
+    family: Family("Apiaceae"),
     commonName: CommonName("Hemlock"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.brm") }],
@@ -581,7 +581,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.xwb"),
     scientificName: ScientificName("Eupatorium cannabinum"),
-    family: "Asteraceae",
+    family: Family("Asteraceae"),
     commonName: CommonName("Hemp-agrimony"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.xwb") }],
@@ -590,7 +590,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.yp2"),
     scientificName: ScientificName("Ilex aquifolium"),
-    family: "Aquifoliaceae",
+    family: Family("Aquifoliaceae"),
     commonName: CommonName("Holly"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.yp2") }],
@@ -599,7 +599,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.18x"),
     scientificName: ScientificName("Impatiens glandulifera"),
-    family: "Balsaminaceae",
+    family: Family("Balsaminaceae"),
     commonName: CommonName("Himalayan Balsam"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.18x") }],
@@ -608,7 +608,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.95p1tn"),
     scientificName: ScientificName("Hedera helix"),
-    family: "Araliaceae",
+    family: Family("Araliaceae"),
     commonName: CommonName("Common & Atlantic Ivy"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.95p1tn") }],
@@ -617,7 +617,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.7mm4kb"),
     scientificName: ScientificName("Reynoutria japonica"),
-    family: "Polygonaceae",
+    family: Family("Polygonaceae"),
     commonName: CommonName("Japanese Knotweed"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.7mm4kb") }],
@@ -626,7 +626,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.6y9637"),
     scientificName: ScientificName("Ficaria verna"),
-    family: "Ranunculaceae",
+    family: Family("Ranunculaceae"),
     commonName: CommonName("Lesser Celandine"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.6y9637") }],
@@ -635,7 +635,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.3ep"),
     scientificName: ScientificName("Papaver dubium"),
-    family: "Papaveraceae",
+    family: Family("Papaveraceae"),
     commonName: CommonName("Long-headed Poppy"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.3ep") }],
@@ -644,7 +644,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.ycr"),
     scientificName: ScientificName("Arum maculatum"),
-    family: "Araceae",
+    family: Family("Araceae"),
     commonName: CommonName("Lords-and-Ladies"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.ycr") }],
@@ -653,7 +653,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.6y8hka"),
     scientificName: ScientificName("Comarum palustre"),
-    family: "Rosaceae",
+    family: Family("Rosaceae"),
     commonName: CommonName("Marsh Cinquefoil"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.6y8hka") }],
@@ -662,7 +662,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.ccc"),
     scientificName: ScientificName("Pedicularis palustris"),
-    family: "Orobanchaceae",
+    family: Family("Orobanchaceae"),
     commonName: CommonName("Marsh Lousewort"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.ccc") }],
@@ -671,7 +671,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.8hn"),
     scientificName: ScientificName("Cirsium palustre"),
-    family: "Asteraceae",
+    family: Family("Asteraceae"),
     commonName: CommonName("Marsh Thistle"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.8hn") }],
@@ -680,7 +680,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.m7w"),
     scientificName: ScientificName("Viola palustris"),
-    family: "Violaceae",
+    family: Family("Violaceae"),
     commonName: CommonName("Marsh Violet"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.m7w") }],
@@ -689,7 +689,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.f36"),
     scientificName: ScientificName("Caltha palustris"),
-    family: "Ranunculaceae",
+    family: Family("Ranunculaceae"),
     commonName: CommonName("Marsh-marigold"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.f36") }],
@@ -698,7 +698,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.vvv"),
     scientificName: ScientificName("Geranium pratense"),
-    family: "Geraniaceae",
+    family: Family("Geraniaceae"),
     commonName: CommonName("Meadow Crane's-bill"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.vvv") }],
@@ -707,7 +707,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.54r"),
     scientificName: ScientificName("Filipendula ulmaria"),
-    family: "Rosaceae",
+    family: Family("Rosaceae"),
     commonName: CommonName("Meadowsweet"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.54r") }],
@@ -716,7 +716,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.267"),
     scientificName: ScientificName("Umbilicus rupestris"),
-    family: "Crassulaceae",
+    family: Family("Crassulaceae"),
     commonName: CommonName("Navelwort"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.267") }],
@@ -725,7 +725,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.f5g"),
     scientificName: ScientificName("Chrysosplenium oppositifolium"),
-    family: "Saxifragaceae",
+    family: Family("Saxifragaceae"),
     commonName: CommonName("Opposite-leaved Golden-saxifrage"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.f5g") }],
@@ -734,7 +734,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.q4"),
     scientificName: ScientificName("Leucanthemum vulgare"),
-    family: "Asteraceae",
+    family: Family("Asteraceae"),
     commonName: CommonName("Oxeye Daisy"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.q4") }],
@@ -743,7 +743,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.5vd"),
     scientificName: ScientificName("Primula vulgaris"),
-    family: "Primulaceae",
+    family: Family("Primulaceae"),
     commonName: CommonName("Primrose"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.5vd") }],
@@ -752,7 +752,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.vmn"),
     scientificName: ScientificName("Lythrum salicaria"),
-    family: "Lythraceae",
+    family: Family("Lythraceae"),
     commonName: CommonName("Purple-loosestrife"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.vmn") }],
@@ -761,7 +761,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.8a0"),
     scientificName: ScientificName("Allium ursinum"),
-    family: "Amaryllidaceae",
+    family: Family("Amaryllidaceae"),
     commonName: CommonName("Ramsons"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.8a0") }],
@@ -770,7 +770,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.vn4"),
     scientificName: ScientificName("Silene dioica"),
-    family: "Caryophyllaceae",
+    family: Family("Caryophyllaceae"),
     commonName: CommonName("Red Campion"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.vn4") }],
@@ -779,7 +779,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.cna"),
     scientificName: ScientificName("Trifolium pratense"),
-    family: "Fabaceae",
+    family: Family("Fabaceae"),
     commonName: CommonName("Red Clover"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.cna") }],
@@ -788,7 +788,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.c66"),
     scientificName: ScientificName("Lamium purpureum"),
-    family: "Lamiaceae",
+    family: Family("Lamiaceae"),
     commonName: CommonName("Red Dead-nettle"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.c66") }],
@@ -797,7 +797,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.9bp"),
     scientificName: ScientificName("Typha latifolia"),
-    family: "Typhaceae",
+    family: Family("Typhaceae"),
     commonName: CommonName("Bulrush"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.9bp") }],
@@ -806,7 +806,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.1xk"),
     scientificName: ScientificName("Plantago lanceolata"),
-    family: "Plantaginaceae",
+    family: Family("Plantaginaceae"),
     commonName: CommonName("Ribwort Plantain"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.1xk") }],
@@ -815,7 +815,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.w2c"),
     scientificName: ScientificName("Sorbus aucuparia"),
-    family: "Rosaceae",
+    family: Family("Rosaceae"),
     commonName: CommonName("Rowan"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.w2c") }],
@@ -824,7 +824,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.vek3vn"),
     scientificName: ScientificName("Lysimachia arvensis"),
-    family: "Primulaceae",
+    family: Family("Primulaceae"),
     commonName: CommonName("Scarlet Pimpernel"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.vek3vn") }],
@@ -833,7 +833,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.fwn"),
     scientificName: ScientificName("Pinus sylvestris"),
-    family: "Pinaceae",
+    family: Family("Pinaceae"),
     commonName: CommonName("Scots Pine"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.fwn") }],
@@ -842,7 +842,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.p1p"),
     scientificName: ScientificName("Prunella vulgaris"),
-    family: "Lamiaceae",
+    family: Family("Lamiaceae"),
     commonName: CommonName("Selfheal"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.p1p") }],
@@ -851,7 +851,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.vzv"),
     scientificName: ScientificName("Rumex acetosella"),
-    family: "Polygonaceae",
+    family: Family("Polygonaceae"),
     commonName: CommonName("Sheep's Sorrel"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.vzv") }],
@@ -860,7 +860,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.1n3"),
     scientificName: ScientificName("Potentilla anserina"),
-    family: "Rosaceae",
+    family: Family("Rosaceae"),
     commonName: CommonName("Silverweed"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.1n3") }],
@@ -869,7 +869,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.59a"),
     scientificName: ScientificName("Iris foetidissima"),
-    family: "Iridaceae",
+    family: Family("Iridaceae"),
     commonName: CommonName("Stinking Iris"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.59a") }],
@@ -878,7 +878,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.fwh"),
     scientificName: ScientificName("Phragmites australis"),
-    family: "Poaceae",
+    family: Family("Poaceae"),
     commonName: CommonName("Common Reed"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.fwh") }],
@@ -887,7 +887,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.vdh"),
     scientificName: ScientificName("Dipsacus fullonum"),
-    family: "Caprifoliaceae",
+    family: Family("Caprifoliaceae"),
     commonName: CommonName("Wild Teasel"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.vdh") }],
@@ -896,7 +896,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.8b8"),
     scientificName: ScientificName("Armeria maritima"),
-    family: "Plumbaginaceae",
+    family: Family("Plumbaginaceae"),
     commonName: CommonName("Thrift"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.8b8") }],
@@ -905,7 +905,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.5v7"),
     scientificName: ScientificName("Potentilla erecta"),
-    family: "Rosaceae",
+    family: Family("Rosaceae"),
     commonName: CommonName("Tormentil"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.5v7") }],
@@ -914,7 +914,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.8hq"),
     scientificName: ScientificName("Clematis vitalba"),
-    family: "Ranunculaceae",
+    family: Family("Ranunculaceae"),
     commonName: CommonName("Traveller's-joy"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.8hq") }],
@@ -923,7 +923,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.5q2"),
     scientificName: ScientificName("Vicia cracca"),
-    family: "Fabaceae",
+    family: Family("Fabaceae"),
     commonName: CommonName("Tufted Vetch"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.5q2") }],
@@ -932,7 +932,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.w1g"),
     scientificName: ScientificName("Scrophularia auriculata"),
-    family: "Scrophulariaceae",
+    family: Family("Scrophulariaceae"),
     commonName: CommonName("Water Figwort"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.w1g") }],
@@ -941,7 +941,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.8rg"),
     scientificName: ScientificName("Lamium album"),
-    family: "Lamiaceae",
+    family: Family("Lamiaceae"),
     commonName: CommonName("White Dead-nettle"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.8rg") }],
@@ -950,7 +950,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.k7f"),
     scientificName: ScientificName("Daucus carota"),
-    family: "Apiaceae",
+    family: Family("Apiaceae"),
     commonName: CommonName("Carrots"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.k7f") }],
@@ -959,7 +959,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.gt"),
     scientificName: ScientificName("Anemone nemorosa"),
-    family: "Ranunculaceae",
+    family: Family("Ranunculaceae"),
     commonName: CommonName("Wood Anemone"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.gt") }],
@@ -968,7 +968,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.cba"),
     scientificName: ScientificName("Oxalis acetosella"),
-    family: "Oxalidaceae",
+    family: Family("Oxalidaceae"),
     commonName: CommonName("Wood-sorrel"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.cba") }],
@@ -977,7 +977,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.f1t"),
     scientificName: ScientificName("Galium odoratum"),
-    family: "Rubiaceae",
+    family: Family("Rubiaceae"),
     commonName: CommonName("Woodruff"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.f1t") }],
@@ -986,7 +986,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.88t"),
     scientificName: ScientificName("Achillea millefolium"),
-    family: "Asteraceae",
+    family: Family("Asteraceae"),
     commonName: CommonName("Yarrow"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.88t") }],
@@ -995,7 +995,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.vwt"),
     scientificName: ScientificName("Iris pseudacorus"),
-    family: "Iridaceae",
+    family: Family("Iridaceae"),
     commonName: CommonName("Yellow Iris"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.vwt") }],
@@ -1004,7 +1004,7 @@ const allPlants: Species[] = [
   {
     id: SpeciesId("2cd4p9h.966"),
     scientificName: ScientificName("Rhinanthus minor"),
-    family: "Orobanchaceae",
+    family: Family("Orobanchaceae"),
     commonName: CommonName("Yellow-rattle"),
     alternativeCommonNames: [],
     links: [{ name: "Plant Atlas", url: Url("https://plantatlas2020.org/atlas/2cd4p9h.966") }],
