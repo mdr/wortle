@@ -18,12 +18,11 @@ export const Route = createFileRoute("/review/$puzzleId")({
       // eslint-disable-next-line @typescript-eslint/only-throw-error -- TanStack Router pattern
       throw notFound()
     }
-    const correctSpecies = findSpecies(puzzle.speciesId)
-    if (!correctSpecies) {
+    if (!findSpecies(puzzle.speciesId)) {
       // eslint-disable-next-line @typescript-eslint/only-throw-error -- TanStack Router pattern
       throw notFound()
     }
-    return { puzzle, correctSpecies }
+    return { puzzle }
   },
   component: () => <PuzzlePageWrapper />,
   notFoundComponent: () => (
@@ -33,15 +32,10 @@ export const Route = createFileRoute("/review/$puzzleId")({
 })
 
 const PuzzlePageWrapper = () => {
-  const { puzzle, correctSpecies } = Route.useLoaderData()
+  const { puzzle } = Route.useLoaderData()
   const gameStorage = useGameStorage()
   return (
-    <PuzzleServiceProvider
-      puzzle={puzzle}
-      correctSpecies={correctSpecies}
-      mode={PuzzleMode.REVIEW}
-      gameStorage={gameStorage}
-    >
+    <PuzzleServiceProvider puzzle={puzzle} mode={PuzzleMode.REVIEW} gameStorage={gameStorage}>
       <PuzzlePage showStatsPlaceholder />
     </PuzzleServiceProvider>
   )

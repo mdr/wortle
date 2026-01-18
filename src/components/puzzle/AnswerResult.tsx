@@ -5,7 +5,7 @@ import { Card } from "@/components/shadcn/Card"
 import { AttemptFeedback } from "@/lib/AttemptFeedback"
 import { getResultMedal } from "@/lib/resultMedal"
 import { getSpecies } from "@/lib/species/plants"
-import { selectIsCorrect } from "@/services/puzzle/puzzleSelectors"
+import { selectCorrectSpecies, selectIsCorrect } from "@/services/puzzle/puzzleSelectors"
 import { usePuzzleState } from "@/services/puzzle/puzzleServiceHooks"
 
 import { AnswerTestIds } from "./PuzzleTestIds"
@@ -19,7 +19,8 @@ const getHintText = (attempt: AttemptFeedback): string | undefined => {
 
 export const AnswerResult = () => {
   const isCorrect = usePuzzleState(selectIsCorrect)
-  const { attempts, correctSpecies, gaveUp, didNotAttempt } = usePuzzleState()
+  const correctSpecies = usePuzzleState(selectCorrectSpecies)
+  const { attempts, gaveUp, didNotAttempt } = usePuzzleState()
   const getHeading = () => {
     if (isCorrect) return "Correct!"
     if (gaveUp) return "Here's the answer"

@@ -7,7 +7,6 @@ import { PuzzlePage } from "@/components/puzzle/PuzzlePage"
 import { Puzzle } from "@/lib/Puzzle"
 import { findPuzzle } from "@/lib/puzzles"
 import { findSpecies } from "@/lib/species/plants"
-import { Species } from "@/lib/species/Species"
 import { PuzzleMode } from "@/services/puzzle/PuzzleService"
 import { PuzzleServiceProvider } from "@/services/puzzle/PuzzleServiceProvider"
 import { Iso8601Date } from "@/utils/brandedTypes"
@@ -15,7 +14,6 @@ import { Iso8601Date } from "@/utils/brandedTypes"
 interface DailyPuzzleData {
   scheduledDate: Iso8601Date
   puzzle?: Puzzle
-  correctSpecies?: Species
 }
 
 export const Route = createFileRoute("/daily")({
@@ -32,13 +30,12 @@ export const Route = createFileRoute("/daily")({
       // eslint-disable-next-line @typescript-eslint/only-throw-error -- TanStack Router pattern
       throw notFound()
     }
-    const correctSpecies = findSpecies(puzzle.speciesId)
-    if (!correctSpecies) {
+    if (!findSpecies(puzzle.speciesId)) {
       // eslint-disable-next-line @typescript-eslint/only-throw-error -- TanStack Router pattern
       throw notFound()
     }
 
-    return { puzzle, correctSpecies, scheduledDate }
+    return { puzzle, scheduledDate }
   },
   component: () => <DailyPuzzlePage />,
   notFoundComponent: () => <NotFoundPage message="Today's puzzle isn't available yet. Please check back later." />,
@@ -46,16 +43,15 @@ export const Route = createFileRoute("/daily")({
 })
 
 const DailyPuzzlePage = () => {
-  const { puzzle, correctSpecies, scheduledDate } = Route.useLoaderData()
+  const { puzzle, scheduledDate } = Route.useLoaderData()
   const gameStorage = useGameStorage()
-  if (!puzzle || !correctSpecies) {
+  if (!puzzle) {
     return <NotFoundPage message="No puzzle is scheduled for today." />
   }
 
   return (
     <PuzzleServiceProvider
       puzzle={puzzle}
-      correctSpecies={correctSpecies}
       scheduledDate={scheduledDate}
       mode={PuzzleMode.DAILY}
       gameStorage={gameStorage}

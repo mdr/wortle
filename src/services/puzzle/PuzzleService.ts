@@ -6,10 +6,10 @@ import { DailyPuzzleRecord, DailyResult } from "@/lib/gameStorage/GameState"
 import { GameStorage } from "@/lib/gameStorage/GameStorage"
 import { Puzzle } from "@/lib/Puzzle"
 import { getSpecies } from "@/lib/species/plants"
-import { Species, SpeciesId } from "@/lib/species/Species"
-import { Option } from "@/utils/types/Option"
+import { SpeciesId } from "@/lib/species/Species"
 import { Iso8601Date } from "@/utils/brandedTypes"
 import { AbstractService } from "@/utils/providerish/AbstractService"
+import { Option } from "@/utils/types/Option"
 
 import { PuzzleCompletion } from "./puzzleTypes"
 
@@ -42,7 +42,6 @@ interface PuzzleServiceOptions {
 
 export interface PuzzleServiceState {
   puzzle: Puzzle
-  correctSpecies: Species
   scheduledDate?: Iso8601Date
   mode: PuzzleMode
   attempts: AttemptFeedback[]
@@ -58,7 +57,6 @@ export interface PuzzleServiceState {
 
 interface PuzzleServiceBaseState {
   puzzle: Puzzle
-  correctSpecies: Species
   scheduledDate?: Iso8601Date
 }
 
@@ -71,6 +69,7 @@ export class PuzzleService extends AbstractService<PuzzleServiceState> implement
     const hasDailyStats = options.mode === PuzzleMode.DAILY
     const gameState = hasDailyStats ? gameStorage.load() : undefined
     const history = gameState?.history ?? []
+    const correctSpecies = getSpecies(state.puzzle.speciesId)
 
     // Handle in-progress state for daily mode
     const dailyInProgress = gameState?.dailyInProgress
@@ -90,7 +89,7 @@ export class PuzzleService extends AbstractService<PuzzleServiceState> implement
     const attemptedSpeciesIds = completedRecord?.attemptedSpeciesIds ?? matchingInProgress?.attemptedSpeciesIds ?? []
     const attempts = attemptedSpeciesIds.map((speciesId) => {
       const species = getSpecies(speciesId)
-      return createAttemptFeedback(species, state.correctSpecies)
+      return createAttemptFeedback(species, correctSpecies)
     })
 
     const gaveUp =
@@ -155,7 +154,8 @@ export class PuzzleService extends AbstractService<PuzzleServiceState> implement
 
   submitAttempt = (speciesId: SpeciesId): boolean => {
     const species = getSpecies(speciesId)
-    const feedback = createAttemptFeedback(species, this.state.correctSpecies)
+    const correctSpecies = getSpecies(this.state.puzzle.speciesId)
+    const feedback = createAttemptFeedback(species, correctSpecies)
     const nextAttempts = [...this.state.attempts, feedback]
     const incorrectFeedbackText = feedback.isCorrect
       ? undefined

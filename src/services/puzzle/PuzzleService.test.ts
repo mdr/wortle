@@ -5,8 +5,6 @@ import { GameStorage } from "@/lib/gameStorage/GameStorage"
 import { createMemoryStorage } from "@/lib/gameStorage/storage.testUtils"
 import { Puzzle } from "@/lib/Puzzle"
 import { getPuzzle } from "@/lib/puzzles"
-import { getSpecies } from "@/lib/species/plants"
-import { Species } from "@/lib/species/Species"
 import { TestPuzzles, TestSpeciesIds } from "@/lib/testConstants.testUtils"
 import { Iso8601Date } from "@/utils/brandedTypes"
 
@@ -14,19 +12,12 @@ import { MAX_ATTEMPTS, PuzzleMode, PuzzleService } from "./PuzzleService"
 
 const scheduledDate = Iso8601Date("2026-06-08")
 const puzzleId = TestPuzzles.daisy.id
-const getPuzzleData = (): { puzzle: Puzzle; correctSpecies: Species } => {
-  const puzzle = getPuzzle(puzzleId)
-  const correctSpecies = getSpecies(puzzle.speciesId)
-  return { puzzle, correctSpecies }
-}
+const getPuzzleData = (): Puzzle => getPuzzle(puzzleId)
 
 const makePuzzleService = (options: Partial<{ mode: PuzzleMode; gameStorage: GameStorage }> = {}): PuzzleService => {
-  const { puzzle, correctSpecies } = getPuzzleData()
+  const puzzle = getPuzzleData()
   const gameStorage = options.gameStorage ?? new GameStorage(createMemoryStorage())
-  return new PuzzleService(
-    { puzzle, correctSpecies, scheduledDate },
-    { mode: options.mode ?? PuzzleMode.REVIEW, gameStorage },
-  )
+  return new PuzzleService({ puzzle, scheduledDate }, { mode: options.mode ?? PuzzleMode.REVIEW, gameStorage })
 }
 
 describe("PuzzleService", () => {
@@ -149,10 +140,10 @@ describe("PuzzleService", () => {
 
   describe("submitAttempt", () => {
     it("records a correct attempt and returns true", () => {
-      const { correctSpecies } = getPuzzleData()
+      const puzzle = getPuzzleData()
       const service = makePuzzleService()
 
-      const result = service.submitAttempt(correctSpecies.id)
+      const result = service.submitAttempt(puzzle.speciesId)
 
       expect(result).toBe(true)
       expect(service.state.attempts).toHaveLength(1)
@@ -205,7 +196,7 @@ describe("PuzzleService", () => {
     })
 
     it("throws for out-of-bounds indices", () => {
-      const { puzzle } = getPuzzleData()
+      const puzzle = getPuzzleData()
       const service = makePuzzleService()
       const outOfBoundsIndex = puzzle.images.length + 2
 
@@ -215,7 +206,7 @@ describe("PuzzleService", () => {
 
   describe("goToNextImage", () => {
     it("advances and wraps the image index", () => {
-      const { puzzle } = getPuzzleData()
+      const puzzle = getPuzzleData()
       const service = makePuzzleService()
 
       service.goToNextImage()
@@ -229,7 +220,7 @@ describe("PuzzleService", () => {
 
   describe("goToPreviousImage", () => {
     it("moves back and wraps the image index", () => {
-      const { puzzle } = getPuzzleData()
+      const puzzle = getPuzzleData()
       const service = makePuzzleService()
 
       service.goToPreviousImage()
@@ -304,10 +295,10 @@ describe("PuzzleService", () => {
         date: scheduledDate,
         attemptedSpeciesIds: [TestPuzzles.herbRobert.speciesId],
       })
-      const { correctSpecies } = getPuzzleData()
+      const puzzle = getPuzzleData()
       const service = makePuzzleService({ mode: PuzzleMode.DAILY, gameStorage })
 
-      service.submitAttempt(correctSpecies.id)
+      service.submitAttempt(puzzle.speciesId)
 
       expect(gameStorage.load().dailyInProgress).toBeUndefined()
     })

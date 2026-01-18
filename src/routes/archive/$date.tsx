@@ -10,7 +10,6 @@ import { GameStorage } from "@/lib/gameStorage/GameStorage"
 import { Puzzle } from "@/lib/Puzzle"
 import { findPuzzle } from "@/lib/puzzles"
 import { findSpecies } from "@/lib/species/plants"
-import { Species } from "@/lib/species/Species"
 import { PuzzleMode } from "@/services/puzzle/PuzzleService"
 import { PuzzleServiceProvider } from "@/services/puzzle/PuzzleServiceProvider"
 import { Iso8601Date } from "@/utils/brandedTypes"
@@ -18,7 +17,6 @@ import { Iso8601Date } from "@/utils/brandedTypes"
 interface ArchivePuzzleData {
   scheduledDate: Iso8601Date
   puzzle?: Puzzle
-  correctSpecies?: Species
 }
 
 export const Route = createFileRoute("/archive/$date")({
@@ -35,13 +33,12 @@ export const Route = createFileRoute("/archive/$date")({
       // eslint-disable-next-line @typescript-eslint/only-throw-error -- TanStack Router pattern
       throw notFound()
     }
-    const correctSpecies = findSpecies(puzzle.speciesId)
-    if (!correctSpecies) {
+    if (!findSpecies(puzzle.speciesId)) {
       // eslint-disable-next-line @typescript-eslint/only-throw-error -- TanStack Router pattern
       throw notFound()
     }
 
-    return { puzzle, correctSpecies, scheduledDate }
+    return { puzzle, scheduledDate }
   },
   component: () => <ArchivePuzzlePage />,
   notFoundComponent: () => <NotFoundPage message="This puzzle doesn't exist." />,
@@ -52,18 +49,17 @@ const findCompletionRecord = (storage: GameStorage, date: Iso8601Date): DailyPuz
   storage.load().history.find((record) => record.date === date)
 
 const ArchivePuzzlePage = () => {
-  const { puzzle, correctSpecies, scheduledDate } = Route.useLoaderData()
+  const { puzzle, scheduledDate } = Route.useLoaderData()
   const gameStorage = useGameStorage()
   const completionRecord = useMemo(() => findCompletionRecord(gameStorage, scheduledDate), [gameStorage, scheduledDate])
 
-  if (!puzzle || !correctSpecies) {
+  if (!puzzle) {
     return <NotFoundPage message="No puzzle was scheduled for this date." />
   }
 
   return (
     <PuzzleServiceProvider
       puzzle={puzzle}
-      correctSpecies={correctSpecies}
       scheduledDate={scheduledDate}
       mode={PuzzleMode.ARCHIVE}
       gameStorage={gameStorage}
