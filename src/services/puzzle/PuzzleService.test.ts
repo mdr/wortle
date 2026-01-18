@@ -128,6 +128,24 @@ describe("PuzzleService", () => {
         didNotAttempt: true,
       })
     })
+
+    it("marks gaveUp for archive puzzles where user gave up", () => {
+      const gameStorage = new GameStorage(createMemoryStorage())
+      gameStorage.recordDailyCompletion({
+        date: TestDate,
+        puzzleId: puzzle.id,
+        result: DailyResult.FAIL,
+        attemptedSpeciesIds: [TestPuzzles.herbRobert.speciesId],
+      })
+
+      const service = makePuzzleService({ mode: PuzzleMode.ARCHIVE, gameStorage, date: TestDate })
+
+      expect(service.state).toMatchObject({
+        attempts: [{ isCorrect: false }],
+        gaveUp: true,
+        didNotAttempt: false,
+      })
+    })
   })
 
   describe("selectSpecies", () => {
