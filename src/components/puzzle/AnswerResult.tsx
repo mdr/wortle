@@ -89,7 +89,7 @@ export const AnswerResult = () => {
                         }`}
                       >
                         <div>
-                          <p className="text-foreground font-medium">{species.commonNames[0]}</p>
+                          <p className="text-foreground font-medium">{species.commonName}</p>
                           <p className="text-muted-foreground text-sm italic">{species.scientificName}</p>
                         </div>
                         <div className="flex flex-col items-end text-right">
@@ -119,7 +119,7 @@ export const AnswerResult = () => {
             <div className="border-border bg-background flex-1 rounded-lg border p-4">
               <div className="flex items-end justify-between">
                 <div>
-                  <p className="text-foreground text-2xl font-semibold">{correctSpecies.commonNames[0]}</p>
+                  <p className="text-foreground text-2xl font-semibold">{correctSpecies.commonName}</p>
                   <p className="text-muted-foreground text-sm italic">{correctSpecies.scientificName}</p>
                 </div>
                 <p className="text-muted-foreground text-sm">{correctSpecies.family}</p>

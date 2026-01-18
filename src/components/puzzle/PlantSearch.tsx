@@ -35,7 +35,7 @@ export const PlantSearch = () => {
   const filteredSpecies = allSpecies.filter(
     (s) =>
       !excludedSpeciesIds.includes(s.id) &&
-      (s.commonNames.some((name) => name.toLowerCase().includes(query.toLowerCase())) ||
+      ([s.commonName, ...s.alternativeCommonNames].some((name) => name.toLowerCase().includes(query.toLowerCase())) ||
         s.scientificName.toLowerCase().includes(query.toLowerCase())),
   )
 
@@ -50,7 +50,7 @@ export const PlantSearch = () => {
         <div className="border-border bg-muted flex items-end justify-between rounded-lg border p-3">
           <div>
             <p className="text-foreground font-medium" data-testid={PuzzleTestIds.selectedPlantName}>
-              {selectedSpecies.commonNames[0]}
+              {selectedSpecies.commonName}
             </p>
             <p className="text-foreground/70 text-xs italic">{selectedSpecies.scientificName}</p>
           </div>
@@ -97,13 +97,13 @@ export const PlantSearch = () => {
             {filteredSpecies.map((species) => (
               <CommandItem
                 key={species.id}
-                value={species.commonNames[0]}
+                value={species.commonName}
                 onSelect={() => handleSelect(species)}
                 className="group"
                 data-testid={PuzzleTestIds.plantOption}
               >
                 <div className="flex flex-1 flex-col">
-                  <span className="font-medium">{species.commonNames[0]}</span>
+                  <span className="font-medium">{species.commonName}</span>
                   <span className="text-muted-foreground group-data-[selected=true]:text-primary-foreground/70 text-xs italic">
                     {species.scientificName}
                   </span>

@@ -20,7 +20,7 @@ const createTestPuzzle = (puzzleId: PuzzleId): TestPuzzle => {
   return {
     id: puzzleId,
     speciesId: puzzle.speciesId,
-    correctAnswer: species.commonNames[0],
+    correctAnswer: species.commonName,
     scheduledDate,
   }
 }

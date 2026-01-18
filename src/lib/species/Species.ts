@@ -14,7 +14,8 @@ export interface Species {
   id: SpeciesId
   scientificName: string
   family: string
-  commonNames: string[]
+  commonName: string
+  alternativeCommonNames: string[]
   links: SpeciesLink[]
   idTips: string[]
 }

@@ -36,7 +36,7 @@ export const AttemptHistory = ({ attempts }: AttemptHistoryProps) => (
               data-testid={AttemptHistoryTestIds.item}
             >
               <div>
-                <p className="text-foreground font-medium">{species.commonNames[0]}</p>
+                <p className="text-foreground font-medium">{species.commonName}</p>
                 <p className="text-muted-foreground text-sm italic">{species.scientificName}</p>
               </div>
               <div className="flex flex-col items-end text-right">
