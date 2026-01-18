@@ -11,34 +11,34 @@ test("can navigate to puzzle and answer correctly on first try", async ({ homePa
   await puzzlePage.verifyCorrectAnswer()
 })
 
-test("can answer correctly after wrong guesses", async ({ homePage }) => {
+test("can answer correctly after wrong attempts", async ({ homePage }) => {
   const puzzlePage = await homePage.clickPuzzle(0)
 
-  // First wrong guess
+  // First wrong attempt
   await puzzlePage.searchForPlant(TestPuzzles.tansy.correctAnswer)
   await puzzlePage.selectFirstPlantOption()
   await puzzlePage.submitAnswer()
   await puzzlePage.verifyAttemptHistory(1)
   await puzzlePage.verifyAttemptCounter(2, 3)
 
-  // Second wrong guess
+  // Second wrong attempt
   await puzzlePage.searchForPlant("Chicory")
   await puzzlePage.selectFirstPlantOption()
   await puzzlePage.submitAnswer()
   await puzzlePage.verifyAttemptHistory(2)
   await puzzlePage.verifyAttemptCounter(3, 3)
 
-  // Correct guess
+  // Correct attempt
   await puzzlePage.searchForPlant(TestPuzzles.daisy.correctAnswer)
   await puzzlePage.selectFirstPlantOption()
   await puzzlePage.submitAnswer()
   await puzzlePage.verifyCorrectAnswer()
 })
 
-test("fails after 3 wrong guesses", async ({ homePage }) => {
+test("fails after 3 wrong attempts", async ({ homePage }) => {
   const puzzlePage = await homePage.clickPuzzle(0)
 
-  // Make 3 wrong guesses
+  // Make 3 wrong attempts
   await puzzlePage.searchForPlant(TestPuzzles.tansy.correctAnswer)
   await puzzlePage.selectFirstPlantOption()
   await puzzlePage.submitAnswer()

@@ -18,11 +18,11 @@ describe("StatsStorage", () => {
       date: Iso8601Date("2026-06-08"),
       puzzleId: TestPuzzles.daisy.id,
       result: DailyResult.PASS,
-      guessedSpeciesIds: [TestSpeciesIds.birdsFootTrefoil, TestPuzzles.herbRobert.speciesId],
+      attemptedSpeciesIds: [TestSpeciesIds.birdsFootTrefoil, TestPuzzles.herbRobert.speciesId],
     })
     statsStorage.saveDailyInProgress({
       date: Iso8601Date("2026-06-09"),
-      guessedSpeciesIds: [TestSpeciesIds.feverfew],
+      attemptedSpeciesIds: [TestSpeciesIds.feverfew],
     })
 
     expect(statsStorage.load()).toEqual({
@@ -31,12 +31,12 @@ describe("StatsStorage", () => {
           date: Iso8601Date("2026-06-08"),
           puzzleId: TestPuzzles.daisy.id,
           result: DailyResult.PASS,
-          guessedSpeciesIds: [TestSpeciesIds.birdsFootTrefoil, TestPuzzles.herbRobert.speciesId],
+          attemptedSpeciesIds: [TestSpeciesIds.birdsFootTrefoil, TestPuzzles.herbRobert.speciesId],
         },
       ],
       dailyInProgress: {
         date: Iso8601Date("2026-06-09"),
-        guessedSpeciesIds: [TestSpeciesIds.feverfew],
+        attemptedSpeciesIds: [TestSpeciesIds.feverfew],
       },
     })
   })
@@ -55,13 +55,13 @@ describe("StatsStorage", () => {
 
     statsStorage.saveDailyInProgress({
       date: Iso8601Date("2026-06-08"),
-      guessedSpeciesIds: [TestSpeciesIds.birdsFootTrefoil],
+      attemptedSpeciesIds: [TestSpeciesIds.birdsFootTrefoil],
     })
 
     expect(statsStorage.load()).toMatchObject({
       dailyInProgress: {
         date: Iso8601Date("2026-06-08"),
-        guessedSpeciesIds: [TestSpeciesIds.birdsFootTrefoil],
+        attemptedSpeciesIds: [TestSpeciesIds.birdsFootTrefoil],
       },
     })
   })
@@ -70,7 +70,7 @@ describe("StatsStorage", () => {
     const statsStorage = createStatsStorage()
     statsStorage.saveDailyInProgress({
       date: Iso8601Date("2026-06-08"),
-      guessedSpeciesIds: [TestSpeciesIds.birdsFootTrefoil],
+      attemptedSpeciesIds: [TestSpeciesIds.birdsFootTrefoil],
     })
 
     statsStorage.clearDailyInProgress()
@@ -82,7 +82,7 @@ describe("StatsStorage", () => {
     const statsStorage = createStatsStorage()
     statsStorage.saveDailyInProgress({
       date: Iso8601Date("2026-06-08"),
-      guessedSpeciesIds: [TestSpeciesIds.birdsFootTrefoil],
+      attemptedSpeciesIds: [TestSpeciesIds.birdsFootTrefoil],
     })
     const record = createDailyPuzzleRecord()
 

@@ -14,6 +14,6 @@ export const createDailyPuzzleRecord = (overrides: Partial<DailyPuzzleRecord> = 
   date: defaultDate,
   puzzleId: TestPuzzles.daisy.id,
   result: DailyResult.PASS,
-  guessedSpeciesIds: [TestSpeciesIds.alexanders],
+  attemptedSpeciesIds: [TestSpeciesIds.alexanders],
   ...overrides,
 })

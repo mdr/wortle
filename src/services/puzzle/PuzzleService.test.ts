@@ -37,7 +37,7 @@ describe("PuzzleService", () => {
         date: scheduledDate,
         puzzleId,
         result: DailyResult.PASS,
-        guessedSpeciesIds: [TestPuzzles.herbRobert.speciesId, TestPuzzles.daisy.speciesId],
+        attemptedSpeciesIds: [TestPuzzles.herbRobert.speciesId, TestPuzzles.daisy.speciesId],
       })
 
       const service = makePuzzleService({ mode: PuzzleMode.DAILY, statsStorage })
@@ -56,7 +56,7 @@ describe("PuzzleService", () => {
         date: scheduledDate,
         puzzleId,
         result: DailyResult.FAIL,
-        guessedSpeciesIds: [TestPuzzles.herbRobert.speciesId],
+        attemptedSpeciesIds: [TestPuzzles.herbRobert.speciesId],
       })
 
       const service = makePuzzleService({ mode: PuzzleMode.DAILY, statsStorage })
@@ -72,7 +72,7 @@ describe("PuzzleService", () => {
         date: scheduledDate,
         puzzleId,
         result: DailyResult.FAIL,
-        guessedSpeciesIds: [
+        attemptedSpeciesIds: [
           TestPuzzles.herbRobert.speciesId,
           TestPuzzles.tansy.speciesId,
           TestSpeciesIds.fieldScabious,
@@ -92,7 +92,7 @@ describe("PuzzleService", () => {
         date: scheduledDate,
         puzzleId,
         result: DailyResult.PASS,
-        guessedSpeciesIds: [TestPuzzles.daisy.speciesId],
+        attemptedSpeciesIds: [TestPuzzles.daisy.speciesId],
       })
 
       const service = makePuzzleService({ mode: PuzzleMode.REVIEW, statsStorage })
@@ -106,7 +106,7 @@ describe("PuzzleService", () => {
     it("updates selected species and clears incorrect feedback", () => {
       const service = makePuzzleService()
 
-      service.submitGuess(TestPuzzles.herbRobert.speciesId)
+      service.submitAttempt(TestPuzzles.herbRobert.speciesId)
       expect(service.state.incorrectFeedbackText).toBeDefined()
 
       service.selectSpecies(TestPuzzles.herbRobert.speciesId)
@@ -120,7 +120,7 @@ describe("PuzzleService", () => {
       const service = makePuzzleService()
 
       service.selectSpecies(TestPuzzles.herbRobert.speciesId)
-      service.submitGuess(TestPuzzles.herbRobert.speciesId)
+      service.submitAttempt(TestPuzzles.herbRobert.speciesId)
 
       service.chooseDifferentPlant()
       expect(service.state.selectedSpecies).toBeUndefined()
@@ -128,12 +128,12 @@ describe("PuzzleService", () => {
     })
   })
 
-  describe("submitGuess", () => {
+  describe("submitAttempt", () => {
     it("records a correct attempt and returns true", () => {
       const { correctSpecies } = getPuzzleData()
       const service = makePuzzleService()
 
-      const result = service.submitGuess(correctSpecies.id)
+      const result = service.submitAttempt(correctSpecies.id)
 
       expect(result).toBe(true)
       expect(service.state.attempts).toHaveLength(1)
@@ -145,7 +145,7 @@ describe("PuzzleService", () => {
     it("records an incorrect attempt and returns false", () => {
       const service = makePuzzleService()
 
-      const result = service.submitGuess(TestPuzzles.herbRobert.speciesId)
+      const result = service.submitAttempt(TestPuzzles.herbRobert.speciesId)
 
       expect(result).toBe(false)
       expect(service.state.attempts).toHaveLength(1)
@@ -159,7 +159,7 @@ describe("PuzzleService", () => {
       const statsStorage = new StatsStorage(createMemoryStorage())
       const service = makePuzzleService({ mode: PuzzleMode.DAILY, statsStorage })
 
-      service.submitGuess(TestPuzzles.herbRobert.speciesId)
+      service.submitAttempt(TestPuzzles.herbRobert.speciesId)
       service.giveUp()
 
       expect(service.state.gaveUp).toBe(true)
@@ -170,7 +170,7 @@ describe("PuzzleService", () => {
           date: scheduledDate,
           puzzleId,
           result: DailyResult.FAIL,
-          guessedSpeciesIds: [TestPuzzles.herbRobert.speciesId],
+          attemptedSpeciesIds: [TestPuzzles.herbRobert.speciesId],
         },
       ])
     })
@@ -244,15 +244,15 @@ describe("PuzzleService", () => {
   })
 
   describe("dailyInProgress", () => {
-    it("saves in-progress after incorrect guess in daily mode", () => {
+    it("saves in-progress after incorrect attempt in daily mode", () => {
       const statsStorage = new StatsStorage(createMemoryStorage())
       const service = makePuzzleService({ mode: PuzzleMode.DAILY, statsStorage })
 
-      service.submitGuess(TestPuzzles.herbRobert.speciesId)
+      service.submitAttempt(TestPuzzles.herbRobert.speciesId)
 
       expect(statsStorage.load().dailyInProgress).toEqual({
         date: scheduledDate,
-        guessedSpeciesIds: [TestPuzzles.herbRobert.speciesId],
+        attemptedSpeciesIds: [TestPuzzles.herbRobert.speciesId],
       })
     })
 
@@ -260,7 +260,7 @@ describe("PuzzleService", () => {
       const statsStorage = new StatsStorage(createMemoryStorage())
       const service = makePuzzleService({ mode: PuzzleMode.REVIEW, statsStorage })
 
-      service.submitGuess(TestPuzzles.herbRobert.speciesId)
+      service.submitAttempt(TestPuzzles.herbRobert.speciesId)
 
       expect(statsStorage.load().dailyInProgress).toBeUndefined()
     })
@@ -269,7 +269,7 @@ describe("PuzzleService", () => {
       const statsStorage = new StatsStorage(createMemoryStorage())
       statsStorage.saveDailyInProgress({
         date: scheduledDate,
-        guessedSpeciesIds: [TestPuzzles.herbRobert.speciesId, TestPuzzles.tansy.speciesId],
+        attemptedSpeciesIds: [TestPuzzles.herbRobert.speciesId, TestPuzzles.tansy.speciesId],
       })
 
       const service = makePuzzleService({ mode: PuzzleMode.DAILY, statsStorage })
@@ -283,12 +283,12 @@ describe("PuzzleService", () => {
       const statsStorage = new StatsStorage(createMemoryStorage())
       statsStorage.saveDailyInProgress({
         date: scheduledDate,
-        guessedSpeciesIds: [TestPuzzles.herbRobert.speciesId],
+        attemptedSpeciesIds: [TestPuzzles.herbRobert.speciesId],
       })
       const { correctSpecies } = getPuzzleData()
       const service = makePuzzleService({ mode: PuzzleMode.DAILY, statsStorage })
 
-      service.submitGuess(correctSpecies.id)
+      service.submitAttempt(correctSpecies.id)
 
       expect(statsStorage.load().dailyInProgress).toBeUndefined()
     })
@@ -297,7 +297,7 @@ describe("PuzzleService", () => {
       const statsStorage = new StatsStorage(createMemoryStorage())
       statsStorage.saveDailyInProgress({
         date: Iso8601Date("2026-06-07"),
-        guessedSpeciesIds: [TestPuzzles.herbRobert.speciesId],
+        attemptedSpeciesIds: [TestPuzzles.herbRobert.speciesId],
       })
 
       const service = makePuzzleService({ mode: PuzzleMode.DAILY, statsStorage })
@@ -310,7 +310,7 @@ describe("PuzzleService", () => {
       const statsStorage = new StatsStorage(createMemoryStorage())
       statsStorage.saveDailyInProgress({
         date: scheduledDate,
-        guessedSpeciesIds: [TestPuzzles.herbRobert.speciesId],
+        attemptedSpeciesIds: [TestPuzzles.herbRobert.speciesId],
       })
 
       const service = makePuzzleService({ mode: PuzzleMode.REVIEW, statsStorage })
@@ -322,14 +322,14 @@ describe("PuzzleService", () => {
       const statsStorage = new StatsStorage(createMemoryStorage())
       statsStorage.saveDailyInProgress({
         date: scheduledDate,
-        guessedSpeciesIds: [TestPuzzles.herbRobert.speciesId],
+        attemptedSpeciesIds: [TestPuzzles.herbRobert.speciesId],
       })
 
       makePuzzleService({ mode: PuzzleMode.REVIEW, statsStorage })
 
       expect(statsStorage.load().dailyInProgress).toEqual({
         date: scheduledDate,
-        guessedSpeciesIds: [TestPuzzles.herbRobert.speciesId],
+        attemptedSpeciesIds: [TestPuzzles.herbRobert.speciesId],
       })
     })
   })

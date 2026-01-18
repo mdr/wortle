@@ -25,7 +25,7 @@ export const AnswerInputCard = () => {
 
   const handleSubmit = () => {
     assert(selectedSpecies, "Selected species is required to submit an answer.")
-    const isCorrect = puzzleActions.submitGuess(selectedSpecies.id)
+    const isCorrect = puzzleActions.submitAttempt(selectedSpecies.id)
     if (!isCorrect) {
       shake()
     }

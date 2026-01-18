@@ -27,7 +27,7 @@ export interface PuzzleServiceActions {
   exitFullscreenImageMode: () => void
   selectSpecies: (speciesId: SpeciesId) => void
   chooseDifferentPlant: () => void
-  submitGuess: (speciesId: SpeciesId) => boolean
+  submitAttempt: (speciesId: SpeciesId) => boolean
   giveUp: () => void
 }
 
@@ -83,8 +83,8 @@ export class PuzzleService extends AbstractService<PuzzleServiceState> implement
           ? history.find((record) => record.date === state.scheduledDate && record.puzzleId === state.puzzle.id)
           : undefined
 
-    const guessedSpeciesIds = completedRecord?.guessedSpeciesIds ?? matchingInProgress?.guessedSpeciesIds ?? []
-    const attempts = guessedSpeciesIds.map((speciesId) => {
+    const attemptedSpeciesIds = completedRecord?.attemptedSpeciesIds ?? matchingInProgress?.attemptedSpeciesIds ?? []
+    const attempts = attemptedSpeciesIds.map((speciesId) => {
       const species = getSpecies(speciesId)
       return createAttemptFeedback(species, state.correctSpecies)
     })
@@ -145,7 +145,7 @@ export class PuzzleService extends AbstractService<PuzzleServiceState> implement
     this.setState({ isFullscreenImageMode: false })
   }
 
-  submitGuess = (speciesId: SpeciesId): boolean => {
+  submitAttempt = (speciesId: SpeciesId): boolean => {
     const species = getSpecies(speciesId)
     const feedback = createAttemptFeedback(species, this.state.correctSpecies)
     const nextAttempts = [...this.state.attempts, feedback]
@@ -160,7 +160,7 @@ export class PuzzleService extends AbstractService<PuzzleServiceState> implement
       feedback.isCorrect || nextAttempts.length >= MAX_ATTEMPTS
         ? ({
             result: feedback.isCorrect ? DailyResult.PASS : DailyResult.FAIL,
-            guessedSpeciesIds: nextAttempts.map((attempt) => attempt.speciesId),
+            attemptedSpeciesIds: nextAttempts.map((attempt) => attempt.speciesId),
           } satisfies PuzzleCompletion)
         : undefined
     this.updateState((draft) => {
@@ -169,7 +169,7 @@ export class PuzzleService extends AbstractService<PuzzleServiceState> implement
       draft.selectedSpecies = undefined
     })
     if (completion) {
-      this.updateStats(completion.result, completion.guessedSpeciesIds)
+      this.updateStats(completion.result, completion.attemptedSpeciesIds)
     } else {
       this.saveDailyInProgress(nextAttempts.map((attempt) => attempt.speciesId))
     }
@@ -180,24 +180,24 @@ export class PuzzleService extends AbstractService<PuzzleServiceState> implement
     this.setState({ gaveUp: true, incorrectFeedbackText: undefined, selectedSpecies: undefined })
     const completion = {
       result: DailyResult.FAIL,
-      guessedSpeciesIds: this.state.attempts.map((attempt) => attempt.speciesId),
+      attemptedSpeciesIds: this.state.attempts.map((attempt) => attempt.speciesId),
     }
-    this.updateStats(completion.result, completion.guessedSpeciesIds)
+    this.updateStats(completion.result, completion.attemptedSpeciesIds)
   }
 
-  private readonly saveDailyInProgress = (guessedSpeciesIds: SpeciesId[]): void => {
+  private readonly saveDailyInProgress = (attemptedSpeciesIds: SpeciesId[]): void => {
     if (this.options.mode === PuzzleMode.DAILY) {
       const { statsStorage } = this.options
       const scheduledDate = this.state.scheduledDate
       assert(scheduledDate, "PuzzleService requires a scheduled date in daily mode.")
       statsStorage.saveDailyInProgress({
         date: scheduledDate,
-        guessedSpeciesIds,
+        attemptedSpeciesIds,
       })
     }
   }
 
-  private readonly updateStats = (result: DailyResult, guessedSpeciesIds: SpeciesId[]): void => {
+  private readonly updateStats = (result: DailyResult, attemptedSpeciesIds: SpeciesId[]): void => {
     if (this.options.mode === PuzzleMode.DAILY) {
       const { statsStorage } = this.options
       assert(statsStorage, "PuzzleService requires stats storage in daily mode.")
@@ -207,7 +207,7 @@ export class PuzzleService extends AbstractService<PuzzleServiceState> implement
         date: scheduledDate,
         puzzleId: this.state.puzzle.id,
         result,
-        guessedSpeciesIds,
+        attemptedSpeciesIds,
       })
       this.setState({ statsSummary: calculateDailyStatsSummary(nextStats.history) })
     }

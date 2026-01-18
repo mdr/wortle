@@ -44,9 +44,9 @@ export const PuzzlePage = ({ showStatsPlaceholder }: PuzzlePageProps) => {
         mode,
         attempts: attempts.length,
         correct: isCorrect,
-        guess1: attempts[0]?.speciesId,
-        guess2: attempts[1]?.speciesId,
-        guess3: attempts[2]?.speciesId,
+        attempt1: attempts[0]?.speciesId,
+        attempt2: attempts[1]?.speciesId,
+        attempt3: attempts[2]?.speciesId,
       })
     }
     wasResolvedRef.current = isResolved

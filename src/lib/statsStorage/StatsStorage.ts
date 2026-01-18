@@ -15,12 +15,12 @@ export interface DailyPuzzleRecord {
   readonly date: Iso8601Date
   readonly puzzleId: PuzzleId
   readonly result: DailyResult
-  readonly guessedSpeciesIds: SpeciesId[]
+  readonly attemptedSpeciesIds: SpeciesId[]
 }
 
 export interface DailyInProgressRecord {
   readonly date: Iso8601Date
-  readonly guessedSpeciesIds: SpeciesId[]
+  readonly attemptedSpeciesIds: SpeciesId[]
 }
 
 export interface StatsSnapshot {
@@ -33,14 +33,14 @@ const dailyPuzzleRecordSchema: z.ZodType<DailyPuzzleRecord> = z
     date: z.string().transform(Iso8601Date),
     puzzleId: z.number().int().transform(PuzzleId),
     result: z.enum([DailyResult.PASS, DailyResult.FAIL]),
-    guessedSpeciesIds: z.array(z.string().transform(SpeciesId)),
+    attemptedSpeciesIds: z.array(z.string().transform(SpeciesId)),
   })
   .readonly()
 
 const dailyInProgressRecordSchema: z.ZodType<DailyInProgressRecord> = z
   .strictObject({
     date: z.string().transform(Iso8601Date),
-    guessedSpeciesIds: z.array(z.string().transform(SpeciesId)),
+    attemptedSpeciesIds: z.array(z.string().transform(SpeciesId)),
   })
   .readonly()
 
@@ -53,7 +53,7 @@ export const statsSnapshotSchema: z.ZodType<StatsSnapshot> = z
 
 assert<Equals<StatsSnapshot, z.infer<typeof statsSnapshotSchema>>>()
 
-const STORAGE_KEY = "wortle:temp:2:stats"
+const STORAGE_KEY = "wortle:temp:3:stats"
 
 const upsertRecord = (history: DailyPuzzleRecord[], record: DailyPuzzleRecord): DailyPuzzleRecord[] =>
   [...history.filter((r) => r.date !== record.date), record].sort((a, b) => a.date.localeCompare(b.date))

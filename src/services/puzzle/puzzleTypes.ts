@@ -3,5 +3,5 @@ import { DailyResult } from "@/lib/statsStorage/StatsStorage"
 
 export interface PuzzleCompletion {
   result: DailyResult
-  guessedSpeciesIds: SpeciesId[]
+  attemptedSpeciesIds: SpeciesId[]
 }
