@@ -1,5 +1,6 @@
+import { TestPuzzles } from "@/lib/testConstants.testUtils"
+
 import { test } from "../fixtures"
-import { TestPuzzles } from "../testConstants.testUtils"
 
 test("can navigate to puzzle and answer correctly on first try", async ({ homePage }) => {
   const puzzlePage = await homePage.clickPuzzle(0)

@@ -1,5 +1,6 @@
+import { TestPuzzles } from "@/lib/testConstants.testUtils"
+
 import { test } from "../fixtures"
-import { TestPuzzles } from "../testConstants.testUtils"
 
 test("history page shows empty state when no puzzles completed", async ({ historyPage }) => {
   await historyPage.verifyEmptyState()

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 
-import { TestPuzzles, TestSpeciesIds } from "@/tests/playwright/testConstants.testUtils"
+import { TestPuzzles, TestSpeciesIds } from "@/lib/testConstants.testUtils"
 import { Iso8601Date } from "@/utils/brandedTypes"
 
 import { DailyResult } from "./GameState"

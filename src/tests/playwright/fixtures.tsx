@@ -1,13 +1,14 @@
 import type { MountResult } from "@playwright/experimental-ct-react"
 import { expect, test as ctBase } from "@playwright/experimental-ct-react"
 
+import { TestPuzzles } from "@/lib/testConstants.testUtils"
+
 import { ErrorPageObject } from "./pageObjects/ErrorPageObject"
 import { HistoryPageObject } from "./pageObjects/HistoryPageObject"
 import { HomePageObject } from "./pageObjects/HomePageObject"
 import { NotFoundPageObject } from "./pageObjects/NotFoundPageObject"
 import { PuzzlePageObject } from "./pageObjects/PuzzlePageObject"
 import { TestApp } from "./TestApp"
-import { TestPuzzles } from "./testConstants.testUtils"
 
 interface MountFunction {
   (component: React.ReactElement): Promise<MountResult>

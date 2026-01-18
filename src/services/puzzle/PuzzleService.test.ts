@@ -7,7 +7,7 @@ import { Puzzle } from "@/lib/Puzzle"
 import { getPuzzle } from "@/lib/puzzles"
 import { getSpecies } from "@/lib/species/plants"
 import { Species } from "@/lib/species/Species"
-import { TestPuzzles, TestSpeciesIds } from "@/tests/playwright/testConstants.testUtils"
+import { TestPuzzles, TestSpeciesIds } from "@/lib/testConstants.testUtils"
 import { Iso8601Date } from "@/utils/brandedTypes"
 
 import { MAX_ATTEMPTS, PuzzleMode, PuzzleService } from "./PuzzleService"

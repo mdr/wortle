@@ -21,3 +21,12 @@ export interface Species {
 }
 
 export const getGenus = (scientificName: string): string => scientificName.split(" ")[0]
+
+const matchesQuery = (species: Species, query: string): boolean => {
+  const lowerQuery = query.toLowerCase()
+  const allNames = [species.commonName, ...species.alternativeCommonNames, species.scientificName]
+  return allNames.some((name) => name.toLowerCase().includes(lowerQuery))
+}
+
+export const filterSpecies = (species: Species[], query: string, excludedIds: SpeciesId[] = []): Species[] =>
+  species.filter((s) => !excludedIds.includes(s.id) && matchesQuery(s, query))

@@ -36,6 +36,15 @@ export const TestPuzzles = {
 export const TestSpeciesIds = {
   alexanders: SpeciesId("2cd4p9h.21r"),
   birdsFootTrefoil: SpeciesId("2cd4p9h.1e3"),
+  daisy: SpeciesId("2cd4p9h.xbs"),
+  devilsBitScabious: SpeciesId("2cd4p9h.23w"),
   feverfew: SpeciesId("2cd4p9h.yhw"),
   fieldScabious: SpeciesId("2cd4p9h.xyv"),
+  herbRobert: SpeciesId("2cd4p9h.8nb"),
 } as const
+
+export const TestSpecies = {
+  daisy: getSpecies(TestSpeciesIds.daisy),
+  devilsBitScabious: getSpecies(TestSpeciesIds.devilsBitScabious),
+  herbRobert: getSpecies(TestSpeciesIds.herbRobert),
+}

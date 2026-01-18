@@ -1,5 +1,6 @@
+import { TestPuzzles } from "@/lib/testConstants.testUtils"
+
 import { test } from "../fixtures"
-import { TestPuzzles } from "../testConstants.testUtils"
 
 test("review puzzle does not save to daily stats", async ({ launcher }) => {
   const reviewPage = await launcher.launchReviewPage(TestPuzzles.daisy.id)

@@ -1,4 +1,4 @@
-import { defineConfig } from "vite"
+import { defineConfig } from "vitest/config"
 import react from "@vitejs/plugin-react"
 import { tanstackRouter } from "@tanstack/router-plugin/vite"
 import { visualizer } from "rollup-plugin-visualizer"
@@ -32,4 +32,7 @@ export default defineConfig({
     allowedHosts: [".ngrok-free.app"],
   },
   base: "/",
+  test: {
+    setupFiles: ["./src/tests/vitest.setup.ts"],
+  },
 })

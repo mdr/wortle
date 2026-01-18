@@ -10,7 +10,7 @@ import {
   CommandList,
 } from "@/components/shadcn/Command"
 import { getAllSpecies } from "@/lib/species/plants"
-import { Species } from "@/lib/species/Species"
+import { filterSpecies, Species } from "@/lib/species/Species"
 import { usePuzzleServiceActions, usePuzzleState } from "@/services/puzzle/puzzleServiceHooks"
 
 import { PuzzleTestIds } from "./PuzzleTestIds"
@@ -32,12 +32,7 @@ export const PlantSearch = () => {
     setOpen(false)
   }
 
-  const filteredSpecies = allSpecies.filter(
-    (s) =>
-      !excludedSpeciesIds.includes(s.id) &&
-      ([s.commonName, ...s.alternativeCommonNames].some((name) => name.toLowerCase().includes(query.toLowerCase())) ||
-        s.scientificName.toLowerCase().includes(query.toLowerCase())),
-  )
+  const filteredSpecies = filterSpecies(allSpecies, query, excludedSpeciesIds)
 
   const handleClear = () => {
     puzzleActions.chooseDifferentPlant()

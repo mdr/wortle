@@ -1,6 +1,6 @@
 import { assert } from "tsafe"
 
-import { TestPuzzles, TestSpeciesIds } from "@/tests/playwright/testConstants.testUtils"
+import { TestPuzzles, TestSpeciesIds } from "@/lib/testConstants.testUtils"
 
 import { type DailyPuzzleRecord, DailyResult } from "./GameState"
 import { GameStorage } from "./GameStorage"
