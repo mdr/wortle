@@ -4,20 +4,17 @@ import { DailyResult } from "@/lib/gameStorage/GameState"
 import { GameStorage } from "@/lib/gameStorage/GameStorage"
 import { createDailyInProgressRecord, createDailyPuzzleRecord } from "@/lib/gameStorage/GameStorage.testUtils"
 import { createMemoryStorage } from "@/lib/gameStorage/storage.testUtils"
-import { Puzzle } from "@/lib/Puzzle"
 import { getPuzzle } from "@/lib/puzzles"
 import { TestDate, TestPuzzles, TestSpeciesIds } from "@/lib/testConstants.testUtils"
 import { ImageIndex, Iso8601Date } from "@/utils/brandedTypes"
 
 import { MAX_ATTEMPTS, PuzzleMode, PuzzleService } from "./PuzzleService"
 
-const puzzleId = TestPuzzles.daisy.id
-const getPuzzleData = (): Puzzle => getPuzzle(puzzleId)
+const puzzle = getPuzzle(TestPuzzles.daisy.id)
 
 const makePuzzleService = (
   options: Partial<{ mode: PuzzleMode; gameStorage: GameStorage; date: Iso8601Date }> = {},
 ): PuzzleService => {
-  const puzzle = getPuzzleData()
   const gameStorage = options.gameStorage ?? new GameStorage(createMemoryStorage())
   return new PuzzleService(puzzle, options.date ?? TestDate, options.mode ?? PuzzleMode.REVIEW, gameStorage)
 }
@@ -29,18 +26,19 @@ describe("PuzzleService", () => {
       const gameStorage = new GameStorage(storage)
       gameStorage.recordDailyCompletion({
         date: TestDate,
-        puzzleId,
+        puzzleId: puzzle.id,
         result: DailyResult.PASS,
         attemptedSpeciesIds: [TestPuzzles.herbRobert.speciesId, TestPuzzles.daisy.speciesId],
       })
 
       const service = makePuzzleService({ mode: PuzzleMode.DAILY, gameStorage })
 
-      expect(service.state.attempts).toHaveLength(2)
-      expect(service.state.attempts[1]?.isCorrect).toBe(true)
-      expect(service.state.gaveUp).toBe(false)
-      expect(service.state.incorrectFeedbackText).toBeUndefined()
-      expect(service.state.selectedSpeciesId).toBeUndefined()
+      expect(service.state).toMatchObject({
+        attempts: [{ isCorrect: false }, { isCorrect: true }],
+        gaveUp: false,
+        incorrectFeedbackText: undefined,
+        selectedSpeciesId: undefined,
+      })
     })
 
     it("marks gave up when daily stats show a failure before max attempts", () => {
@@ -48,15 +46,17 @@ describe("PuzzleService", () => {
       const gameStorage = new GameStorage(storage)
       gameStorage.recordDailyCompletion({
         date: TestDate,
-        puzzleId,
+        puzzleId: puzzle.id,
         result: DailyResult.FAIL,
         attemptedSpeciesIds: [TestPuzzles.herbRobert.speciesId],
       })
 
       const service = makePuzzleService({ mode: PuzzleMode.DAILY, gameStorage })
 
-      expect(service.state.attempts).toHaveLength(1)
-      expect(service.state.gaveUp).toBe(true)
+      expect(service.state).toMatchObject({
+        attempts: [{ isCorrect: false }],
+        gaveUp: true,
+      })
     })
 
     it("does not mark gave up when daily failure uses all attempts", () => {
@@ -64,7 +64,7 @@ describe("PuzzleService", () => {
       const gameStorage = new GameStorage(storage)
       gameStorage.recordDailyCompletion({
         date: TestDate,
-        puzzleId,
+        puzzleId: puzzle.id,
         result: DailyResult.FAIL,
         attemptedSpeciesIds: [
           TestPuzzles.herbRobert.speciesId,
@@ -75,8 +75,10 @@ describe("PuzzleService", () => {
 
       const service = makePuzzleService({ mode: PuzzleMode.DAILY, gameStorage })
 
-      expect(service.state.attempts).toHaveLength(MAX_ATTEMPTS)
-      expect(service.state.gaveUp).toBe(false)
+      expect(service.state).toMatchObject({
+        attempts: [{ isCorrect: false }, { isCorrect: false }, { isCorrect: false }],
+        gaveUp: false,
+      })
     })
 
     it("ignores stats hydration for review mode", () => {
@@ -84,15 +86,47 @@ describe("PuzzleService", () => {
       const gameStorage = new GameStorage(storage)
       gameStorage.recordDailyCompletion({
         date: TestDate,
-        puzzleId,
+        puzzleId: puzzle.id,
         result: DailyResult.PASS,
         attemptedSpeciesIds: [TestPuzzles.daisy.speciesId],
       })
 
       const service = makePuzzleService({ mode: PuzzleMode.REVIEW, gameStorage })
 
-      expect(service.state.attempts).toHaveLength(0)
-      expect(service.state.gaveUp).toBe(false)
+      expect(service.state).toMatchObject({
+        attempts: [],
+        gaveUp: false,
+      })
+    })
+
+    it("hydrates completed archive puzzles from stats", () => {
+      const gameStorage = new GameStorage(createMemoryStorage())
+      gameStorage.recordDailyCompletion({
+        date: TestDate,
+        puzzleId: puzzle.id,
+        result: DailyResult.PASS,
+        attemptedSpeciesIds: [TestPuzzles.herbRobert.speciesId, TestPuzzles.daisy.speciesId],
+      })
+
+      const service = makePuzzleService({ mode: PuzzleMode.ARCHIVE, gameStorage, date: TestDate })
+
+      expect(service.state).toMatchObject({
+        attempts: [{ isCorrect: false }, { isCorrect: true }],
+        gaveUp: false,
+        didNotAttempt: false,
+      })
+    })
+
+    it("marks didNotAttempt for unattempted archive puzzles", () => {
+      const gameStorage = new GameStorage(createMemoryStorage())
+
+      const service = makePuzzleService({ mode: PuzzleMode.ARCHIVE, gameStorage })
+
+      expect(service.state).toMatchObject({
+        attempts: [],
+        gaveUp: true,
+        didNotAttempt: true,
+      })
     })
   })
 
@@ -142,16 +176,16 @@ describe("PuzzleService", () => {
 
   describe("submitAttempt", () => {
     it("records a correct attempt and returns true", () => {
-      const puzzle = getPuzzleData()
       const service = makePuzzleService()
 
       const result = service.submitAttempt(puzzle.speciesId)
 
       expect(result).toBe(true)
-      expect(service.state.attempts).toHaveLength(1)
-      expect(service.state.attempts[0]?.isCorrect).toBe(true)
-      expect(service.state.selectedSpeciesId).toBeUndefined()
-      expect(service.state.incorrectFeedbackText).toBeUndefined()
+      expect(service.state).toMatchObject({
+        attempts: [{ isCorrect: true }],
+        selectedSpeciesId: undefined,
+        incorrectFeedbackText: undefined,
+      })
     })
 
     it("records an incorrect attempt and returns false", () => {
@@ -160,8 +194,9 @@ describe("PuzzleService", () => {
       const result = service.submitAttempt(TestPuzzles.herbRobert.speciesId)
 
       expect(result).toBe(false)
-      expect(service.state.attempts).toHaveLength(1)
-      expect(service.state.attempts[0]?.isCorrect).toBe(false)
+      expect(service.state).toMatchObject({
+        attempts: [{ isCorrect: false }],
+      })
       expect(service.state.incorrectFeedbackText).toBeDefined()
     })
   })
@@ -174,13 +209,15 @@ describe("PuzzleService", () => {
       service.submitAttempt(TestPuzzles.herbRobert.speciesId)
       service.giveUp()
 
-      expect(service.state.gaveUp).toBe(true)
-      expect(service.state.selectedSpeciesId).toBeUndefined()
-      expect(service.state.incorrectFeedbackText).toBeUndefined()
+      expect(service.state).toMatchObject({
+        gaveUp: true,
+        selectedSpeciesId: undefined,
+        incorrectFeedbackText: undefined,
+      })
       expect(gameStorage.load().history).toEqual([
         {
           date: TestDate,
-          puzzleId,
+          puzzleId: puzzle.id,
           result: DailyResult.FAIL,
           attemptedSpeciesIds: [TestPuzzles.herbRobert.speciesId],
         },
@@ -198,7 +235,6 @@ describe("PuzzleService", () => {
     })
 
     it("throws for out-of-bounds indices", () => {
-      const puzzle = getPuzzleData()
       const service = makePuzzleService()
       const outOfBoundsIndex = ImageIndex(puzzle.images.length + 2)
 
@@ -216,7 +252,6 @@ describe("PuzzleService", () => {
 
   describe("goToNextImage", () => {
     it("advances and wraps the image index", () => {
-      const puzzle = getPuzzleData()
       const service = makePuzzleService()
 
       service.goToNextImage()
@@ -230,7 +265,6 @@ describe("PuzzleService", () => {
 
   describe("goToPreviousImage", () => {
     it("moves back and wraps the image index", () => {
-      const puzzle = getPuzzleData()
       const service = makePuzzleService()
 
       service.goToPreviousImage()
@@ -294,9 +328,9 @@ describe("PuzzleService", () => {
 
       const service = makePuzzleService({ mode: PuzzleMode.DAILY, gameStorage })
 
-      expect(service.state.attempts).toHaveLength(2)
-      expect(service.state.attempts[0]?.speciesId).toBe(TestPuzzles.herbRobert.speciesId)
-      expect(service.state.attempts[1]?.speciesId).toBe(TestPuzzles.tansy.speciesId)
+      expect(service.state).toMatchObject({
+        attempts: [{ speciesId: TestPuzzles.herbRobert.speciesId }, { speciesId: TestPuzzles.tansy.speciesId }],
+      })
     })
 
     it("clears daily in-progress when puzzle is completed", () => {
@@ -304,7 +338,6 @@ describe("PuzzleService", () => {
       gameStorage.saveDailyInProgress(createDailyInProgressRecord())
       const existingRecord = createDailyPuzzleRecord({ date: Iso8601Date("2026-06-01") })
       gameStorage.recordDailyCompletion(existingRecord)
-      const puzzle = getPuzzleData()
       const service = makePuzzleService({ mode: PuzzleMode.DAILY, gameStorage })
 
       service.submitAttempt(puzzle.speciesId)
@@ -323,7 +356,7 @@ describe("PuzzleService", () => {
       const service = makePuzzleService({ mode: PuzzleMode.DAILY, gameStorage, date: todayDate })
 
       expect(gameStorage.load().dailyInProgress).toBeUndefined()
-      expect(service.state.attempts).toHaveLength(0)
+      expect(service.state).toMatchObject({ attempts: [] })
     })
 
     it("does not restore in-progress for review mode", () => {
@@ -332,7 +365,7 @@ describe("PuzzleService", () => {
 
       const service = makePuzzleService({ mode: PuzzleMode.REVIEW, gameStorage })
 
-      expect(service.state.attempts).toHaveLength(0)
+      expect(service.state).toMatchObject({ attempts: [] })
     })
 
     it("preserves daily in-progress when viewing a review puzzle", () => {
