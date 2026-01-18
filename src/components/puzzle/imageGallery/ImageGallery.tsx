@@ -13,7 +13,7 @@ import { GalleryTestIds } from "./GalleryTestIds"
 export const ImageGallery = () => {
   const captionId = useId()
   const { id: puzzleId, images, photoAttribution } = usePuzzleState((state) => state.puzzle)
-  const { imageGalleryIndex, isFullscreenImageMode } = usePuzzleState()
+  const { index: imageGalleryIndex, isFullscreen } = usePuzzleState((state) => state.imageGallery)
   const puzzleActions = usePuzzleServiceActions()
 
   const goToPrevious = () => {
@@ -155,7 +155,7 @@ export const ImageGallery = () => {
         </div>
       </div>
 
-      {isFullscreenImageMode && <FullScreenViewer />}
+      {isFullscreen && <FullScreenViewer />}
     </>
   )
 }

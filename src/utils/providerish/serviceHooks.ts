@@ -12,7 +12,7 @@ export const useService = <T>(context: Context<Option<T>>): T => {
   return service
 }
 
-export const useServiceStateSelector = <State, Service extends AbstractService<State>, Selected>(
+export const useServiceStateSelector = <State extends object, Service extends AbstractService<State>, Selected>(
   context: Context<Option<Service>>,
   selector: (state: State) => Selected,
 ): Selected => {

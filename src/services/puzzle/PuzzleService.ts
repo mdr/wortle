@@ -40,6 +40,11 @@ interface PuzzleServiceOptions {
   completionRecord?: DailyPuzzleRecord
 }
 
+export interface ImageGalleryState {
+  index: number
+  isFullscreen: boolean
+}
+
 export interface PuzzleServiceState {
   puzzle: Puzzle
   scheduledDate?: Iso8601Date
@@ -51,8 +56,7 @@ export interface PuzzleServiceState {
   selectedSpeciesId: Option<SpeciesId>
   searchQuery: string
   statsSummary?: DailyStatsSummary
-  imageGalleryIndex: number
-  isFullscreenImageMode: boolean
+  imageGallery: ImageGalleryState
 }
 
 interface PuzzleServiceBaseState {
@@ -106,8 +110,7 @@ export class PuzzleService extends AbstractService<PuzzleServiceState> implement
       incorrectFeedbackText: undefined,
       selectedSpeciesId: undefined,
       searchQuery: "",
-      imageGalleryIndex: 0,
-      isFullscreenImageMode: false,
+      imageGallery: { index: 0, isFullscreen: false },
       statsSummary,
     })
   }
@@ -131,25 +134,25 @@ export class PuzzleService extends AbstractService<PuzzleServiceState> implement
 
   selectImageIndex = (index: number): void => {
     assert(index >= 0 && index < this.state.puzzle.images.length, `Invalid image index: ${index}`)
-    this.setState({ imageGalleryIndex: index })
+    this.setState({ imageGallery: { index } })
   }
 
   goToNextImage = (): void => {
-    const { imageGalleryIndex, puzzle } = this.state
-    this.selectImageIndex(imageGalleryIndex === puzzle.images.length - 1 ? 0 : imageGalleryIndex + 1)
+    const { imageGallery, puzzle } = this.state
+    this.selectImageIndex(imageGallery.index === puzzle.images.length - 1 ? 0 : imageGallery.index + 1)
   }
 
   goToPreviousImage = (): void => {
-    const { imageGalleryIndex, puzzle } = this.state
-    this.selectImageIndex(imageGalleryIndex === 0 ? puzzle.images.length - 1 : imageGalleryIndex - 1)
+    const { imageGallery, puzzle } = this.state
+    this.selectImageIndex(imageGallery.index === 0 ? puzzle.images.length - 1 : imageGallery.index - 1)
   }
 
   enterFullscreenImageMode = (): void => {
-    this.setState({ isFullscreenImageMode: true })
+    this.setState({ imageGallery: { isFullscreen: true } })
   }
 
   exitFullscreenImageMode = (): void => {
-    this.setState({ isFullscreenImageMode: false })
+    this.setState({ imageGallery: { isFullscreen: false } })
   }
 
   submitAttempt = (speciesId: SpeciesId): boolean => {

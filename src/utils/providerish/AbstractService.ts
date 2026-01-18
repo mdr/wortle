@@ -1,8 +1,13 @@
+import { deepmergeCustom } from "deepmerge-ts"
 import { Draft, produce } from "immer"
 
 export type StateChangedListener = () => void
 
-export class AbstractService<State> {
+type DeepPartial<T> = T extends object ? { [P in keyof T]?: DeepPartial<T[P]> } : T
+
+const deepmerge = deepmergeCustom({ filterValues: false })
+
+export class AbstractService<State extends object> {
   private readonly listeners: StateChangedListener[] = []
 
   private _state: State
@@ -20,8 +25,8 @@ export class AbstractService<State> {
     this.fireListeners()
   }
 
-  protected setState = (state: Partial<State>): void => {
-    this.state = { ...this.state, ...state }
+  protected setState = (state: DeepPartial<State>): void => {
+    this.state = deepmerge(this.state, state) as State
   }
 
   protected updateState = (update: (draft: Draft<State>) => void): void => {

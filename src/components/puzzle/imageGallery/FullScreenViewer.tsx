@@ -14,7 +14,7 @@ import { ZoomControls } from "./ZoomControls"
 export const FullScreenViewer = () => {
   const captionId = useId()
   const { id: puzzleId, images } = usePuzzleState((state) => state.puzzle)
-  const imageGalleryIndex = usePuzzleState((state) => state.imageGalleryIndex)
+  const imageGalleryIndex = usePuzzleState((state) => state.imageGallery.index)
   const puzzleActions = usePuzzleServiceActions()
 
   return (

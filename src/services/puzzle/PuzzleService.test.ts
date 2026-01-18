@@ -192,7 +192,7 @@ describe("PuzzleService", () => {
 
       service.selectImageIndex(2)
 
-      expect(service.state.imageGalleryIndex).toBe(2)
+      expect(service.state.imageGallery.index).toBe(2)
     })
 
     it("throws for out-of-bounds indices", () => {
@@ -210,11 +210,11 @@ describe("PuzzleService", () => {
       const service = makePuzzleService()
 
       service.goToNextImage()
-      expect(service.state.imageGalleryIndex).toBe(1)
+      expect(service.state.imageGallery.index).toBe(1)
 
       service.selectImageIndex(puzzle.images.length - 1)
       service.goToNextImage()
-      expect(service.state.imageGalleryIndex).toBe(0)
+      expect(service.state.imageGallery.index).toBe(0)
     })
   })
 
@@ -224,11 +224,11 @@ describe("PuzzleService", () => {
       const service = makePuzzleService()
 
       service.goToPreviousImage()
-      expect(service.state.imageGalleryIndex).toBe(puzzle.images.length - 1)
+      expect(service.state.imageGallery.index).toBe(puzzle.images.length - 1)
 
       service.selectImageIndex(1)
       service.goToPreviousImage()
-      expect(service.state.imageGalleryIndex).toBe(0)
+      expect(service.state.imageGallery.index).toBe(0)
     })
   })
 
@@ -238,7 +238,7 @@ describe("PuzzleService", () => {
 
       service.enterFullscreenImageMode()
 
-      expect(service.state.isFullscreenImageMode).toBe(true)
+      expect(service.state.imageGallery.isFullscreen).toBe(true)
     })
   })
 
@@ -249,7 +249,7 @@ describe("PuzzleService", () => {
       service.enterFullscreenImageMode()
       service.exitFullscreenImageMode()
 
-      expect(service.state.isFullscreenImageMode).toBe(false)
+      expect(service.state.imageGallery.isFullscreen).toBe(false)
     })
   })
 
