@@ -1,7 +1,7 @@
 import { Iso8601Date } from "@/utils/brandedTypes"
 import { Option } from "@/utils/types/Option"
 
-import { DailyPuzzleRecord, DailyResult } from "./GameState"
+import { PassOrFail, PuzzleAttempt } from "./HistoryRecord"
 
 export interface DailyStatsSummary {
   readonly played: number
@@ -22,7 +22,7 @@ const getIsoDateWithOffset = (isoDate: Iso8601Date, days: number): Iso8601Date =
   return Iso8601Date(`${year}-${month}-${day}`)
 }
 
-export const calculateDailyStatsSummary = (history: DailyPuzzleRecord[]): DailyStatsSummary => {
+export const calculateDailyStatsSummary = (attempts: PuzzleAttempt[]): DailyStatsSummary => {
   const emptySummary: DailyStatsSummary = {
     played: 0,
     wins: 0,
@@ -31,20 +31,20 @@ export const calculateDailyStatsSummary = (history: DailyPuzzleRecord[]): DailyS
     maxStreak: 0,
   }
 
-  if (history.length === 0) {
+  if (attempts.length === 0) {
     return emptySummary
   }
 
-  const played = history.length
-  const wins = history.filter((record) => record.result === DailyResult.PASS).length
+  const played = attempts.length
+  const wins = attempts.filter((attempt) => attempt.result === PassOrFail.PASS).length
   const winRate = played === 0 ? 0 : wins / played
 
-  const recordsByDate = new Map<Iso8601Date, DailyPuzzleRecord>()
-  history.forEach((record) => {
-    recordsByDate.set(record.date, record)
+  const attemptsByDate = new Map<Iso8601Date, PuzzleAttempt>()
+  attempts.forEach((attempt) => {
+    attemptsByDate.set(attempt.date, attempt)
   })
 
-  const sortedDates = Array.from(recordsByDate.keys()).sort(
+  const sortedDates = Array.from(attemptsByDate.keys()).sort(
     (left, right) => isoDateToTimestamp(left) - isoDateToTimestamp(right),
   )
 
@@ -53,8 +53,8 @@ export const calculateDailyStatsSummary = (history: DailyPuzzleRecord[]): DailyS
   let previousDate: Option<Iso8601Date>
 
   sortedDates.forEach((date) => {
-    const record = recordsByDate.get(date)
-    if (!record || record.result !== DailyResult.PASS) {
+    const attempt = attemptsByDate.get(date)
+    if (!attempt || attempt.result !== PassOrFail.PASS) {
       runningStreak = 0
       previousDate = date
       return
@@ -72,13 +72,13 @@ export const calculateDailyStatsSummary = (history: DailyPuzzleRecord[]): DailyS
   if (latestDate) {
     let cursor: Option<Iso8601Date> = latestDate
     while (cursor) {
-      const record = recordsByDate.get(cursor)
-      if (!record || record.result !== DailyResult.PASS) {
+      const attempt = attemptsByDate.get(cursor)
+      if (!attempt || attempt.result !== PassOrFail.PASS) {
         break
       }
       currentStreak += 1
       const previousDate = getIsoDateWithOffset(cursor, -1)
-      cursor = recordsByDate.has(previousDate) ? previousDate : undefined
+      cursor = attemptsByDate.has(previousDate) ? previousDate : undefined
     }
   }
 

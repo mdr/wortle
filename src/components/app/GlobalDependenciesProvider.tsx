@@ -1,6 +1,6 @@
 import { type ReactNode } from "react"
 
-import { GameStorage } from "@/lib/gameStorage/GameStorage"
+import { HistoryStore } from "@/lib/gameStorage/HistoryStore"
 import { defaultSchedule, type Schedule } from "@/lib/schedule"
 import { type Clock, defaultClock } from "@/utils/Clock"
 import { createOptionalContext, useService } from "@/utils/providerish/serviceHooks"
@@ -8,7 +8,7 @@ import { createOptionalContext, useService } from "@/utils/providerish/serviceHo
 export interface GlobalDependencies {
   clock: Clock
   schedule: Schedule
-  gameStorage: GameStorage
+  historyStore: HistoryStore
 }
 
 export const GlobalDependenciesContext = createOptionalContext<GlobalDependencies>()
@@ -19,12 +19,12 @@ export const useClock = (): Clock => useGlobalDependencies().clock
 
 export const useSchedule = (): Schedule => useGlobalDependencies().schedule
 
-export const useGameStorage = (): GameStorage => useGlobalDependencies().gameStorage
+export const useHistoryStore = (): HistoryStore => useGlobalDependencies().historyStore
 
 export const defaultGlobalDependencies: GlobalDependencies = {
   clock: defaultClock,
   schedule: defaultSchedule,
-  gameStorage: new GameStorage(window.localStorage),
+  historyStore: new HistoryStore(window.localStorage),
 }
 
 interface GlobalDependenciesProviderProps {

@@ -1,4 +1,4 @@
-import { TestPuzzles } from "@/lib/testConstants.testUtils"
+import { TestPuzzles, TestSpeciesIds } from "@/lib/testConstants.testUtils"
 
 import { test } from "../fixtures"
 
@@ -6,14 +6,14 @@ test("can navigate to puzzle and answer correctly on first try", async ({ homePa
   const puzzlePage = await homePage.clickPuzzle(0)
   await puzzlePage.checkScreenshot("puzzle-page")
   await puzzlePage.verifyAttemptCounter(1, 3)
-  await puzzlePage.submitAnswer(TestPuzzles.daisy.speciesId)
+  await puzzlePage.submitAnswer(TestSpeciesIds.daisy)
   await puzzlePage.verifyCorrectAnswer()
 })
 
 test("can answer correctly after wrong attempts", async ({ homePage }) => {
   const puzzlePage = await homePage.clickPuzzle(0)
 
-  await puzzlePage.submitAnswer(TestPuzzles.tansy.speciesId)
+  await puzzlePage.submitAnswer(TestSpeciesIds.tansy)
   await puzzlePage.verifyAttemptHistory(1)
   await puzzlePage.verifyAttemptCounter(2, 3)
 
@@ -23,14 +23,14 @@ test("can answer correctly after wrong attempts", async ({ homePage }) => {
   await puzzlePage.verifyAttemptHistory(2)
   await puzzlePage.verifyAttemptCounter(3, 3)
 
-  await puzzlePage.submitAnswer(TestPuzzles.daisy.speciesId)
+  await puzzlePage.submitAnswer(TestSpeciesIds.daisy)
   await puzzlePage.verifyCorrectAnswer()
 })
 
 test("fails after 3 wrong attempts", async ({ homePage }) => {
   const puzzlePage = await homePage.clickPuzzle(0)
 
-  await puzzlePage.submitAnswer(TestPuzzles.tansy.speciesId)
+  await puzzlePage.submitAnswer(TestSpeciesIds.tansy)
 
   await puzzlePage.searchForPlant("Chicory")
   await puzzlePage.selectFirstPlantOption()
@@ -62,7 +62,7 @@ test("can choose a different plant", async ({ homePage }) => {
 
 test("daily puzzle stays completed after leaving and returning", async ({ homePage }) => {
   const dailyPuzzle = await homePage.clickDailyPuzzle()
-  await dailyPuzzle.submitAnswer(TestPuzzles.devilsBitScabious.speciesId)
+  await dailyPuzzle.submitAnswer(TestSpeciesIds.devilsBitScabious)
   await dailyPuzzle.verifyCorrectAnswer()
 
   const backHome = await dailyPuzzle.goHome()

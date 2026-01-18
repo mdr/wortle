@@ -1,6 +1,6 @@
 import { ReactNode, useMemo } from "react"
 
-import { GameStorage } from "@/lib/gameStorage/GameStorage"
+import { HistoryStore } from "@/lib/gameStorage/HistoryStore"
 import { Puzzle } from "@/lib/Puzzle"
 import { Iso8601Date } from "@/utils/brandedTypes"
 
@@ -11,7 +11,7 @@ interface PuzzleServiceProviderProps {
   puzzle: Puzzle
   scheduledDate?: Iso8601Date
   mode: PuzzleMode
-  gameStorage: GameStorage
+  historyStore: HistoryStore
   children: ReactNode
 }
 
@@ -19,12 +19,12 @@ export const PuzzleServiceProvider = ({
   puzzle,
   scheduledDate,
   mode,
-  gameStorage,
+  historyStore,
   children,
 }: PuzzleServiceProviderProps) => {
   const service = useMemo(
-    () => new PuzzleService(puzzle, scheduledDate, mode, gameStorage),
-    [puzzle, scheduledDate, mode, gameStorage],
+    () => new PuzzleService(puzzle, scheduledDate, mode, historyStore),
+    [puzzle, scheduledDate, mode, historyStore],
   )
 
   return <PuzzleServiceContext.Provider value={service}>{children}</PuzzleServiceContext.Provider>

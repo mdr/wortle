@@ -4,7 +4,7 @@ import { assert } from "tsafe"
 import { TipWithGlossary } from "@/components/puzzle/TipWithGlossary"
 import { Card } from "@/components/shadcn/Card"
 import { AttemptResult } from "@/lib/AttemptResult"
-import { DailyResult } from "@/lib/gameStorage/GameState"
+import { PassOrFail } from "@/lib/gameStorage/HistoryRecord"
 import { getResultMedal } from "@/lib/resultMedal"
 import { getSpecies } from "@/lib/species/plants"
 import { selectCorrectSpecies } from "@/services/puzzle/puzzleSelectors"
@@ -87,7 +87,7 @@ export const AnswerResult = () => {
         </div>
       )
     }
-    const result = isCorrect ? DailyResult.PASS : DailyResult.FAIL
+    const result = isCorrect ? PassOrFail.PASS : PassOrFail.FAIL
     return <span className="text-5xl">{getResultMedal({ attemptCount: attempts.length, result })}</span>
   }
 

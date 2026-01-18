@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router"
 import { ArrowLeft, Calendar } from "lucide-react"
 import { useMemo } from "react"
 
-import { useClock, useGameStorage } from "@/components/app/GlobalDependenciesProvider"
+import { useClock, useHistoryStore } from "@/components/app/GlobalDependenciesProvider"
 import { Button } from "@/components/shadcn/Button"
 import { Card } from "@/components/shadcn/Card"
 import { StatsSummaryGrid } from "@/components/shared/StatsSummaryGrid"
@@ -13,12 +13,15 @@ import { HistoryItem } from "./HistoryItem"
 import { HistoryTestIds } from "./HistoryTestIds"
 
 export const HistoryPage = () => {
-  const storage = useGameStorage()
+  const storage = useHistoryStore()
   const clock = useClock()
   const today = clock.todayIso()
-  const stats = useMemo(() => storage.load(), [storage])
-  const summary = useMemo(() => calculateDailyStatsSummary(stats.history), [stats.history])
-  const sortedHistory = useMemo(() => [...stats.history].sort((a, b) => b.date.localeCompare(a.date)), [stats.history])
+  const history = useMemo(() => storage.load(), [storage])
+  const summary = useMemo(() => calculateDailyStatsSummary(history.attempts), [history.attempts])
+  const sortedAttempts = useMemo(
+    () => [...history.attempts].sort((a, b) => b.date.localeCompare(a.date)),
+    [history.attempts],
+  )
 
   return (
     <main className="bg-background min-h-screen" data-testid={HistoryTestIds.page}>
@@ -34,7 +37,7 @@ export const HistoryPage = () => {
         </div>
 
         <div className="space-y-6">
-          {sortedHistory.length > 0 && (
+          {sortedAttempts.length > 0 && (
             <Card className="p-4" data-testid={HistoryTestIds.stats}>
               <h2 className="text-foreground mb-3 font-serif text-lg font-semibold">Statistics</h2>
               <StatsSummaryGrid summary={summary} />
@@ -43,7 +46,7 @@ export const HistoryPage = () => {
 
           <Card className="p-4">
             <h2 className="text-foreground mb-3 font-serif text-lg font-semibold">Recent Puzzles</h2>
-            {sortedHistory.length === 0 ? (
+            {sortedAttempts.length === 0 ? (
               <div className="py-8 text-center" data-testid={HistoryTestIds.emptyState}>
                 <Calendar className="text-muted-foreground mx-auto mb-4 size-12" />
                 <p className="text-muted-foreground mb-4">You haven't completed any puzzles yet.</p>
@@ -53,8 +56,8 @@ export const HistoryPage = () => {
               </div>
             ) : (
               <div className="space-y-3">
-                {sortedHistory.map((record) => (
-                  <HistoryItem key={record.date} record={record} isToday={record.date === today} />
+                {sortedAttempts.map((attempt) => (
+                  <HistoryItem key={attempt.date} attempt={attempt} isToday={attempt.date === today} />
                 ))}
               </div>
             )}

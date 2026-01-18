@@ -3,8 +3,8 @@ import { describe, expect, it } from "vitest"
 import { Iso8601Date } from "@/utils/brandedTypes"
 
 import { calculateDailyStatsSummary } from "./dailyStatsSummary"
-import { DailyResult } from "./GameState"
-import { createDailyPuzzleRecord } from "./GameStorage.testUtils"
+import { PassOrFail } from "./HistoryRecord"
+import { createPuzzleAttempt } from "./HistoryStore.testUtils"
 
 describe("calculateDailyStatsSummary", () => {
   it("returns empty summary when history is empty", () => {
@@ -20,8 +20,8 @@ describe("calculateDailyStatsSummary", () => {
 
   it("counts consecutive passes as streaks", () => {
     const history = [
-      createDailyPuzzleRecord({ date: Iso8601Date("2026-06-08"), result: DailyResult.PASS }),
-      createDailyPuzzleRecord({ date: Iso8601Date("2026-06-09"), result: DailyResult.PASS }),
+      createPuzzleAttempt({ date: Iso8601Date("2026-06-08"), result: PassOrFail.PASS }),
+      createPuzzleAttempt({ date: Iso8601Date("2026-06-09"), result: PassOrFail.PASS }),
     ]
 
     expect(calculateDailyStatsSummary(history)).toEqual({
@@ -35,8 +35,8 @@ describe("calculateDailyStatsSummary", () => {
 
   it("breaks streaks on gaps or failures", () => {
     const history = [
-      createDailyPuzzleRecord({ date: Iso8601Date("2026-06-08"), result: DailyResult.PASS }),
-      createDailyPuzzleRecord({ date: Iso8601Date("2026-06-10"), result: DailyResult.FAIL }),
+      createPuzzleAttempt({ date: Iso8601Date("2026-06-08"), result: PassOrFail.PASS }),
+      createPuzzleAttempt({ date: Iso8601Date("2026-06-10"), result: PassOrFail.FAIL }),
     ]
 
     expect(calculateDailyStatsSummary(history)).toEqual({
@@ -50,9 +50,9 @@ describe("calculateDailyStatsSummary", () => {
 
   it("treats records without result (abandoned) as failures for streaks", () => {
     const history = [
-      createDailyPuzzleRecord({ date: Iso8601Date("2026-06-08"), result: DailyResult.PASS }),
-      createDailyPuzzleRecord({ date: Iso8601Date("2026-06-09"), result: undefined }),
-      createDailyPuzzleRecord({ date: Iso8601Date("2026-06-10"), result: DailyResult.PASS }),
+      createPuzzleAttempt({ date: Iso8601Date("2026-06-08"), result: PassOrFail.PASS }),
+      createPuzzleAttempt({ date: Iso8601Date("2026-06-09"), result: undefined }),
+      createPuzzleAttempt({ date: Iso8601Date("2026-06-10"), result: PassOrFail.PASS }),
     ]
 
     expect(calculateDailyStatsSummary(history)).toEqual({
@@ -65,7 +65,7 @@ describe("calculateDailyStatsSummary", () => {
   })
 
   it("counts records without result in played total", () => {
-    const history = [createDailyPuzzleRecord({ date: Iso8601Date("2026-06-08"), result: undefined })]
+    const history = [createPuzzleAttempt({ date: Iso8601Date("2026-06-08"), result: undefined })]
 
     expect(calculateDailyStatsSummary(history)).toEqual({
       played: 1,

@@ -2,7 +2,7 @@ import { Check, Share2 } from "lucide-react"
 import { useState } from "react"
 
 import { Button } from "@/components/shadcn/Button"
-import { DailyResult } from "@/lib/gameStorage/GameState"
+import { PassOrFail } from "@/lib/gameStorage/HistoryRecord"
 import { getResultMedal } from "@/lib/resultMedal"
 import { PuzzleOutcome } from "@/services/puzzle/PuzzleService"
 import { usePuzzleState } from "@/services/puzzle/puzzleServiceHooks"
@@ -31,7 +31,7 @@ const getOrdinal = (n: number): string => {
 const generateShareText = (scheduledDate: Iso8601Date, attemptCount: number, outcome: PuzzleOutcome): string => {
   const isCorrect = outcome === PuzzleOutcome.CORRECT
   const isGaveUpOrNotCompleted = outcome === PuzzleOutcome.GAVE_UP || outcome === PuzzleOutcome.NOT_COMPLETED
-  const result = isCorrect ? DailyResult.PASS : DailyResult.FAIL
+  const result = isCorrect ? PassOrFail.PASS : PassOrFail.FAIL
   const medal = isGaveUpOrNotCompleted ? "❌" : getResultMedal({ attemptCount, result })
   const attemptText = isGaveUpOrNotCompleted ? "gave up" : `${getOrdinal(attemptCount)} try`
 

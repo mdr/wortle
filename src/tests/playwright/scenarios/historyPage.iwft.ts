@@ -1,4 +1,4 @@
-import { TestPuzzles } from "@/lib/testConstants.testUtils"
+import { TestSpeciesIds } from "@/lib/testConstants.testUtils"
 
 import { test } from "../fixtures"
 
@@ -10,7 +10,7 @@ test("history page shows empty state when no puzzles completed", async ({ histor
 
 test("history page shows completed puzzle", async ({ homePage }) => {
   const puzzlePage = await homePage.clickDailyPuzzle()
-  await puzzlePage.submitAnswer(TestPuzzles.devilsBitScabious.speciesId)
+  await puzzlePage.submitAnswer(TestSpeciesIds.devilsBitScabious)
   await puzzlePage.verifyCorrectAnswer()
 
   const home = await puzzlePage.goHome()
