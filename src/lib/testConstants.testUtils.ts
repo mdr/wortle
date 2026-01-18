@@ -45,10 +45,4 @@ export const TestSpeciesIds = {
   tansy: SpeciesId("2cd4p9h.9b1"),
 } as const
 
-export const TestSpecies = {
-  daisy: getSpecies(TestSpeciesIds.daisy),
-  devilsBitScabious: getSpecies(TestSpeciesIds.devilsBitScabious),
-  herbRobert: getSpecies(TestSpeciesIds.herbRobert),
-}
-
 export const TestDate = Iso8601Date("2026-06-08")

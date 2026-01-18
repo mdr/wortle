@@ -67,6 +67,11 @@ tasks:
     cmds:
       - pnpm exec knip
 
+  knip:prod:
+    desc: Find unused code (production only, ignores test usage)
+    cmds:
+      - pnpm exec knip --production
+
   check:
     desc: Run all checks (tsc, lint, format, tests)
     cmds:
