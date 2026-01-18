@@ -51,7 +51,7 @@ export const AnswerResult = () => {
         </div>
       )
     }
-    return <span className="text-5xl">{getResultMedal(attempts.length, isCorrect)}</span>
+    return <span className="text-5xl">{getResultMedal({ attemptCount: attempts.length, isCorrect })}</span>
   }
 
   return (

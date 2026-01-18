@@ -1,4 +1,9 @@
-export const getResultMedal = (attemptCount: number, isCorrect: boolean): string => {
+interface ResultArgs {
+  attemptCount: number
+  isCorrect: boolean
+}
+
+export const getResultMedal = ({ attemptCount, isCorrect }: ResultArgs): string => {
   if (!isCorrect) return "❌"
   if (attemptCount === 1) return "🥇"
   if (attemptCount === 2) return "🥈"
@@ -12,12 +17,7 @@ const getOrdinal = (n: number): string => {
   return `${n}th`
 }
 
-interface ResultDescriptionArgs {
-  attemptCount: number
-  isCorrect: boolean
-}
-
-export const getResultDescription = ({ attemptCount, isCorrect }: ResultDescriptionArgs): string => {
+export const getResultDescription = ({ attemptCount, isCorrect }: ResultArgs): string => {
   if (!isCorrect) return "Incorrect"
   return `Correct on ${getOrdinal(attemptCount)} try`
 }

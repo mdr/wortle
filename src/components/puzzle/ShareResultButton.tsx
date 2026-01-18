@@ -21,7 +21,7 @@ const generateShareText = (
   isCorrect: boolean,
   gaveUp: boolean,
 ): string => {
-  const medal = gaveUp ? "❌" : getResultMedal(attemptCount, isCorrect)
+  const medal = gaveUp ? "❌" : getResultMedal({ attemptCount, isCorrect })
   const attemptText = gaveUp ? "gave up" : `${getOrdinal(attemptCount)} try`
 
   return `Wortle ${formatDate(scheduledDate, undefined, "medium")} ${medal} ${attemptText}

@@ -24,7 +24,7 @@ export const HistoryItem = ({ record }: HistoryItemProps) => {
       <div className="bg-muted hover:bg-muted/80 flex items-center justify-between rounded-lg p-4 transition-colors">
         <div className="flex items-center gap-3">
           <span className="text-2xl" aria-hidden="true">
-            {getResultMedal(guessCount, isPassed)}
+            {getResultMedal({ attemptCount: guessCount, isCorrect: isPassed })}
           </span>
           <span className="sr-only">{getResultDescription({ attemptCount: guessCount, isCorrect: isPassed })}:</span>
           <div>
