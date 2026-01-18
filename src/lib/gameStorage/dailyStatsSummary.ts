@@ -1,7 +1,7 @@
 import { Iso8601Date } from "@/utils/brandedTypes"
 import { Option } from "@/utils/types/Option"
 
-import { DailyPuzzleRecord, DailyResult } from "./StatsStorage"
+import { DailyPuzzleRecord, DailyResult } from "./GameState"
 
 export interface DailyStatsSummary {
   readonly played: number

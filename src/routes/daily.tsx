@@ -1,6 +1,6 @@
 import { createFileRoute, notFound } from "@tanstack/react-router"
 
-import { useStatsStorage } from "@/components/app/GlobalDependenciesProvider"
+import { useGameStorage } from "@/components/app/GlobalDependenciesProvider"
 import { ErrorFallback } from "@/components/error/ErrorFallback"
 import { NotFoundPage } from "@/components/notFound/NotFoundPage"
 import { PuzzlePage } from "@/components/puzzle/PuzzlePage"
@@ -47,7 +47,7 @@ export const Route = createFileRoute("/daily")({
 
 const DailyPuzzlePage = () => {
   const { puzzle, correctSpecies, scheduledDate } = Route.useLoaderData()
-  const statsStorage = useStatsStorage()
+  const gameStorage = useGameStorage()
   if (!puzzle || !correctSpecies) {
     return <NotFoundPage message="No puzzle is scheduled for today." />
   }
@@ -58,7 +58,7 @@ const DailyPuzzlePage = () => {
       correctSpecies={correctSpecies}
       scheduledDate={scheduledDate}
       mode={PuzzleMode.DAILY}
-      statsStorage={statsStorage}
+      gameStorage={gameStorage}
     >
       <PuzzlePage />
     </PuzzleServiceProvider>

@@ -2,18 +2,18 @@ import { Link } from "@tanstack/react-router"
 import { ArrowLeft, Calendar } from "lucide-react"
 import { useMemo } from "react"
 
-import { useStatsStorage } from "@/components/app/GlobalDependenciesProvider"
+import { useGameStorage } from "@/components/app/GlobalDependenciesProvider"
 import { Button } from "@/components/shadcn/Button"
 import { Card } from "@/components/shadcn/Card"
 import { StatsSummaryGrid } from "@/components/shared/StatsSummaryGrid"
-import { calculateDailyStatsSummary } from "@/lib/statsStorage/dailyStatsSummary"
+import { calculateDailyStatsSummary } from "@/lib/gameStorage/dailyStatsSummary"
 import { assetUrl } from "@/utils/utils"
 
 import { HistoryItem } from "./HistoryItem"
 import { HistoryTestIds } from "./HistoryTestIds"
 
 export const HistoryPage = () => {
-  const storage = useStatsStorage()
+  const storage = useGameStorage()
   const stats = useMemo(() => storage.load(), [storage])
   const summary = useMemo(() => calculateDailyStatsSummary(stats.history), [stats.history])
   const sortedHistory = useMemo(() => [...stats.history].sort((a, b) => b.date.localeCompare(a.date)), [stats.history])

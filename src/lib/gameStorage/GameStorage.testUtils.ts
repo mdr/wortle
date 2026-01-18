@@ -2,13 +2,14 @@ import { assert } from "tsafe"
 
 import { TestPuzzles, TestSpeciesIds } from "@/tests/playwright/testConstants.testUtils"
 
-import { type DailyPuzzleRecord, DailyResult, StatsStorage } from "./StatsStorage"
+import { type DailyPuzzleRecord, DailyResult } from "./GameState"
+import { GameStorage } from "./GameStorage"
 import { createMemoryStorage } from "./storage.testUtils"
 
 const defaultDate = TestPuzzles.daisy.scheduledDate
 assert(defaultDate !== undefined)
 
-export const createStatsStorage = () => new StatsStorage(createMemoryStorage())
+export const createGameStorage = () => new GameStorage(createMemoryStorage())
 
 export const createDailyPuzzleRecord = (overrides: Partial<DailyPuzzleRecord> = {}): DailyPuzzleRecord => ({
   date: defaultDate,

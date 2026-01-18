@@ -1,15 +1,16 @@
 import { createFileRoute, notFound } from "@tanstack/react-router"
 import { useMemo } from "react"
 
-import { useStatsStorage } from "@/components/app/GlobalDependenciesProvider"
+import { useGameStorage } from "@/components/app/GlobalDependenciesProvider"
 import { ErrorFallback } from "@/components/error/ErrorFallback"
 import { NotFoundPage } from "@/components/notFound/NotFoundPage"
 import { PuzzlePage } from "@/components/puzzle/PuzzlePage"
+import { DailyPuzzleRecord } from "@/lib/gameStorage/GameState"
+import { GameStorage } from "@/lib/gameStorage/GameStorage"
 import { Puzzle } from "@/lib/Puzzle"
 import { findPuzzle } from "@/lib/puzzles"
 import { findSpecies } from "@/lib/species/plants"
 import { Species } from "@/lib/species/Species"
-import { DailyPuzzleRecord, StatsStorage } from "@/lib/statsStorage/StatsStorage"
 import { PuzzleMode } from "@/services/puzzle/PuzzleService"
 import { PuzzleServiceProvider } from "@/services/puzzle/PuzzleServiceProvider"
 import { Iso8601Date } from "@/utils/brandedTypes"
@@ -47,16 +48,13 @@ export const Route = createFileRoute("/archive/$date")({
   errorComponent: ({ error }) => <ErrorFallback error={error} />,
 })
 
-const findCompletionRecord = (storage: StatsStorage, date: Iso8601Date): DailyPuzzleRecord | undefined =>
+const findCompletionRecord = (storage: GameStorage, date: Iso8601Date): DailyPuzzleRecord | undefined =>
   storage.load().history.find((record) => record.date === date)
 
 const ArchivePuzzlePage = () => {
   const { puzzle, correctSpecies, scheduledDate } = Route.useLoaderData()
-  const statsStorage = useStatsStorage()
-  const completionRecord = useMemo(
-    () => findCompletionRecord(statsStorage, scheduledDate),
-    [statsStorage, scheduledDate],
-  )
+  const gameStorage = useGameStorage()
+  const completionRecord = useMemo(() => findCompletionRecord(gameStorage, scheduledDate), [gameStorage, scheduledDate])
 
   if (!puzzle || !correctSpecies) {
     return <NotFoundPage message="No puzzle was scheduled for this date." />
@@ -68,7 +66,7 @@ const ArchivePuzzlePage = () => {
       correctSpecies={correctSpecies}
       scheduledDate={scheduledDate}
       mode={PuzzleMode.ARCHIVE}
-      statsStorage={statsStorage}
+      gameStorage={gameStorage}
       completionRecord={completionRecord}
     >
       <PuzzlePage />

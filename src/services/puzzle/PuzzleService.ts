@@ -1,11 +1,12 @@
 import { assert } from "tsafe"
 
 import { AttemptFeedback, createAttemptFeedback } from "@/lib/AttemptFeedback"
+import { calculateDailyStatsSummary, DailyStatsSummary } from "@/lib/gameStorage/dailyStatsSummary"
+import { DailyPuzzleRecord, DailyResult } from "@/lib/gameStorage/GameState"
+import { GameStorage } from "@/lib/gameStorage/GameStorage"
 import { Puzzle } from "@/lib/Puzzle"
 import { getSpecies } from "@/lib/species/plants"
 import { Species, SpeciesId } from "@/lib/species/Species"
-import { calculateDailyStatsSummary, DailyStatsSummary } from "@/lib/statsStorage/dailyStatsSummary"
-import { DailyPuzzleRecord, DailyResult, StatsStorage } from "@/lib/statsStorage/StatsStorage"
 import { Iso8601Date } from "@/utils/brandedTypes"
 import { AbstractService } from "@/utils/providerish/AbstractService"
 
@@ -33,7 +34,7 @@ export interface PuzzleServiceActions {
 
 interface PuzzleServiceOptions {
   mode: PuzzleMode
-  statsStorage: StatsStorage
+  gameStorage: GameStorage
   completionRecord?: DailyPuzzleRecord
 }
 
@@ -63,15 +64,15 @@ export class PuzzleService extends AbstractService<PuzzleServiceState> implement
     state: PuzzleServiceBaseState,
     private readonly options: PuzzleServiceOptions,
   ) {
-    const { statsStorage, completionRecord: providedCompletionRecord } = options
+    const { gameStorage, completionRecord: providedCompletionRecord } = options
     const hasDailyStats = options.mode === PuzzleMode.DAILY
-    const statsSnapshot = hasDailyStats ? statsStorage.load() : undefined
-    const history = statsSnapshot?.history ?? []
+    const gameState = hasDailyStats ? gameStorage.load() : undefined
+    const history = gameState?.history ?? []
 
     // Handle in-progress state for daily mode
-    const dailyInProgress = statsSnapshot?.dailyInProgress
+    const dailyInProgress = gameState?.dailyInProgress
     if (dailyInProgress && state.scheduledDate && dailyInProgress.date !== state.scheduledDate) {
-      statsStorage.clearDailyInProgress()
+      gameStorage.clearDailyInProgress()
     }
     const matchingInProgress =
       dailyInProgress && state.scheduledDate === dailyInProgress.date ? dailyInProgress : undefined
@@ -93,7 +94,7 @@ export class PuzzleService extends AbstractService<PuzzleServiceState> implement
       completedRecord !== undefined && completedRecord.result === DailyResult.FAIL && attempts.length < MAX_ATTEMPTS
     const didNotAttempt = options.mode === PuzzleMode.ARCHIVE && completedRecord === undefined
     const statsSummary =
-      options.mode === PuzzleMode.DAILY ? calculateDailyStatsSummary(options.statsStorage.load().history) : undefined
+      options.mode === PuzzleMode.DAILY ? calculateDailyStatsSummary(options.gameStorage.load().history) : undefined
     super({
       ...state,
       mode: options.mode,
@@ -187,10 +188,10 @@ export class PuzzleService extends AbstractService<PuzzleServiceState> implement
 
   private readonly saveDailyInProgress = (attemptedSpeciesIds: SpeciesId[]): void => {
     if (this.options.mode === PuzzleMode.DAILY) {
-      const { statsStorage } = this.options
+      const { gameStorage } = this.options
       const scheduledDate = this.state.scheduledDate
       assert(scheduledDate, "PuzzleService requires a scheduled date in daily mode.")
-      statsStorage.saveDailyInProgress({
+      gameStorage.saveDailyInProgress({
         date: scheduledDate,
         attemptedSpeciesIds,
       })
@@ -199,11 +200,11 @@ export class PuzzleService extends AbstractService<PuzzleServiceState> implement
 
   private readonly updateStats = (result: DailyResult, attemptedSpeciesIds: SpeciesId[]): void => {
     if (this.options.mode === PuzzleMode.DAILY) {
-      const { statsStorage } = this.options
-      assert(statsStorage, "PuzzleService requires stats storage in daily mode.")
+      const { gameStorage } = this.options
+      assert(gameStorage, "PuzzleService requires stats storage in daily mode.")
       const scheduledDate = this.state.scheduledDate
       assert(scheduledDate, "PuzzleService requires a scheduled date in daily mode.")
-      const nextStats = statsStorage.recordDailyCompletion({
+      const nextStats = gameStorage.recordDailyCompletion({
         date: scheduledDate,
         puzzleId: this.state.puzzle.id,
         result,

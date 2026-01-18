@@ -1,9 +1,9 @@
 import { Link } from "@tanstack/react-router"
 
+import { type DailyPuzzleRecord, DailyResult } from "@/lib/gameStorage/GameState"
 import { findPuzzle } from "@/lib/puzzles"
 import { getResultDescription, getResultMedal } from "@/lib/resultMedal"
 import { getSpecies } from "@/lib/species/plants"
-import { type DailyPuzzleRecord, DailyResult } from "@/lib/statsStorage/StatsStorage"
 import { formatDate } from "@/utils/dateUtils"
 
 import { HistoryTestIds } from "./HistoryTestIds"

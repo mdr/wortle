@@ -1,6 +1,6 @@
 import { createFileRoute, notFound } from "@tanstack/react-router"
 
-import { useStatsStorage } from "@/components/app/GlobalDependenciesProvider"
+import { useGameStorage } from "@/components/app/GlobalDependenciesProvider"
 import { ErrorFallback } from "@/components/error/ErrorFallback"
 import { NotFoundPage } from "@/components/notFound/NotFoundPage"
 import { PuzzlePage } from "@/components/puzzle/PuzzlePage"
@@ -34,13 +34,13 @@ export const Route = createFileRoute("/review/$puzzleId")({
 
 const PuzzlePageWrapper = () => {
   const { puzzle, correctSpecies } = Route.useLoaderData()
-  const statsStorage = useStatsStorage()
+  const gameStorage = useGameStorage()
   return (
     <PuzzleServiceProvider
       puzzle={puzzle}
       correctSpecies={correctSpecies}
       mode={PuzzleMode.REVIEW}
-      statsStorage={statsStorage}
+      gameStorage={gameStorage}
     >
       <PuzzlePage showStatsPlaceholder />
     </PuzzleServiceProvider>

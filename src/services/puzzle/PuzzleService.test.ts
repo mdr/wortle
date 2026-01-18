@@ -1,11 +1,12 @@
 import { describe, expect, it } from "vitest"
 
+import { DailyResult } from "@/lib/gameStorage/GameState"
+import { GameStorage } from "@/lib/gameStorage/GameStorage"
+import { createMemoryStorage } from "@/lib/gameStorage/storage.testUtils"
 import { Puzzle } from "@/lib/Puzzle"
 import { getPuzzle } from "@/lib/puzzles"
 import { getSpecies } from "@/lib/species/plants"
 import { Species } from "@/lib/species/Species"
-import { DailyResult, StatsStorage } from "@/lib/statsStorage/StatsStorage"
-import { createMemoryStorage } from "@/lib/statsStorage/storage.testUtils"
 import { TestPuzzles, TestSpeciesIds } from "@/tests/playwright/testConstants.testUtils"
 import { Iso8601Date } from "@/utils/brandedTypes"
 
@@ -19,12 +20,12 @@ const getPuzzleData = (): { puzzle: Puzzle; correctSpecies: Species } => {
   return { puzzle, correctSpecies }
 }
 
-const makePuzzleService = (options: Partial<{ mode: PuzzleMode; statsStorage: StatsStorage }> = {}): PuzzleService => {
+const makePuzzleService = (options: Partial<{ mode: PuzzleMode; gameStorage: GameStorage }> = {}): PuzzleService => {
   const { puzzle, correctSpecies } = getPuzzleData()
-  const statsStorage = options.statsStorage ?? new StatsStorage(createMemoryStorage())
+  const gameStorage = options.gameStorage ?? new GameStorage(createMemoryStorage())
   return new PuzzleService(
     { puzzle, correctSpecies, scheduledDate },
-    { mode: options.mode ?? PuzzleMode.REVIEW, statsStorage },
+    { mode: options.mode ?? PuzzleMode.REVIEW, gameStorage },
   )
 }
 
@@ -32,15 +33,15 @@ describe("PuzzleService", () => {
   describe("hydration", () => {
     it("hydrates completed daily puzzles from stats", () => {
       const storage = createMemoryStorage()
-      const statsStorage = new StatsStorage(storage)
-      statsStorage.recordDailyCompletion({
+      const gameStorage = new GameStorage(storage)
+      gameStorage.recordDailyCompletion({
         date: scheduledDate,
         puzzleId,
         result: DailyResult.PASS,
         attemptedSpeciesIds: [TestPuzzles.herbRobert.speciesId, TestPuzzles.daisy.speciesId],
       })
 
-      const service = makePuzzleService({ mode: PuzzleMode.DAILY, statsStorage })
+      const service = makePuzzleService({ mode: PuzzleMode.DAILY, gameStorage })
 
       expect(service.state.attempts).toHaveLength(2)
       expect(service.state.attempts[1]?.isCorrect).toBe(true)
@@ -51,15 +52,15 @@ describe("PuzzleService", () => {
 
     it("marks gave up when daily stats show a failure before max attempts", () => {
       const storage = createMemoryStorage()
-      const statsStorage = new StatsStorage(storage)
-      statsStorage.recordDailyCompletion({
+      const gameStorage = new GameStorage(storage)
+      gameStorage.recordDailyCompletion({
         date: scheduledDate,
         puzzleId,
         result: DailyResult.FAIL,
         attemptedSpeciesIds: [TestPuzzles.herbRobert.speciesId],
       })
 
-      const service = makePuzzleService({ mode: PuzzleMode.DAILY, statsStorage })
+      const service = makePuzzleService({ mode: PuzzleMode.DAILY, gameStorage })
 
       expect(service.state.attempts).toHaveLength(1)
       expect(service.state.gaveUp).toBe(true)
@@ -67,8 +68,8 @@ describe("PuzzleService", () => {
 
     it("does not mark gave up when daily failure uses all attempts", () => {
       const storage = createMemoryStorage()
-      const statsStorage = new StatsStorage(storage)
-      statsStorage.recordDailyCompletion({
+      const gameStorage = new GameStorage(storage)
+      gameStorage.recordDailyCompletion({
         date: scheduledDate,
         puzzleId,
         result: DailyResult.FAIL,
@@ -79,7 +80,7 @@ describe("PuzzleService", () => {
         ],
       })
 
-      const service = makePuzzleService({ mode: PuzzleMode.DAILY, statsStorage })
+      const service = makePuzzleService({ mode: PuzzleMode.DAILY, gameStorage })
 
       expect(service.state.attempts).toHaveLength(MAX_ATTEMPTS)
       expect(service.state.gaveUp).toBe(false)
@@ -87,15 +88,15 @@ describe("PuzzleService", () => {
 
     it("ignores stats hydration for review mode", () => {
       const storage = createMemoryStorage()
-      const statsStorage = new StatsStorage(storage)
-      statsStorage.recordDailyCompletion({
+      const gameStorage = new GameStorage(storage)
+      gameStorage.recordDailyCompletion({
         date: scheduledDate,
         puzzleId,
         result: DailyResult.PASS,
         attemptedSpeciesIds: [TestPuzzles.daisy.speciesId],
       })
 
-      const service = makePuzzleService({ mode: PuzzleMode.REVIEW, statsStorage })
+      const service = makePuzzleService({ mode: PuzzleMode.REVIEW, gameStorage })
 
       expect(service.state.attempts).toHaveLength(0)
       expect(service.state.gaveUp).toBe(false)
@@ -156,8 +157,8 @@ describe("PuzzleService", () => {
 
   describe("giveUp", () => {
     it("marks the puzzle as gave up and records stats in daily mode", () => {
-      const statsStorage = new StatsStorage(createMemoryStorage())
-      const service = makePuzzleService({ mode: PuzzleMode.DAILY, statsStorage })
+      const gameStorage = new GameStorage(createMemoryStorage())
+      const service = makePuzzleService({ mode: PuzzleMode.DAILY, gameStorage })
 
       service.submitAttempt(TestPuzzles.herbRobert.speciesId)
       service.giveUp()
@@ -165,7 +166,7 @@ describe("PuzzleService", () => {
       expect(service.state.gaveUp).toBe(true)
       expect(service.state.selectedSpecies).toBeUndefined()
       expect(service.state.incorrectFeedbackText).toBeUndefined()
-      expect(statsStorage.load().history).toEqual([
+      expect(gameStorage.load().history).toEqual([
         {
           date: scheduledDate,
           puzzleId,
@@ -245,34 +246,34 @@ describe("PuzzleService", () => {
 
   describe("dailyInProgress", () => {
     it("saves in-progress after incorrect attempt in daily mode", () => {
-      const statsStorage = new StatsStorage(createMemoryStorage())
-      const service = makePuzzleService({ mode: PuzzleMode.DAILY, statsStorage })
+      const gameStorage = new GameStorage(createMemoryStorage())
+      const service = makePuzzleService({ mode: PuzzleMode.DAILY, gameStorage })
 
       service.submitAttempt(TestPuzzles.herbRobert.speciesId)
 
-      expect(statsStorage.load().dailyInProgress).toEqual({
+      expect(gameStorage.load().dailyInProgress).toEqual({
         date: scheduledDate,
         attemptedSpeciesIds: [TestPuzzles.herbRobert.speciesId],
       })
     })
 
     it("does not save in-progress in review mode", () => {
-      const statsStorage = new StatsStorage(createMemoryStorage())
-      const service = makePuzzleService({ mode: PuzzleMode.REVIEW, statsStorage })
+      const gameStorage = new GameStorage(createMemoryStorage())
+      const service = makePuzzleService({ mode: PuzzleMode.REVIEW, gameStorage })
 
       service.submitAttempt(TestPuzzles.herbRobert.speciesId)
 
-      expect(statsStorage.load().dailyInProgress).toBeUndefined()
+      expect(gameStorage.load().dailyInProgress).toBeUndefined()
     })
 
     it("restores in-progress attempts on daily puzzle hydration", () => {
-      const statsStorage = new StatsStorage(createMemoryStorage())
-      statsStorage.saveDailyInProgress({
+      const gameStorage = new GameStorage(createMemoryStorage())
+      gameStorage.saveDailyInProgress({
         date: scheduledDate,
         attemptedSpeciesIds: [TestPuzzles.herbRobert.speciesId, TestPuzzles.tansy.speciesId],
       })
 
-      const service = makePuzzleService({ mode: PuzzleMode.DAILY, statsStorage })
+      const service = makePuzzleService({ mode: PuzzleMode.DAILY, gameStorage })
 
       expect(service.state.attempts).toHaveLength(2)
       expect(service.state.attempts[0]?.speciesId).toBe(TestPuzzles.herbRobert.speciesId)
@@ -280,54 +281,54 @@ describe("PuzzleService", () => {
     })
 
     it("clears in-progress when puzzle is completed", () => {
-      const statsStorage = new StatsStorage(createMemoryStorage())
-      statsStorage.saveDailyInProgress({
+      const gameStorage = new GameStorage(createMemoryStorage())
+      gameStorage.saveDailyInProgress({
         date: scheduledDate,
         attemptedSpeciesIds: [TestPuzzles.herbRobert.speciesId],
       })
       const { correctSpecies } = getPuzzleData()
-      const service = makePuzzleService({ mode: PuzzleMode.DAILY, statsStorage })
+      const service = makePuzzleService({ mode: PuzzleMode.DAILY, gameStorage })
 
       service.submitAttempt(correctSpecies.id)
 
-      expect(statsStorage.load().dailyInProgress).toBeUndefined()
+      expect(gameStorage.load().dailyInProgress).toBeUndefined()
     })
 
     it("clears stale in-progress when date changes", () => {
-      const statsStorage = new StatsStorage(createMemoryStorage())
-      statsStorage.saveDailyInProgress({
+      const gameStorage = new GameStorage(createMemoryStorage())
+      gameStorage.saveDailyInProgress({
         date: Iso8601Date("2026-06-07"),
         attemptedSpeciesIds: [TestPuzzles.herbRobert.speciesId],
       })
 
-      const service = makePuzzleService({ mode: PuzzleMode.DAILY, statsStorage })
+      const service = makePuzzleService({ mode: PuzzleMode.DAILY, gameStorage })
 
-      expect(statsStorage.load().dailyInProgress).toBeUndefined()
+      expect(gameStorage.load().dailyInProgress).toBeUndefined()
       expect(service.state.attempts).toHaveLength(0)
     })
 
     it("does not restore in-progress for review mode", () => {
-      const statsStorage = new StatsStorage(createMemoryStorage())
-      statsStorage.saveDailyInProgress({
+      const gameStorage = new GameStorage(createMemoryStorage())
+      gameStorage.saveDailyInProgress({
         date: scheduledDate,
         attemptedSpeciesIds: [TestPuzzles.herbRobert.speciesId],
       })
 
-      const service = makePuzzleService({ mode: PuzzleMode.REVIEW, statsStorage })
+      const service = makePuzzleService({ mode: PuzzleMode.REVIEW, gameStorage })
 
       expect(service.state.attempts).toHaveLength(0)
     })
 
     it("viewing a review puzzle does not clear daily in-progress", () => {
-      const statsStorage = new StatsStorage(createMemoryStorage())
-      statsStorage.saveDailyInProgress({
+      const gameStorage = new GameStorage(createMemoryStorage())
+      gameStorage.saveDailyInProgress({
         date: scheduledDate,
         attemptedSpeciesIds: [TestPuzzles.herbRobert.speciesId],
       })
 
-      makePuzzleService({ mode: PuzzleMode.REVIEW, statsStorage })
+      makePuzzleService({ mode: PuzzleMode.REVIEW, gameStorage })
 
-      expect(statsStorage.load().dailyInProgress).toEqual({
+      expect(gameStorage.load().dailyInProgress).toEqual({
         date: scheduledDate,
         attemptedSpeciesIds: [TestPuzzles.herbRobert.speciesId],
       })

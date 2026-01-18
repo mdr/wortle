@@ -3,8 +3,8 @@ import { describe, expect, it } from "vitest"
 import { Iso8601Date } from "@/utils/brandedTypes"
 
 import { calculateDailyStatsSummary } from "./dailyStatsSummary"
-import { DailyResult } from "./StatsStorage"
-import { createDailyPuzzleRecord } from "./StatsStorage.testUtils"
+import { DailyResult } from "./GameState"
+import { createDailyPuzzleRecord } from "./GameStorage.testUtils"
 
 describe("calculateDailyStatsSummary", () => {
   it("returns empty summary when history is empty", () => {

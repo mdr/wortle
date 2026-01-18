@@ -6,7 +6,7 @@ import { ShareResultButton } from "@/components/puzzle/ShareResultButton"
 import { Button } from "@/components/shadcn/Button"
 import { Card } from "@/components/shadcn/Card"
 import { StatsSummaryGrid } from "@/components/shared/StatsSummaryGrid"
-import { type DailyStatsSummary } from "@/lib/statsStorage/dailyStatsSummary"
+import { type DailyStatsSummary } from "@/lib/gameStorage/dailyStatsSummary"
 import { type Clock } from "@/utils/Clock"
 import { formatDuration } from "@/utils/dateUtils"
 
