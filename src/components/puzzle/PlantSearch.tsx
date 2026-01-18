@@ -9,13 +9,13 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/shadcn/Command"
-import { filterSpecies, getAllSpecies } from "@/lib/species/plants"
+import { filterSpecies, findSpecies, getAllSpecies } from "@/lib/species/plants"
 import { usePuzzleServiceActions, usePuzzleState } from "@/services/puzzle/puzzleServiceHooks"
 
 import { PuzzleTestIds } from "./PuzzleTestIds"
 
 export const PlantSearch = () => {
-  const { attempts, selectedSpecies, searchQuery } = usePuzzleState()
+  const { attempts, selectedSpeciesId, searchQuery } = usePuzzleState()
   const puzzleActions = usePuzzleServiceActions()
   const excludedSpeciesIds = attempts.map((attempt) => attempt.speciesId)
   const open = searchQuery.length > 0
@@ -23,6 +23,7 @@ export const PlantSearch = () => {
   const inputId = useId()
 
   const filteredSpecies = filterSpecies(getAllSpecies(), searchQuery, excludedSpeciesIds)
+  const selectedSpecies = selectedSpeciesId ? findSpecies(selectedSpeciesId) : undefined
 
   if (selectedSpecies) {
     return (

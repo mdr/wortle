@@ -47,7 +47,7 @@ describe("PuzzleService", () => {
       expect(service.state.attempts[1]?.isCorrect).toBe(true)
       expect(service.state.gaveUp).toBe(false)
       expect(service.state.incorrectFeedbackText).toBeUndefined()
-      expect(service.state.selectedSpecies).toBeUndefined()
+      expect(service.state.selectedSpeciesId).toBeUndefined()
     })
 
     it("marks gave up when daily stats show a failure before max attempts", () => {
@@ -104,28 +104,46 @@ describe("PuzzleService", () => {
   })
 
   describe("selectSpecies", () => {
-    it("updates selected species and clears incorrect feedback", () => {
+    it("updates selected species and clears incorrect feedback and search query", () => {
       const service = makePuzzleService()
 
       service.submitAttempt(TestPuzzles.herbRobert.speciesId)
       expect(service.state.incorrectFeedbackText).toBeDefined()
 
+      service.setSearchQuery("herb")
       service.selectSpecies(TestPuzzles.herbRobert.speciesId)
-      expect(service.state.selectedSpecies?.id).toBe(TestPuzzles.herbRobert.speciesId)
-      expect(service.state.incorrectFeedbackText).toBeUndefined()
+      expect(service.state).toMatchObject({
+        selectedSpeciesId: TestPuzzles.herbRobert.speciesId,
+        incorrectFeedbackText: undefined,
+        searchQuery: "",
+      })
     })
   })
 
   describe("chooseDifferentPlant", () => {
-    it("clears selected species and incorrect feedback", () => {
+    it("clears selected species, incorrect feedback, and search query", () => {
       const service = makePuzzleService()
 
       service.selectSpecies(TestPuzzles.herbRobert.speciesId)
       service.submitAttempt(TestPuzzles.herbRobert.speciesId)
+      service.setSearchQuery("tansy")
 
       service.chooseDifferentPlant()
-      expect(service.state.selectedSpecies).toBeUndefined()
-      expect(service.state.incorrectFeedbackText).toBeUndefined()
+      expect(service.state).toMatchObject({
+        selectedSpeciesId: undefined,
+        incorrectFeedbackText: undefined,
+        searchQuery: "",
+      })
+    })
+  })
+
+  describe("setSearchQuery", () => {
+    it("sets the search query", () => {
+      const service = makePuzzleService()
+
+      service.setSearchQuery("daisy")
+
+      expect(service.state.searchQuery).toBe("daisy")
     })
   })
 
@@ -139,7 +157,7 @@ describe("PuzzleService", () => {
       expect(result).toBe(true)
       expect(service.state.attempts).toHaveLength(1)
       expect(service.state.attempts[0]?.isCorrect).toBe(true)
-      expect(service.state.selectedSpecies).toBeUndefined()
+      expect(service.state.selectedSpeciesId).toBeUndefined()
       expect(service.state.incorrectFeedbackText).toBeUndefined()
     })
 
@@ -164,7 +182,7 @@ describe("PuzzleService", () => {
       service.giveUp()
 
       expect(service.state.gaveUp).toBe(true)
-      expect(service.state.selectedSpecies).toBeUndefined()
+      expect(service.state.selectedSpeciesId).toBeUndefined()
       expect(service.state.incorrectFeedbackText).toBeUndefined()
       expect(gameStorage.load().history).toEqual([
         {

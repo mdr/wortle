@@ -7,6 +7,7 @@ import { GameStorage } from "@/lib/gameStorage/GameStorage"
 import { Puzzle } from "@/lib/Puzzle"
 import { getSpecies } from "@/lib/species/plants"
 import { Species, SpeciesId } from "@/lib/species/Species"
+import { Option } from "@/utils/types/Option"
 import { Iso8601Date } from "@/utils/brandedTypes"
 import { AbstractService } from "@/utils/providerish/AbstractService"
 
@@ -48,7 +49,7 @@ export interface PuzzleServiceState {
   gaveUp: boolean
   didNotAttempt: boolean
   incorrectFeedbackText?: string
-  selectedSpecies?: Species
+  selectedSpeciesId: Option<SpeciesId>
   searchQuery: string
   statsSummary?: DailyStatsSummary
   imageGalleryIndex: number
@@ -104,7 +105,7 @@ export class PuzzleService extends AbstractService<PuzzleServiceState> implement
       gaveUp: gaveUp || didNotAttempt,
       didNotAttempt,
       incorrectFeedbackText: undefined,
-      selectedSpecies: undefined,
+      selectedSpeciesId: undefined,
       searchQuery: "",
       imageGalleryIndex: 0,
       isFullscreenImageMode: false,
@@ -118,12 +119,11 @@ export class PuzzleService extends AbstractService<PuzzleServiceState> implement
     })
 
   selectSpecies = (speciesId: SpeciesId): void => {
-    const species = getSpecies(speciesId)
-    this.setState({ selectedSpecies: species, searchQuery: "", incorrectFeedbackText: undefined })
+    this.setState({ selectedSpeciesId: speciesId, searchQuery: "", incorrectFeedbackText: undefined })
   }
 
   chooseDifferentPlant = (): void => {
-    this.setState({ selectedSpecies: undefined, searchQuery: "", incorrectFeedbackText: undefined })
+    this.setState({ selectedSpeciesId: undefined, searchQuery: "", incorrectFeedbackText: undefined })
   }
 
   setSearchQuery = (query: string): void => {
@@ -174,7 +174,7 @@ export class PuzzleService extends AbstractService<PuzzleServiceState> implement
     this.updateState((draft) => {
       draft.attempts.push(feedback)
       draft.incorrectFeedbackText = incorrectFeedbackText
-      draft.selectedSpecies = undefined
+      draft.selectedSpeciesId = undefined
     })
     if (completion) {
       this.updateStats(completion.result, completion.attemptedSpeciesIds)
@@ -185,7 +185,7 @@ export class PuzzleService extends AbstractService<PuzzleServiceState> implement
   }
 
   giveUp = (): void => {
-    this.setState({ gaveUp: true, incorrectFeedbackText: undefined, selectedSpecies: undefined })
+    this.setState({ gaveUp: true, incorrectFeedbackText: undefined, selectedSpeciesId: undefined })
     const completion = {
       result: DailyResult.FAIL,
       attemptedSpeciesIds: this.state.attempts.map((attempt) => attempt.speciesId),

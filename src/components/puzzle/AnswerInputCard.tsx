@@ -17,15 +17,15 @@ const SHAKE_TRANSITION: AnimationOptions = { duration: 0.35, ease: "easeInOut" }
 export const AnswerInputCard = () => {
   const [scope, animate] = useAnimate()
   const puzzleActions = usePuzzleServiceActions()
-  const { attempts, incorrectFeedbackText, selectedSpecies } = usePuzzleState()
+  const { attempts, incorrectFeedbackText, selectedSpeciesId } = usePuzzleState()
 
   const shake = useCallback(() => {
     animate(scope.current, SHAKE_ANIMATION, SHAKE_TRANSITION)
   }, [animate, scope])
 
   const handleSubmit = () => {
-    assert(selectedSpecies, "Selected species is required to submit an answer.")
-    const isCorrect = puzzleActions.submitAttempt(selectedSpecies.id)
+    assert(selectedSpeciesId, "Selected species is required to submit an answer.")
+    const isCorrect = puzzleActions.submitAttempt(selectedSpeciesId)
     if (!isCorrect) {
       shake()
     }
@@ -47,7 +47,7 @@ export const AnswerInputCard = () => {
         <div className="space-y-4">
           <PlantSearch />
 
-          {selectedSpecies && (
+          {selectedSpeciesId && (
             <Button onClick={handleSubmit} className="w-full" size="lg" data-testid={PuzzleTestIds.submitAnswer}>
               I'll go with this
             </Button>
