@@ -77,6 +77,23 @@ const config = [
       "no-console": "off",
     },
   },
+  {
+    files: ["**/*.ts", "**/*.tsx"],
+    ignores: ["**/*.test.ts", "**/*.test.tsx", "**/*.testUtils.ts", "**/*.testUtils.tsx", "src/tests/**"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            {
+              group: ["*.test", "*.testUtils", "**/*.test", "**/*.testUtils"],
+              message: "Do not import test files into production code.",
+            },
+          ],
+        },
+      ],
+    },
+  },
 ]
 
 export default config
