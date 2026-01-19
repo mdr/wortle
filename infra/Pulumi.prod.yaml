@@ -1,6 +1,6 @@
 config:
   {
     "cloudflare:apiToken":
-      { secure: AAABAID6lgRGC5HeWrMCrdT/rbuJ6xLjBeHwKWp1/316DajYy7JUZfw7dgLApkvjkkTJ66CU+YicDi1BfNCzXvMofgphFuR1 },
+      { secure: AAABACGH0Wem4X156PvkxcZCB9Wf5NBNjrvUzYEVV3KwlLMKU6/nHgjBRlyqyAaGGNtPzpSzmr8yZLSfH6tfGLGnfLTKaz6b },
     "wortle-infra:cloudflareAccountId": b9b4484585e9307f7c60257ca27dd5ab,
   }
