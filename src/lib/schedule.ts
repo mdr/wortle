@@ -11,9 +11,7 @@ export interface ScheduleEntry {
 export interface Schedule {
   findPuzzleForDate: (date: Iso8601Date) => Option<PuzzleId>
   findFirstDateForPuzzle: (puzzleId: PuzzleId) => Option<Iso8601Date>
-  getDatesForPuzzle: (puzzleId: PuzzleId) => Iso8601Date[]
   getAllScheduledDates: () => Iso8601Date[]
-  findFirstScheduledDate: () => Option<Iso8601Date>
 }
 
 export class DefaultSchedule implements Schedule {
@@ -29,16 +27,7 @@ export class DefaultSchedule implements Schedule {
   findFirstDateForPuzzle = (puzzleId: PuzzleId): Option<Iso8601Date> =>
     this.entries.find((entry) => entry.puzzleId === puzzleId)?.date
 
-  getDatesForPuzzle = (puzzleId: PuzzleId): Iso8601Date[] =>
-    this.entries.filter((entry) => entry.puzzleId === puzzleId).map((entry) => entry.date)
-
   getAllScheduledDates = (): Iso8601Date[] => this.entries.map((entry) => entry.date)
-
-  findFirstScheduledDate = (): Option<Iso8601Date> =>
-    this.entries.reduce<Option<Iso8601Date>>(
-      (earliest, entry) => (!earliest || entry.date < earliest ? entry.date : earliest),
-      undefined,
-    )
 }
 
 const defaultEntries: ScheduleEntry[] = [

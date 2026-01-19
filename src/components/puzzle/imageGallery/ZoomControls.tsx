@@ -3,6 +3,8 @@ import { useControls } from "react-zoom-pan-pinch"
 
 import { Button } from "@/components/shadcn/Button"
 
+import { FullscreenTestIds } from "./GalleryTestIds"
+
 export const ZoomControls = () => {
   const { zoomIn, zoomOut, resetTransform } = useControls()
   return (
@@ -12,6 +14,7 @@ export const ZoomControls = () => {
         size="icon"
         className="size-12 rounded-full text-white hover:bg-black/70 hover:text-white"
         onClick={() => zoomOut()}
+        data-testid={FullscreenTestIds.zoomOut}
       >
         <ZoomOut className="size-6" />
         <span className="sr-only">Zoom out</span>
@@ -21,6 +24,7 @@ export const ZoomControls = () => {
         size="icon"
         className="size-12 rounded-full text-white hover:bg-black/70 hover:text-white"
         onClick={() => resetTransform()}
+        data-testid={FullscreenTestIds.resetZoom}
       >
         <RotateCcw className="size-6" />
         <span className="sr-only">Reset zoom</span>
@@ -30,6 +34,7 @@ export const ZoomControls = () => {
         size="icon"
         className="size-12 rounded-full text-white hover:bg-black/70 hover:text-white"
         onClick={() => zoomIn()}
+        data-testid={FullscreenTestIds.zoomIn}
       >
         <ZoomIn className="size-6" />
         <span className="sr-only">Zoom in</span>

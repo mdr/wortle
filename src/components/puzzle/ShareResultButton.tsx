@@ -1,6 +1,7 @@
 import { Check, Share2 } from "lucide-react"
 import { useState } from "react"
 
+import { ShareResultTestIds } from "@/components/puzzle/PuzzleTestIds"
 import { Button } from "@/components/shadcn/Button"
 import { PassOrFail } from "@/lib/gameStorage/HistoryRecord"
 import { getResultMedal } from "@/lib/resultMedal"
@@ -8,6 +9,7 @@ import { PuzzleOutcome } from "@/services/puzzle/PuzzleService"
 import { usePuzzleState } from "@/services/puzzle/puzzleServiceHooks"
 import { Iso8601Date } from "@/utils/brandedTypes"
 import { formatDate } from "@/utils/dateUtils"
+import { getOrdinal } from "@/utils/getOrdinal"
 
 export const isShareableOutcome = (outcome: PuzzleOutcome): boolean => {
   switch (outcome) {
@@ -19,13 +21,6 @@ export const isShareableOutcome = (outcome: PuzzleOutcome): boolean => {
     case PuzzleOutcome.DID_NOT_ATTEMPT:
       return false
   }
-}
-
-const getOrdinal = (n: number): string => {
-  if (n === 1) return "1st"
-  if (n === 2) return "2nd"
-  if (n === 3) return "3rd"
-  return `${n}th`
 }
 
 const generateShareText = (scheduledDate: Iso8601Date, attemptCount: number, outcome: PuzzleOutcome): string => {
@@ -69,12 +64,18 @@ export const ShareResultButton = () => {
   }
 
   return (
-    <Button onClick={handleShare} variant="outline" className="w-full bg-transparent" size="sm">
+    <Button
+      onClick={handleShare}
+      variant="outline"
+      className="w-full bg-transparent"
+      size="sm"
+      data-testid={ShareResultTestIds.button}
+    >
       {copied ? (
-        <>
-          <Check className="mr-2 size-4" />
+        <span data-testid={ShareResultTestIds.copiedState}>
+          <Check className="mr-2 inline size-4" />
           Copied!
-        </>
+        </span>
       ) : (
         <>
           <Share2 className="mr-2 size-4" />

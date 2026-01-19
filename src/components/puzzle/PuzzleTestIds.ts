@@ -23,3 +23,8 @@ export const AttemptHistoryTestIds = {
   item: "AttemptHistory.item",
   hint: "AttemptHistory.hint",
 } as const
+
+export const ShareResultTestIds = {
+  button: "ShareResult.button",
+  copiedState: "ShareResult.copiedState",
+} as const

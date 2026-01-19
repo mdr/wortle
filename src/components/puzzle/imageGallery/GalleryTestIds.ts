@@ -13,4 +13,7 @@ export const FullscreenTestIds = {
   prev: "Fullscreen.prev",
   next: "Fullscreen.next",
   close: "Fullscreen.close",
+  zoomIn: "Fullscreen.zoomIn",
+  zoomOut: "Fullscreen.zoomOut",
+  resetZoom: "Fullscreen.resetZoom",
 } as const

@@ -1,3 +1,5 @@
+import { getOrdinal } from "@/utils/getOrdinal"
+
 import { PassOrFail } from "./gameStorage/HistoryRecord"
 
 interface ResultArgs {
@@ -14,13 +16,6 @@ export const getResultMedal = ({ attemptCount, result, isToday }: ResultArgs): s
   if (attemptCount === 1) return "🥇"
   if (attemptCount === 2) return "🥈"
   return "🥉"
-}
-
-const getOrdinal = (n: number): string => {
-  if (n === 1) return "1st"
-  if (n === 2) return "2nd"
-  if (n === 3) return "3rd"
-  return `${n}th`
 }
 
 export const getResultDescription = ({ attemptCount, result, isToday }: ResultArgs): string => {

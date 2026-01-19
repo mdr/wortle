@@ -1,4 +1,9 @@
-import { AnswerTestIds, AttemptHistoryTestIds, PuzzleTestIds } from "@/components/puzzle/PuzzleTestIds"
+import {
+  AnswerTestIds,
+  AttemptHistoryTestIds,
+  PuzzleTestIds,
+  ShareResultTestIds,
+} from "@/components/puzzle/PuzzleTestIds"
 import { SharedTestIds } from "@/components/shared/SharedTestIds"
 import { getSpecies } from "@/lib/species/plants"
 import { SpeciesId } from "@/lib/species/Species"
@@ -89,4 +94,16 @@ export class PuzzlePageObject extends PageObject {
       await this.get(SharedTestIds.headerHistoryLink).click()
       return new HistoryPageObject(this.mountResult).verifyIsShown()
     })
+
+  verifyShareButtonVisible = (): Promise<void> =>
+    this.step("verifyShareButtonVisible", () => expect(this.get(ShareResultTestIds.button)).toBeVisible())
+
+  verifyShareButtonHidden = (): Promise<void> =>
+    this.step("verifyShareButtonHidden", () => expect(this.get(ShareResultTestIds.button)).not.toBeVisible())
+
+  clickShareResult = (): Promise<void> =>
+    this.step("clickShareResult", () => this.get(ShareResultTestIds.button).click())
+
+  verifyShareCopied = (): Promise<void> =>
+    this.step("verifyShareCopied", () => expect(this.get(ShareResultTestIds.copiedState)).toBeVisible())
 }

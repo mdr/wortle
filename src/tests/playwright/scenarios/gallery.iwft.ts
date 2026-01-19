@@ -57,3 +57,50 @@ test("can zoom fullscreen with keyboard shortcuts", async ({ homePage }) => {
   await fullscreen.pressZoomOutKey()
   await fullscreen.verifyZoomedOut(zoomedScale)
 })
+
+test("can navigate fullscreen with arrow keys", async ({ homePage }) => {
+  const puzzle = await homePage.clickPuzzle(0)
+  const gallery = await puzzle.gallery()
+
+  const fullscreen = await gallery.openFullscreen()
+  await fullscreen.verifyCaption("Whole plant")
+
+  await fullscreen.pressRightArrow()
+  await fullscreen.verifyCaption("Flower close-up")
+
+  await fullscreen.pressRightArrow()
+  await fullscreen.verifyCaption("Leaves close-up")
+
+  await fullscreen.pressLeftArrow()
+  await fullscreen.verifyCaption("Flower close-up")
+})
+
+test("can close fullscreen with escape key", async ({ homePage }) => {
+  const puzzle = await homePage.clickPuzzle(0)
+  const gallery = await puzzle.gallery()
+
+  const fullscreen = await gallery.openFullscreen()
+  await fullscreen.pressEscape()
+  await fullscreen.verifyIsClosed()
+})
+
+test("can zoom fullscreen with buttons", async ({ homePage }) => {
+  const puzzle = await homePage.clickPuzzle(0)
+  const gallery = await puzzle.gallery()
+
+  const fullscreen = await gallery.openFullscreen()
+  const initialScale = await fullscreen.getTransformScale()
+
+  await fullscreen.clickZoomIn()
+  await fullscreen.verifyZoomedIn(initialScale)
+
+  const zoomedScale = await fullscreen.getTransformScale()
+  await fullscreen.clickZoomOut()
+  await fullscreen.verifyZoomedOut(zoomedScale)
+
+  await fullscreen.clickZoomIn()
+  await fullscreen.clickZoomIn()
+
+  await fullscreen.clickResetZoom()
+  await fullscreen.verifyZoomReset()
+})

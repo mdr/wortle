@@ -2,6 +2,7 @@ import { HomeTestIds } from "@/components/home/HomeTestIds"
 import { SharedTestIds } from "@/components/shared/SharedTestIds"
 
 import { expect } from "../fixtures"
+import { AboutPageObject } from "./AboutPageObject"
 import { HistoryPageObject } from "./HistoryPageObject"
 import { PageObject } from "./PageObject"
 import { PuzzlePageObject } from "./PuzzlePageObject"
@@ -32,5 +33,11 @@ export class HomePageObject extends PageObject {
     this.step("goToHistory", async () => {
       await this.get(SharedTestIds.headerHistoryLink).click()
       return new HistoryPageObject(this.mountResult).verifyIsShown()
+    })
+
+  goToAbout = (): Promise<AboutPageObject> =>
+    this.step("goToAbout", async () => {
+      await this.get(SharedTestIds.headerAboutLink).click()
+      return new AboutPageObject(this.mountResult).verifyIsShown()
     })
 }

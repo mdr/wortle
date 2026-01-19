@@ -45,6 +45,21 @@ export class FullscreenViewerPageObject extends PageObject {
 
   pressZoomOutKey = (): Promise<void> => this.step("pressZoomOutKey", () => this.page.keyboard.press("-"))
 
+  pressEscape = (): Promise<void> => this.step("pressEscape", () => this.page.keyboard.press("Escape"))
+
+  pressLeftArrow = (): Promise<void> => this.step("pressLeftArrow", () => this.page.keyboard.press("ArrowLeft"))
+
+  pressRightArrow = (): Promise<void> => this.step("pressRightArrow", () => this.page.keyboard.press("ArrowRight"))
+
+  clickZoomIn = (): Promise<void> => this.step("clickZoomIn", () => this.get(FullscreenTestIds.zoomIn).click())
+
+  clickZoomOut = (): Promise<void> => this.step("clickZoomOut", () => this.get(FullscreenTestIds.zoomOut).click())
+
+  clickResetZoom = (): Promise<void> => this.step("clickResetZoom", () => this.get(FullscreenTestIds.resetZoom).click())
+
+  verifyIsClosed = (): Promise<void> =>
+    this.step("verifyIsClosed", () => expect(this.get(FullscreenTestIds.viewer)).not.toBeVisible())
+
   getTransformScale = (): Promise<number> =>
     this.step("getTransformScale", async () => {
       const transform = await this.get(FullscreenTestIds.viewer)
@@ -70,6 +85,16 @@ export class FullscreenViewerPageObject extends PageObject {
 
   verifyZoomedOut = (previousScale: number): Promise<void> =>
     this.step("verifyZoomedOut", () => expect.poll(() => this.getTransformScale()).toBeLessThan(previousScale))
+
+  verifyZoomReset = (): Promise<void> =>
+    this.step("verifyZoomReset", () =>
+      expect
+        .poll(async () => {
+          const scale = await this.getTransformScale()
+          return Math.abs(scale - 1) < 0.1
+        })
+        .toBe(true),
+    )
 
   close = (): Promise<void> =>
     this.step("close", async () => {

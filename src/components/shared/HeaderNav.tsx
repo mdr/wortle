@@ -47,7 +47,7 @@ export const HeaderNav = () => (
         <History className="size-6" />
         <span className="sr-only">History</span>
       </Link>
-      <Link to="/about" className={iconButtonClass}>
+      <Link to="/about" className={iconButtonClass} data-testid={SharedTestIds.headerAboutLink}>
         <HelpCircle className="size-6" />
         <span className="sr-only">About Wortle</span>
       </Link>
