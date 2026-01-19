@@ -127,8 +127,8 @@ export const HomePage = () => {
                 If you'd be interested in helping out this project, either to help with reviewing the botany, or
                 contributing puzzle photos, or helping with the technical aspects - please get in touch. I'm Matt
                 Russell, and you can reach me at{" "}
-                <a href="mailto:mattrusselluk@gmail.com" className="hover:text-foreground underline">
-                  mattrusselluk@gmail.com
+                <a href="mailto:matt@wortle.app" className="hover:text-foreground underline">
+                  matt@wortle.app
                 </a>
                 .
               </p>
