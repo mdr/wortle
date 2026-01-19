@@ -127,10 +127,10 @@ tasks:
     desc: Preview infrastructure changes
     dir: infra
     cmds:
-      - pulumi preview --stack mdr-org/prod
+      - pulumi preview --stack prod
 
   infra:up:
     desc: Apply infrastructure changes
     dir: infra
     cmds:
-      - pulumi up --stack mdr-org/prod
+      - pulumi up --stack prod --yes

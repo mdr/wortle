@@ -18,6 +18,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 
+# tanstack router cache
+.tanstack/
+
 # playwright
 /playwright/.cache
 /playwright-report

@@ -32,3 +32,6 @@ Run `task check` to verify work before finishing (runs tsc, lint, format, and te
 - `task analyze`: build with bundle analysis.
 - `task knip`: unused code scan.
 - `task check`: run all checks.
+- `task infra:tsc`: type check infrastructure code.
+- `task infra:preview`: preview infrastructure changes.
+- `task infra:up`: apply infrastructure changes.
