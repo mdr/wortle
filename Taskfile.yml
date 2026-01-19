@@ -31,18 +31,18 @@ tasks:
     cmds:
       - pnpm format:check
 
-  test:ct:install:
+  test:iwft:install:
     desc: Install Playwright browsers
     cmds:
       - pnpm exec playwright install --with-deps chromium
 
-  test:ct:
-    desc: Run component tests
+  test:iwft:
+    desc: Run isolated whole frontend tests
     cmds:
-      - pnpm test:ct
+      - pnpm test:iwft
 
-  test:ct:ui:
-    desc: Run component tests with UI
+  test:iwft:ui:
+    desc: Run isolated whole frontend tests with UI
     cmds:
       - pnpm exec playwright test -c playwright-ct.config.ts --ui
 
@@ -50,6 +50,29 @@ tasks:
     desc: Run unit tests
     cmds:
       - pnpm test:unit
+
+  coverage:unit:
+    desc: Run unit tests with coverage
+    cmds:
+      - pnpm vitest run --coverage
+
+  coverage:iwft:
+    desc: Run IWFTs with coverage
+    cmds:
+      - COVERAGE=true pnpm test:iwft
+
+  coverage:merge:
+    desc: Merge unit and IWFT coverage reports
+    cmds:
+      - pnpm exec tsx scripts/merge-coverage.ts
+
+  coverage:
+    desc: Run all tests with coverage and merge reports
+    cmds:
+      - rm -rf coverage
+      - task: coverage:unit
+      - task: coverage:iwft
+      - task: coverage:merge
 
   stryker:
     desc: Run mutation testing with Stryker
@@ -85,7 +108,7 @@ tasks:
       - task: lint
       - task: format:check
       - task: test:unit
-      - task: test:ct
+      - task: test:iwft
 
   ngrok:
     desc: Expose local dev server via ngrok

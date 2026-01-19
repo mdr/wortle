@@ -3,6 +3,7 @@ import path from "path"
 import { fileURLToPath } from "url"
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const collectCoverage = !!process.env.COVERAGE
 
 export default defineConfig({
   testDir: "./src/tests/playwright/scenarios",
@@ -13,7 +14,28 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
-  reporter: "html",
+  reporter: collectCoverage
+    ? [
+        ["html"],
+        [
+          "monocart-reporter",
+          {
+            name: "IWFT Coverage Report",
+            outputFile: "./coverage/iwft/report.html",
+            coverage: {
+              reports: [["raw", {}], ["v8"], ["console-summary"]],
+              entryFilter: (entry: { url: string }) => entry.url.includes("localhost") && !entry.url.includes("umami"),
+              sourceFilter: (sourcePath: string) =>
+                sourcePath.startsWith("src/") &&
+                !sourcePath.startsWith("src/tests/") &&
+                !sourcePath.includes("routeTree.gen") &&
+                !sourcePath.endsWith(".css") &&
+                !sourcePath.includes(".stryker-tmp"),
+            },
+          },
+        ],
+      ]
+    : "html",
   use: {
     trace: "on-first-retry",
     ctPort: 3100,

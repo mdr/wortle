@@ -17,6 +17,13 @@ Run `task check` to verify work before finishing (runs tsc, lint, format, and te
 - In tests, only specify values important for that test case; use test factory defaults for everything else.
 - When fixing bugs, write a failing test first, then fix the code to make it pass.
 
+## Testing
+
+This project uses two testing styles:
+
+- **Unit tests** (`task test:unit`): Vitest tests for small functions, utilities, and larger pieces of logic like PuzzleService. These test code in isolation.
+- **IWFTs** (`task test:iwft`): Isolated Whole Frontend Tests using Playwright component tests that render the entire `<App />`. These check whole user journeys without needing an independent environment.
+
 ## Task Commands
 
 - `task install`: install dependencies.
@@ -26,7 +33,7 @@ Run `task check` to verify work before finishing (runs tsc, lint, format, and te
 - `task format`: format code.
 - `task format:check`: check formatting.
 - `task test:unit`: run unit tests.
-- `task test:ct`: run component tests.
+- `task test:iwft`: run isolated whole frontend tests (IWFTs).
 - `task stryker`: run mutation testing.
 - `task build`: build.
 - `task analyze`: build with bundle analysis.

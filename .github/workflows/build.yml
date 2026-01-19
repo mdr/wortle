@@ -71,19 +71,19 @@ jobs:
         run: task format:check
 
       - name: Install Playwright browsers
-        run: task test:ct:install
+        run: task test:iwft:install
 
-      - name: Component tests
-        id: test-ct
-        run: task test:ct
+      - name: Isolated whole frontend tests
+        id: test-iwft
+        run: task test:iwft
         continue-on-error: ${{ steps.check-us.outputs.update_screenshots == 'true' }}
 
       - name: Update snapshots if tests failed
-        if: steps.check-us.outputs.update_screenshots == 'true' && steps.test-ct.outcome == 'failure'
-        run: pnpm test:ct --update-snapshots
+        if: steps.check-us.outputs.update_screenshots == 'true' && steps.test-iwft.outcome == 'failure'
+        run: pnpm test:iwft --update-snapshots
 
       - name: Commit updated snapshots
-        if: steps.check-us.outputs.update_screenshots == 'true' && steps.test-ct.outcome == 'failure'
+        if: steps.check-us.outputs.update_screenshots == 'true' && steps.test-iwft.outcome == 'failure'
         run: |
           git add src/tests/playwright/snapshots
           if git diff --staged --quiet; then
@@ -91,13 +91,13 @@ jobs:
           else
             git config --global user.name 'github-actions[bot]'
             git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-            git commit -m "Update component test snapshots"
+            git commit -m "Update IWFT snapshots"
             git push
           fi
 
-      - name: Re-run component tests after snapshot update
-        if: steps.check-us.outputs.update_screenshots == 'true' && steps.test-ct.outcome == 'failure'
-        run: task test:ct
+      - name: Re-run IWFTs after snapshot update
+        if: steps.check-us.outputs.update_screenshots == 'true' && steps.test-iwft.outcome == 'failure'
+        run: task test:iwft
 
       - name: Upload Playwright report
         if: failure()

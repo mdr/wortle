@@ -37,10 +37,10 @@ jobs:
         run: task install
 
       - name: Install Playwright browsers
-        run: task test:ct:install
+        run: task test:iwft:install
 
-      - name: Update component test snapshots
-        run: pnpm test:ct --update-snapshots
+      - name: Update IWFT snapshots
+        run: pnpm test:iwft --update-snapshots
 
       - name: Check for changes
         id: git-check

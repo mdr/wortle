@@ -1,5 +1,6 @@
 import type { MountResult } from "@playwright/experimental-ct-react"
 import { expect, test as ctBase } from "@playwright/experimental-ct-react"
+import { addCoverageReport } from "monocart-reporter"
 
 import { TestPuzzles } from "@/lib/testConstants.testUtils"
 import { Iso8601Date } from "@/utils/brandedTypes"
@@ -51,6 +52,8 @@ class Launcher {
   }
 }
 
+const collectCoverage = !!process.env.COVERAGE
+
 interface Fixtures {
   launcher: Launcher
   homePage: HomePageObject
@@ -58,9 +61,23 @@ interface Fixtures {
   errorPage: ErrorPageObject
   archivePage: PuzzlePageObject
   historyPage: HistoryPageObject
+  coverageFixture: undefined
 }
 
 export const test = ctBase.extend<Fixtures>({
+  coverageFixture: [
+    async ({ page }, use, testInfo) => {
+      if (collectCoverage) {
+        await page.coverage.startJSCoverage({ resetOnNavigation: false })
+      }
+      await use(undefined)
+      if (collectCoverage) {
+        const coverage = await page.coverage.stopJSCoverage()
+        await addCoverageReport(coverage, testInfo)
+      }
+    },
+    { auto: true },
+  ],
   // eslint-disable-next-line @typescript-eslint/unbound-method
   launcher: async ({ mount }, use) => {
     await use(new Launcher(mount))

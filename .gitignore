@@ -31,6 +31,9 @@ yarn-error.log*
 .stryker-tmp/
 /reports/
 
+# coverage
+/coverage/
+
 # wrangler
 .wrangler/
 

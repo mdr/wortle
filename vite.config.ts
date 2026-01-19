@@ -34,5 +34,9 @@ export default defineConfig({
   base: "/",
   test: {
     setupFiles: ["./src/tests/vitest.setup.ts"],
+    coverage: {
+      provider: "custom",
+      customProviderModule: "vitest-monocart-coverage",
+    },
   },
 })
