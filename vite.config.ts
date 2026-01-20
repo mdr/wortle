@@ -37,6 +37,7 @@ export default defineConfig({
     coverage: {
       provider: "custom",
       customProviderModule: "vitest-monocart-coverage",
+      exclude: ["src/components/shadcn/**"],
     },
   },
 })

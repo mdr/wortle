@@ -23,7 +23,13 @@ export const isShareableOutcome = (outcome: PuzzleOutcome): boolean => {
   }
 }
 
-const generateShareText = (scheduledDate: Iso8601Date, attemptCount: number, outcome: PuzzleOutcome): string => {
+interface GenerateShareTextArgs {
+  scheduledDate: Iso8601Date
+  attemptCount: number
+  outcome: PuzzleOutcome
+}
+
+export const generateShareText = ({ scheduledDate, attemptCount, outcome }: GenerateShareTextArgs): string => {
   const isCorrect = outcome === PuzzleOutcome.CORRECT
   const isGaveUpOrNotCompleted = outcome === PuzzleOutcome.GAVE_UP || outcome === PuzzleOutcome.NOT_COMPLETED
   const result = isCorrect ? PassOrFail.PASS : PassOrFail.FAIL
@@ -43,7 +49,7 @@ export const ShareResultButton = () => {
 
   if (!scheduledDate || !outcome || !isShareableOutcome(outcome)) return null
 
-  const shareText = generateShareText(scheduledDate, attempts.length, outcome)
+  const shareText = generateShareText({ scheduledDate, attemptCount: attempts.length, outcome })
 
   const handleShare = () => {
     const doShare = async () => {
