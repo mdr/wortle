@@ -12,7 +12,7 @@ import {
 import { filterSpecies, findSpecies, getAllSpecies } from "@/lib/species/plants"
 import { usePuzzleServiceActions, usePuzzleState } from "@/services/puzzle/puzzleServiceHooks"
 
-import { PuzzleTestIds } from "./PuzzleTestIds"
+import { PuzzleTestIds } from "../PuzzleTestIds"
 
 export const PlantSearch = () => {
   const { attempts, selectedSpeciesId, searchQuery } = usePuzzleState()

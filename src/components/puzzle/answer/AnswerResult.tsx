@@ -1,7 +1,7 @@
 import { Info } from "lucide-react"
 import { assert } from "tsafe"
 
-import { TipWithGlossary } from "@/components/puzzle/TipWithGlossary"
+import { TipWithGlossary } from "@/components/puzzle/glossary/TipWithGlossary"
 import { Card } from "@/components/shadcn/Card"
 import { AttemptResult } from "@/lib/AttemptResult"
 import { PassOrFail } from "@/lib/gameStorage/HistoryRecord"
@@ -12,7 +12,7 @@ import { PuzzleOutcome } from "@/services/puzzle/PuzzleService"
 import { usePuzzleState } from "@/services/puzzle/puzzleServiceHooks"
 import { Option } from "@/utils/types/Option"
 
-import { AnswerTestIds } from "./PuzzleTestIds"
+import { AnswerTestIds } from "../PuzzleTestIds"
 
 const getHintText = (attempt: AttemptResult): Option<string> => {
   if (attempt.isCorrect) return undefined

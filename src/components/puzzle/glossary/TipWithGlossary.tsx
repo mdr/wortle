@@ -1,4 +1,4 @@
-import { GlossaryTerm } from "@/components/puzzle/GlossaryTerm"
+import { GlossaryTerm } from "@/components/puzzle/glossary/GlossaryTerm"
 import { glossary } from "@/lib/glossary"
 
 interface TextRegion {

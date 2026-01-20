@@ -1,4 +1,4 @@
-import { UkLocationMap } from "@/components/puzzle/UkLocationMap"
+import { UkLocationMap } from "@/components/puzzle/location/UkLocationMap"
 import { Card } from "@/components/shadcn/Card"
 import { Puzzle } from "@/lib/Puzzle"
 import { ClassNameList } from "@/utils/brandedTypes"

@@ -3,7 +3,7 @@ import { AttemptResult } from "@/lib/AttemptResult"
 import { getSpecies } from "@/lib/species/plants"
 import { Option } from "@/utils/types/Option"
 
-import { AttemptHistoryTestIds } from "./PuzzleTestIds"
+import { AttemptHistoryTestIds } from "../PuzzleTestIds"
 
 interface AttemptHistoryProps {
   attempts: AttemptResult[]
