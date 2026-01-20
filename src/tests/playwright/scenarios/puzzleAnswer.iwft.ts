@@ -8,6 +8,7 @@ test("can navigate to puzzle and answer correctly on first try", async ({ homePa
   await puzzlePage.verifyAttemptCounter(1, 3)
   await puzzlePage.submitAnswer(TestSpeciesIds.daisy)
   await puzzlePage.verifyCorrectAnswer()
+  await puzzlePage.checkScreenshot("outcome-correct-first-try")
 })
 
 test("can answer correctly after wrong attempts", async ({ homePage }) => {
@@ -25,6 +26,7 @@ test("can answer correctly after wrong attempts", async ({ homePage }) => {
 
   await puzzlePage.submitAnswer(TestSpeciesIds.daisy)
   await puzzlePage.verifyCorrectAnswer()
+  await puzzlePage.checkScreenshot("outcome-correct-multiple-attempts")
 })
 
 test("fails after 3 wrong attempts", async ({ homePage }) => {
@@ -41,12 +43,14 @@ test("fails after 3 wrong attempts", async ({ homePage }) => {
   await puzzlePage.confirmSelection()
 
   await puzzlePage.verifyIncorrectAnswer()
+  await puzzlePage.checkScreenshot("outcome-out-of-attempts")
 })
 
 test("can give up on puzzle", async ({ homePage }) => {
   const puzzlePage = await homePage.clickPuzzle(0)
   await puzzlePage.giveUp()
   await puzzlePage.verifyGaveUp()
+  await puzzlePage.checkScreenshot("outcome-gave-up")
 })
 
 test("can choose a different plant", async ({ homePage }) => {

@@ -20,4 +20,5 @@ test("viewing abandoned puzzle from history shows not-completed state", async ({
 
   await archivePage.verifyNotCompleted()
   await archivePage.verifySearchInputHidden()
+  await archivePage.checkScreenshot("outcome-not-completed")
 })
