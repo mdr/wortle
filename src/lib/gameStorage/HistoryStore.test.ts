@@ -5,27 +5,27 @@ import { Iso8601Date } from "@/utils/brandedTypes"
 
 import { PassOrFail } from "./HistoryRecord"
 import { HistoryStore } from "./HistoryStore"
-import { createHistoryStore, createInProgressAttempt, createPuzzleAttempt } from "./HistoryStore.testUtils"
+import { createHistoryStore, createInProgressEntry, createPuzzleHistoryEntry } from "./HistoryStore.testUtils"
 import { createMemoryStorage } from "./storage.testUtils"
 
-const STORAGE_KEY = "wortle:temp:5:history"
+const STORAGE_KEY = "wortle:temp:6:history"
 
 describe("HistoryStore", () => {
   it("returns default history when empty", () => {
     const store = createHistoryStore()
-    expect(store.load()).toEqual({ attempts: [] })
+    expect(store.load()).toEqual({ entries: [] })
   })
 
   it("persists and loads history", () => {
     const store = createHistoryStore()
-    store.saveAttempt({
+    store.saveEntry({
       date: Iso8601Date("2026-06-08"),
       result: PassOrFail.PASS,
       submittedSpecies: [TestSpeciesIds.birdsFootTrefoil, TestSpeciesIds.herbRobert],
     })
 
     expect(store.load()).toEqual({
-      attempts: [
+      entries: [
         {
           date: Iso8601Date("2026-06-08"),
           result: PassOrFail.PASS,
@@ -35,49 +35,49 @@ describe("HistoryStore", () => {
     })
   })
 
-  it("saves in-progress attempt (without result)", () => {
+  it("saves in-progress entry (without result)", () => {
     const store = createHistoryStore()
 
-    store.saveAttempt(createInProgressAttempt())
+    store.saveEntry(createInProgressEntry())
 
     expect(store.load()).toEqual({
-      attempts: [createInProgressAttempt()],
+      entries: [createInProgressEntry()],
     })
   })
 
-  it("updates in-progress attempt to completed", () => {
+  it("updates in-progress entry to completed", () => {
     const store = createHistoryStore()
     const date = Iso8601Date("2026-06-08")
-    store.saveAttempt(createInProgressAttempt({ date }))
+    store.saveEntry(createInProgressEntry({ date }))
 
-    store.saveAttempt(createPuzzleAttempt({ date, result: PassOrFail.PASS }))
+    store.saveEntry(createPuzzleHistoryEntry({ date, result: PassOrFail.PASS }))
 
-    expect(store.load().attempts).toHaveLength(1)
-    expect(store.load().attempts[0]?.result).toBe(PassOrFail.PASS)
+    expect(store.load().entries).toHaveLength(1)
+    expect(store.load().entries[0]?.result).toBe(PassOrFail.PASS)
   })
 
-  it("replaces existing attempt for same date", () => {
+  it("replaces existing entry for same date", () => {
     const store = createHistoryStore()
     const date = Iso8601Date("2026-06-08")
-    store.saveAttempt(createPuzzleAttempt({ date, result: PassOrFail.FAIL }))
+    store.saveEntry(createPuzzleHistoryEntry({ date, result: PassOrFail.FAIL }))
 
-    store.saveAttempt(createPuzzleAttempt({ date, result: PassOrFail.PASS }))
+    store.saveEntry(createPuzzleHistoryEntry({ date, result: PassOrFail.PASS }))
 
-    expect(store.load().attempts).toHaveLength(1)
-    expect(store.load().attempts[0]?.result).toBe(PassOrFail.PASS)
+    expect(store.load().entries).toHaveLength(1)
+    expect(store.load().entries[0]?.result).toBe(PassOrFail.PASS)
   })
 
-  it("keeps attempts sorted by date", () => {
+  it("keeps entries sorted by date", () => {
     const store = createHistoryStore()
     const earliest = Iso8601Date("2026-06-08")
     const middle = Iso8601Date("2026-06-09")
     const latest = Iso8601Date("2026-06-10")
-    store.saveAttempt(createPuzzleAttempt({ date: middle }))
-    store.saveAttempt(createPuzzleAttempt({ date: latest }))
-    store.saveAttempt(createPuzzleAttempt({ date: earliest }))
+    store.saveEntry(createPuzzleHistoryEntry({ date: middle }))
+    store.saveEntry(createPuzzleHistoryEntry({ date: latest }))
+    store.saveEntry(createPuzzleHistoryEntry({ date: earliest }))
 
-    const attempts = store.load().attempts
-    expect(attempts.map((a) => a.date)).toEqual([earliest, middle, latest])
+    const entries = store.load().entries
+    expect(entries.map((e) => e.date)).toEqual([earliest, middle, latest])
   })
 
   it("returns default history when storage contains invalid JSON", () => {
@@ -85,14 +85,14 @@ describe("HistoryStore", () => {
     storage.setItem(STORAGE_KEY, "not valid json {{{")
     const store = new HistoryStore(storage)
 
-    expect(store.load()).toEqual({ attempts: [] })
+    expect(store.load()).toEqual({ entries: [] })
   })
 
   it("returns default history when storage contains valid JSON but invalid schema", () => {
     const storage = createMemoryStorage()
-    storage.setItem(STORAGE_KEY, JSON.stringify({ attempts: [{ invalid: "data" }] }))
+    storage.setItem(STORAGE_KEY, JSON.stringify({ entries: [{ invalid: "data" }] }))
     const store = new HistoryStore(storage)
 
-    expect(store.load()).toEqual({ attempts: [] })
+    expect(store.load()).toEqual({ entries: [] })
   })
 })

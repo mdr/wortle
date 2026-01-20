@@ -17,10 +17,10 @@ export const HistoryPage = () => {
   const clock = useClock()
   const today = clock.todayIso()
   const history = useMemo(() => storage.load(), [storage])
-  const summary = useMemo(() => calculateDailyStatsSummary(history.attempts, today), [history.attempts, today])
-  const sortedAttempts = useMemo(
-    () => [...history.attempts].sort((a, b) => b.date.localeCompare(a.date)),
-    [history.attempts],
+  const summary = useMemo(() => calculateDailyStatsSummary(history.entries, today), [history.entries, today])
+  const sortedEntries = useMemo(
+    () => [...history.entries].sort((a, b) => b.date.localeCompare(a.date)),
+    [history.entries],
   )
 
   return (
@@ -37,7 +37,7 @@ export const HistoryPage = () => {
         </div>
 
         <div className="space-y-6">
-          {sortedAttempts.length > 0 && (
+          {sortedEntries.length > 0 && (
             <Card className="p-4" data-testid={HistoryTestIds.stats}>
               <h2 className="text-foreground mb-3 font-serif text-lg font-semibold">Statistics</h2>
               <StatsSummaryGrid summary={summary} />
@@ -46,7 +46,7 @@ export const HistoryPage = () => {
 
           <Card className="p-4">
             <h2 className="text-foreground mb-3 font-serif text-lg font-semibold">Recent Puzzles</h2>
-            {sortedAttempts.length === 0 ? (
+            {sortedEntries.length === 0 ? (
               <div className="py-8 text-center" data-testid={HistoryTestIds.emptyState}>
                 <Calendar className="text-muted-foreground mx-auto mb-4 size-12" />
                 <p className="text-muted-foreground mb-4">You haven't completed any puzzles yet.</p>
@@ -56,8 +56,8 @@ export const HistoryPage = () => {
               </div>
             ) : (
               <div className="space-y-3">
-                {sortedAttempts.map((attempt) => (
-                  <HistoryItem key={attempt.date} attempt={attempt} isToday={attempt.date === today} />
+                {sortedEntries.map((entry) => (
+                  <HistoryItem key={entry.date} entry={entry} isToday={entry.date === today} />
                 ))}
               </div>
             )}

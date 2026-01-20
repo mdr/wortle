@@ -4,8 +4,8 @@ import { PassOrFail } from "@/lib/gameStorage/HistoryRecord"
 import { HistoryStore } from "@/lib/gameStorage/HistoryStore"
 import {
   createHistoryStore,
-  createInProgressAttempt,
-  createPuzzleAttempt,
+  createInProgressEntry,
+  createPuzzleHistoryEntry,
 } from "@/lib/gameStorage/HistoryStore.testUtils"
 import { createMemoryStorage } from "@/lib/gameStorage/storage.testUtils"
 import { Puzzle } from "@/lib/Puzzle"
@@ -91,7 +91,7 @@ describe("PuzzleService", () => {
   describe("hydration", () => {
     it("hydrates completed daily puzzles from history", () => {
       const historyStore = new HistoryStore(createMemoryStorage())
-      historyStore.saveAttempt({
+      historyStore.saveEntry({
         date: TestDate,
         result: PassOrFail.PASS,
         submittedSpecies: [TestSpeciesIds.herbRobert, TestSpeciesIds.daisy],
@@ -112,7 +112,7 @@ describe("PuzzleService", () => {
 
     it("marks gave up when history shows a failure before max attempts", () => {
       const historyStore = new HistoryStore(createMemoryStorage())
-      historyStore.saveAttempt({
+      historyStore.saveEntry({
         date: TestDate,
         result: PassOrFail.FAIL,
         submittedSpecies: [TestSpeciesIds.herbRobert],
@@ -128,7 +128,7 @@ describe("PuzzleService", () => {
 
     it("marks out of attempts when failure uses all attempts", () => {
       const historyStore = new HistoryStore(createMemoryStorage())
-      historyStore.saveAttempt({
+      historyStore.saveEntry({
         date: TestDate,
         result: PassOrFail.FAIL,
         submittedSpecies: [TestSpeciesIds.herbRobert, TestSpeciesIds.tansy, TestSpeciesIds.fieldScabious],
@@ -144,7 +144,7 @@ describe("PuzzleService", () => {
 
     it("ignores history hydration for review mode", () => {
       const historyStore = new HistoryStore(createMemoryStorage())
-      historyStore.saveAttempt({
+      historyStore.saveEntry({
         date: TestDate,
         result: PassOrFail.PASS,
         submittedSpecies: [TestSpeciesIds.daisy],
@@ -160,7 +160,7 @@ describe("PuzzleService", () => {
 
     it("hydrates completed archive puzzles from history", () => {
       const historyStore = new HistoryStore(createMemoryStorage())
-      historyStore.saveAttempt({
+      historyStore.saveEntry({
         date: TestDate,
         result: PassOrFail.PASS,
         submittedSpecies: [TestSpeciesIds.herbRobert, TestSpeciesIds.daisy],
@@ -187,7 +187,7 @@ describe("PuzzleService", () => {
 
     it("marks gaveUp for archive puzzles where user gave up", () => {
       const historyStore = new HistoryStore(createMemoryStorage())
-      historyStore.saveAttempt({
+      historyStore.saveEntry({
         date: TestDate,
         result: PassOrFail.FAIL,
         submittedSpecies: [TestSpeciesIds.herbRobert],
@@ -310,7 +310,7 @@ describe("PuzzleService", () => {
         outcome: PuzzleOutcome.OUT_OF_ATTEMPTS,
         statsSummary: { played: 1, wins: 0 },
       })
-      expect(historyStore.load().attempts).toEqual([
+      expect(historyStore.load().entries).toEqual([
         {
           date: TestDate,
           result: PassOrFail.FAIL,
@@ -333,7 +333,7 @@ describe("PuzzleService", () => {
         selectedSpeciesId: undefined,
         incorrectFeedbackText: undefined,
       })
-      expect(historyStore.load().attempts).toEqual([
+      expect(historyStore.load().entries).toEqual([
         {
           date: TestDate,
           result: PassOrFail.FAIL,
@@ -422,7 +422,7 @@ describe("PuzzleService", () => {
 
       service.submitAttempt(TestSpeciesIds.herbRobert)
 
-      const attempts = historyStore.load().attempts
+      const attempts = historyStore.load().entries
       expect(attempts).toHaveLength(1)
       expect(attempts[0]).toEqual({
         date: TestDate,
@@ -436,13 +436,13 @@ describe("PuzzleService", () => {
 
       service.submitAttempt(TestSpeciesIds.herbRobert)
 
-      expect(historyStore.load().attempts).toHaveLength(0)
+      expect(historyStore.load().entries).toHaveLength(0)
     })
 
     it("restores in-progress attempts on daily puzzle hydration", () => {
       const historyStore = new HistoryStore(createMemoryStorage())
-      historyStore.saveAttempt(
-        createInProgressAttempt({
+      historyStore.saveEntry(
+        createInProgressEntry({
           submittedSpecies: [TestSpeciesIds.herbRobert, TestSpeciesIds.tansy],
         }),
       )
@@ -456,20 +456,20 @@ describe("PuzzleService", () => {
 
     it("sets result when puzzle is completed", () => {
       const historyStore = new HistoryStore(createMemoryStorage())
-      const existingAttempt = createPuzzleAttempt({ date: Iso8601Date("2026-06-01") })
-      historyStore.saveAttempt(existingAttempt)
+      const existingEntry = createPuzzleHistoryEntry({ date: Iso8601Date("2026-06-01") })
+      historyStore.saveEntry(existingEntry)
       const service = makePuzzleService({ mode: PuzzleMode.DAILY, historyStore })
 
       service.submitAttempt(defaultPuzzle.speciesId)
 
       const history = historyStore.load()
-      expect(history.attempts).toHaveLength(2)
-      expect(history.attempts.find((a) => a.date === TestDate)?.result).toBe(PassOrFail.PASS)
+      expect(history.entries).toHaveLength(2)
+      expect(history.entries.find((a) => a.date === TestDate)?.result).toBe(PassOrFail.PASS)
     })
 
     it("does not restore in-progress for review mode", () => {
       const historyStore = new HistoryStore(createMemoryStorage())
-      historyStore.saveAttempt(createInProgressAttempt())
+      historyStore.saveEntry(createInProgressEntry())
 
       const service = makePuzzleService({ mode: PuzzleMode.REVIEW, historyStore })
 
@@ -478,23 +478,23 @@ describe("PuzzleService", () => {
 
     it("preserves other attempts when viewing a review puzzle", () => {
       const historyStore = new HistoryStore(createMemoryStorage())
-      const inProgress = createInProgressAttempt()
-      historyStore.saveAttempt(inProgress)
+      const inProgress = createInProgressEntry()
+      historyStore.saveEntry(inProgress)
 
       makePuzzleService({ mode: PuzzleMode.REVIEW, historyStore })
 
-      expect(historyStore.load().attempts).toEqual([inProgress])
+      expect(historyStore.load().entries).toEqual([inProgress])
     })
 
     it("preserves other attempts when viewing an archived puzzle from a different day", () => {
       const historyStore = new HistoryStore(createMemoryStorage())
       const archiveDate = Iso8601Date("2026-06-01")
-      const inProgress = createInProgressAttempt()
-      historyStore.saveAttempt(inProgress)
+      const inProgress = createInProgressEntry()
+      historyStore.saveEntry(inProgress)
 
       makePuzzleService({ mode: PuzzleMode.ARCHIVE, historyStore, date: archiveDate })
 
-      expect(historyStore.load().attempts).toEqual([inProgress])
+      expect(historyStore.load().entries).toEqual([inProgress])
     })
   })
 })

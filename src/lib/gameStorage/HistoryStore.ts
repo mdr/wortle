@@ -2,15 +2,15 @@ import { z } from "zod"
 
 import { logger } from "@/utils/Logger"
 
-import { HistoryRecord, historyRecordSchema, PuzzleAttempt } from "./HistoryRecord"
+import { HistoryRecord, historyRecordSchema, PuzzleHistoryEntry } from "./HistoryRecord"
 
-const STORAGE_KEY = "wortle:temp:5:history"
+const STORAGE_KEY = "wortle:temp:6:history"
 
-const upsertAttempt = (attempts: PuzzleAttempt[], attempt: PuzzleAttempt): PuzzleAttempt[] =>
-  [...attempts.filter((a) => a.date !== attempt.date), attempt].sort((a, b) => a.date.localeCompare(b.date))
+const upsertEntry = (entries: PuzzleHistoryEntry[], entry: PuzzleHistoryEntry): PuzzleHistoryEntry[] =>
+  [...entries.filter((e) => e.date !== entry.date), entry].sort((a, b) => a.date.localeCompare(b.date))
 
 const defaultHistory: HistoryRecord = {
-  attempts: [],
+  entries: [],
 }
 
 export class HistoryStore {
@@ -54,8 +54,8 @@ export class HistoryStore {
     return next
   }
 
-  saveAttempt = (attempt: PuzzleAttempt): HistoryRecord =>
+  saveEntry = (entry: PuzzleHistoryEntry): HistoryRecord =>
     this.update((current) => ({
-      attempts: upsertAttempt(current.attempts, attempt),
+      entries: upsertEntry(current.entries, entry),
     }))
 }

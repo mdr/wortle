@@ -9,17 +9,17 @@ export enum PassOrFail {
   FAIL = "FAIL",
 }
 
-export interface PuzzleAttempt {
+export interface PuzzleHistoryEntry {
   readonly date: Iso8601Date
   readonly result?: PassOrFail
   readonly submittedSpecies: SpeciesId[]
 }
 
 export interface HistoryRecord {
-  readonly attempts: PuzzleAttempt[]
+  readonly entries: PuzzleHistoryEntry[]
 }
 
-const puzzleAttemptSchema: z.ZodType<PuzzleAttempt> = z
+const puzzleHistoryEntrySchema: z.ZodType<PuzzleHistoryEntry> = z
   .strictObject({
     date: z.string().transform(Iso8601Date),
     result: z.enum([PassOrFail.PASS, PassOrFail.FAIL]).optional(),
@@ -29,7 +29,7 @@ const puzzleAttemptSchema: z.ZodType<PuzzleAttempt> = z
 
 export const historyRecordSchema: z.ZodType<HistoryRecord> = z
   .strictObject({
-    attempts: z.array(puzzleAttemptSchema),
+    entries: z.array(puzzleHistoryEntrySchema),
   })
   .readonly()
 

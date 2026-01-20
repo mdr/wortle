@@ -13,24 +13,24 @@ import { Option } from "@/utils/types/Option"
 
 export const MAX_ATTEMPTS = 3
 
-export interface ExistingAttempt {
+export interface ExistingEntry {
   result?: PassOrFail
 }
 
 export const computeInitialOutcome = (
   mode: PuzzleMode,
-  existingAttempt: ExistingAttempt | undefined,
+  existingEntry: Option<ExistingEntry>,
   attemptsCount: number,
 ): Option<PuzzleOutcome> => {
   if (mode === PuzzleMode.REVIEW) return undefined
 
-  if (mode === PuzzleMode.ARCHIVE && !existingAttempt) {
+  if (mode === PuzzleMode.ARCHIVE && !existingEntry) {
     return PuzzleOutcome.DID_NOT_ATTEMPT
   }
 
-  if (!existingAttempt) return undefined
+  if (!existingEntry) return undefined
 
-  const { result } = existingAttempt
+  const { result } = existingEntry
 
   if (result === PassOrFail.PASS) {
     return PuzzleOutcome.CORRECT
@@ -106,28 +106,28 @@ export class PuzzleService extends AbstractService<PuzzleServiceState> implement
     private readonly historyStore: HistoryStore,
   ) {
     const history = mode !== PuzzleMode.REVIEW ? historyStore.load() : undefined
-    const pastAttempts = history?.attempts ?? []
+    const pastEntries = history?.entries ?? []
     const correctSpecies = getSpecies(puzzle.speciesId)
 
-    const existingAttempt =
+    const existingEntry =
       mode !== PuzzleMode.REVIEW && scheduledDate
-        ? pastAttempts.find((attempt) => attempt.date === scheduledDate)
+        ? pastEntries.find((entry) => entry.date === scheduledDate)
         : undefined
 
-    const submittedSpecies = existingAttempt?.submittedSpecies ?? []
+    const submittedSpecies = existingEntry?.submittedSpecies ?? []
     const attempts = submittedSpecies.map((speciesId) => {
       const species = getSpecies(speciesId)
       return createAttemptResult(species, correctSpecies)
     })
 
     const statsSummary =
-      mode === PuzzleMode.DAILY && scheduledDate ? calculateDailyStatsSummary(pastAttempts, scheduledDate) : undefined
+      mode === PuzzleMode.DAILY && scheduledDate ? calculateDailyStatsSummary(pastEntries, scheduledDate) : undefined
     super({
       puzzle,
       scheduledDate,
       mode,
       attempts,
-      outcome: computeInitialOutcome(mode, existingAttempt, attempts.length),
+      outcome: computeInitialOutcome(mode, existingEntry, attempts.length),
       incorrectFeedbackText: undefined,
       selectedSpeciesId: undefined,
       searchQuery: "",
@@ -190,7 +190,7 @@ export class PuzzleService extends AbstractService<PuzzleServiceState> implement
       draft.selectedSpeciesId = undefined
       draft.outcome = outcome
     })
-    this.saveAttempt(
+    this.saveEntry(
       nextAttempts.map((attempt) => attempt.speciesId),
       result,
     )
@@ -199,22 +199,22 @@ export class PuzzleService extends AbstractService<PuzzleServiceState> implement
 
   giveUp = (): void => {
     this.setState({ outcome: PuzzleOutcome.GAVE_UP, incorrectFeedbackText: undefined, selectedSpeciesId: undefined })
-    this.saveAttempt(
+    this.saveEntry(
       this.state.attempts.map((attempt) => attempt.speciesId),
       PassOrFail.FAIL,
     )
   }
 
-  private readonly saveAttempt = (submittedSpecies: SpeciesId[], result?: PassOrFail): void => {
+  private readonly saveEntry = (submittedSpecies: SpeciesId[], result?: PassOrFail): void => {
     if (this.mode === PuzzleMode.DAILY) {
       const scheduledDate = this.state.scheduledDate
       assert(scheduledDate, "PuzzleService requires a scheduled date in daily mode.")
-      const nextHistory = this.historyStore.saveAttempt({
+      const nextHistory = this.historyStore.saveEntry({
         date: scheduledDate,
         result,
         submittedSpecies,
       })
-      this.setState({ statsSummary: calculateDailyStatsSummary(nextHistory.attempts, scheduledDate) })
+      this.setState({ statsSummary: calculateDailyStatsSummary(nextHistory.entries, scheduledDate) })
     }
   }
 

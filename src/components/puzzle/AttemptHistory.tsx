@@ -1,6 +1,7 @@
 import { Card } from "@/components/shadcn/Card"
 import { AttemptResult } from "@/lib/AttemptResult"
 import { getSpecies } from "@/lib/species/plants"
+import { Option } from "@/utils/types/Option"
 
 import { AttemptHistoryTestIds } from "./PuzzleTestIds"
 
@@ -8,7 +9,7 @@ interface AttemptHistoryProps {
   attempts: AttemptResult[]
 }
 
-const getHintText = (attempt: AttemptResult): string | undefined => {
+const getHintText = (attempt: AttemptResult): Option<string> => {
   if (attempt.isCorrect) return undefined
   if (attempt.genusMatch) return "Right genus!"
   if (attempt.familyMatch) return "Right family!"

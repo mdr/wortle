@@ -10,10 +10,11 @@ import { getSpecies } from "@/lib/species/plants"
 import { selectCorrectSpecies } from "@/services/puzzle/puzzleSelectors"
 import { PuzzleOutcome } from "@/services/puzzle/PuzzleService"
 import { usePuzzleState } from "@/services/puzzle/puzzleServiceHooks"
+import { Option } from "@/utils/types/Option"
 
 import { AnswerTestIds } from "./PuzzleTestIds"
 
-const getHintText = (attempt: AttemptResult): string | undefined => {
+const getHintText = (attempt: AttemptResult): Option<string> => {
   if (attempt.isCorrect) return undefined
   if (attempt.genusMatch) return "Right genus!"
   if (attempt.familyMatch) return "Right family!"

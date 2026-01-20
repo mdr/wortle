@@ -1,7 +1,7 @@
 import { Iso8601Date } from "@/utils/brandedTypes"
 import { Option } from "@/utils/types/Option"
 
-import { PassOrFail, PuzzleAttempt } from "./HistoryRecord"
+import { PassOrFail, PuzzleHistoryEntry } from "./HistoryRecord"
 
 export interface DailyStatsSummary {
   readonly played: number
@@ -22,7 +22,7 @@ const getIsoDateWithOffset = (isoDate: Iso8601Date, days: number): Iso8601Date =
   return Iso8601Date(`${year}-${month}-${day}`)
 }
 
-export const calculateDailyStatsSummary = (attempts: PuzzleAttempt[], today: Iso8601Date): DailyStatsSummary => {
+export const calculateDailyStatsSummary = (entries: PuzzleHistoryEntry[], today: Iso8601Date): DailyStatsSummary => {
   const emptySummary: DailyStatsSummary = {
     played: 0,
     wins: 0,
@@ -31,25 +31,25 @@ export const calculateDailyStatsSummary = (attempts: PuzzleAttempt[], today: Iso
     maxStreak: 0,
   }
 
-  // Exclude today's in-progress attempt from all calculations
-  const isInProgressToday = (attempt: PuzzleAttempt): boolean => attempt.date === today && attempt.result === undefined
+  // Exclude today's in-progress entry from all calculations
+  const isInProgressToday = (entry: PuzzleHistoryEntry): boolean => entry.date === today && entry.result === undefined
 
-  const countableAttempts = attempts.filter((attempt) => !isInProgressToday(attempt))
+  const countableEntries = entries.filter((entry) => !isInProgressToday(entry))
 
-  if (countableAttempts.length === 0) {
+  if (countableEntries.length === 0) {
     return emptySummary
   }
 
-  const played = countableAttempts.length
-  const wins = countableAttempts.filter((attempt) => attempt.result === PassOrFail.PASS).length
+  const played = countableEntries.length
+  const wins = countableEntries.filter((entry) => entry.result === PassOrFail.PASS).length
   const winRate = wins / played
 
-  const attemptsByDate = new Map<Iso8601Date, PuzzleAttempt>()
-  countableAttempts.forEach((attempt) => {
-    attemptsByDate.set(attempt.date, attempt)
+  const entriesByDate = new Map<Iso8601Date, PuzzleHistoryEntry>()
+  countableEntries.forEach((entry) => {
+    entriesByDate.set(entry.date, entry)
   })
 
-  const sortedDates = Array.from(attemptsByDate.keys()).sort(
+  const sortedDates = Array.from(entriesByDate.keys()).sort(
     (left, right) => isoDateToTimestamp(left) - isoDateToTimestamp(right),
   )
 
@@ -58,8 +58,8 @@ export const calculateDailyStatsSummary = (attempts: PuzzleAttempt[], today: Iso
   let previousDate: Option<Iso8601Date>
 
   sortedDates.forEach((date) => {
-    const attempt = attemptsByDate.get(date)
-    if (!attempt || attempt.result !== PassOrFail.PASS) {
+    const entry = entriesByDate.get(date)
+    if (!entry || entry.result !== PassOrFail.PASS) {
       runningStreak = 0
       previousDate = date
       return
@@ -78,13 +78,13 @@ export const calculateDailyStatsSummary = (attempts: PuzzleAttempt[], today: Iso
   if (latestDate) {
     let cursor: Option<Iso8601Date> = latestDate
     while (cursor) {
-      const attempt = attemptsByDate.get(cursor)
-      if (!attempt || attempt.result !== PassOrFail.PASS) {
+      const entry = entriesByDate.get(cursor)
+      if (!entry || entry.result !== PassOrFail.PASS) {
         break
       }
       currentStreak += 1
       const previousDate = getIsoDateWithOffset(cursor, -1)
-      cursor = attemptsByDate.has(previousDate) ? previousDate : undefined
+      cursor = entriesByDate.has(previousDate) ? previousDate : undefined
     }
   }
 
