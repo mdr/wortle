@@ -115,7 +115,7 @@ export const AnswerResult = () => {
                   const hint = getHintText(attempt)
                   return (
                     <div key={attempt.speciesId} className="flex items-stretch gap-2">
-                      <div className="text-muted-foreground flex w-6 items-center justify-center text-sm">
+                      <div className="text-foreground/70 flex w-6 items-center justify-center text-sm">
                         #{index + 1}
                       </div>
                       <div
@@ -147,9 +147,7 @@ export const AnswerResult = () => {
 
           <div className="flex items-stretch gap-2">
             {isCorrect && attempts.length > 1 && (
-              <div className="text-muted-foreground flex w-6 items-center justify-center text-sm">
-                #{attempts.length}
-              </div>
+              <div className="text-foreground/70 flex w-6 items-center justify-center text-sm">#{attempts.length}</div>
             )}
             <div className="border-border bg-background flex-1 rounded-lg border p-4">
               <div className="flex items-end justify-between">
