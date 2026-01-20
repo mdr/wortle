@@ -4,8 +4,6 @@ import { PuzzleService, PuzzleServiceActions, PuzzleServiceState } from "./Puzzl
 
 export const PuzzleServiceContext = createOptionalContext<PuzzleService>()
 
-export const usePuzzleService = (): PuzzleService => useService(PuzzleServiceContext)
-
 export const usePuzzleServiceActions = (): PuzzleServiceActions => useService(PuzzleServiceContext)
 
 export const usePuzzleState = <Selected = PuzzleServiceState>(

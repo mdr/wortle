@@ -26,20 +26,22 @@ export class HistoryStore {
       return defaultHistory
     }
 
+    let parsed: unknown
     try {
-      const parsed: unknown = JSON.parse(raw)
-      const result = historyRecordSchema.safeParse(parsed)
-      if (!result.success) {
-        logger.error("history.parseSchema", "Failed to parse history from storage", {
-          zodError: z.treeifyError(result.error),
-        })
-        return defaultHistory
-      }
-      return result.data
+      parsed = JSON.parse(raw)
     } catch (error) {
       logger.error("history.parseJson", "Failed to parse history from storage", undefined, error)
       return defaultHistory
     }
+
+    const result = historyRecordSchema.safeParse(parsed)
+    if (!result.success) {
+      logger.error("history.parseSchema", "Failed to parse history from storage", {
+        zodError: z.treeifyError(result.error),
+      })
+      return defaultHistory
+    }
+    return result.data
   }
 
   private readonly save = (history: HistoryRecord): void => {

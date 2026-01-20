@@ -4,7 +4,11 @@ import { TestSpeciesIds } from "@/lib/testConstants.testUtils"
 import { Iso8601Date } from "@/utils/brandedTypes"
 
 import { PassOrFail } from "./HistoryRecord"
+import { HistoryStore } from "./HistoryStore"
 import { createHistoryStore, createInProgressAttempt, createPuzzleAttempt } from "./HistoryStore.testUtils"
+import { createMemoryStorage } from "./storage.testUtils"
+
+const STORAGE_KEY = "wortle:temp:5:history"
 
 describe("HistoryStore", () => {
   it("returns default history when empty", () => {
@@ -74,5 +78,21 @@ describe("HistoryStore", () => {
 
     const attempts = store.load().attempts
     expect(attempts.map((a) => a.date)).toEqual([earliest, middle, latest])
+  })
+
+  it("returns default history when storage contains invalid JSON", () => {
+    const storage = createMemoryStorage()
+    storage.setItem(STORAGE_KEY, "not valid json {{{")
+    const store = new HistoryStore(storage)
+
+    expect(store.load()).toEqual({ attempts: [] })
+  })
+
+  it("returns default history when storage contains valid JSON but invalid schema", () => {
+    const storage = createMemoryStorage()
+    storage.setItem(STORAGE_KEY, JSON.stringify({ attempts: [{ invalid: "data" }] }))
+    const store = new HistoryStore(storage)
+
+    expect(store.load()).toEqual({ attempts: [] })
   })
 })

@@ -4,7 +4,7 @@ export interface Logger {
   readonly error: (code: string, message: string, extraFields?: Record<string, unknown>, exception?: unknown) => void
 }
 
-export class ConsoleLogger implements Logger {
+export class AppLogger implements Logger {
   error = (code: string, message: string, extraFields?: Record<string, unknown>, exception?: unknown): void => {
     const parts: unknown[] = [`[${code}]`, message]
     if (extraFields !== undefined) parts.push(extraFields)
@@ -19,4 +19,4 @@ export class ConsoleLogger implements Logger {
   }
 }
 
-export const logger: Logger = new ConsoleLogger()
+export const logger: Logger = new AppLogger()

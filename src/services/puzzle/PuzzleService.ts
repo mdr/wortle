@@ -109,7 +109,6 @@ export class PuzzleService extends AbstractService<PuzzleServiceState> implement
     const pastAttempts = history?.attempts ?? []
     const correctSpecies = getSpecies(puzzle.speciesId)
 
-    // Find existing attempt for this date (may be in-progress or completed)
     const existingAttempt =
       mode !== PuzzleMode.REVIEW && scheduledDate
         ? pastAttempts.find((attempt) => attempt.date === scheduledDate)
@@ -177,13 +176,7 @@ export class PuzzleService extends AbstractService<PuzzleServiceState> implement
     const correctSpecies = getSpecies(this.state.puzzle.speciesId)
     const attemptResult = createAttemptResult(species, correctSpecies)
     const nextAttempts = [...this.state.attempts, attemptResult]
-    const incorrectFeedbackText = attemptResult.isCorrect
-      ? undefined
-      : attemptResult.genusMatch
-        ? "Right genus - you're close!"
-        : attemptResult.familyMatch
-          ? "That's in the right family - have another go."
-          : "That's not it - have another go."
+    const incorrectFeedbackText = attemptResult.isCorrect ? undefined : this.getIncorrectFeedbackText(attemptResult)
     const isComplete = attemptResult.isCorrect || nextAttempts.length >= MAX_ATTEMPTS
     const result = isComplete ? (attemptResult.isCorrect ? PassOrFail.PASS : PassOrFail.FAIL) : undefined
     const outcome = attemptResult.isCorrect
@@ -223,5 +216,11 @@ export class PuzzleService extends AbstractService<PuzzleServiceState> implement
       })
       this.setState({ statsSummary: calculateDailyStatsSummary(nextHistory.attempts, scheduledDate) })
     }
+  }
+
+  private readonly getIncorrectFeedbackText = (attemptResult: AttemptResult): string => {
+    if (attemptResult.genusMatch) return "Right genus - you're close!"
+    if (attemptResult.familyMatch) return "That's in the right family - have another go."
+    return "That's not it - have another go."
   }
 }
