@@ -1,4 +1,4 @@
-import { createFileRoute, notFound } from "@tanstack/react-router"
+import { createFileRoute, notFound, redirect } from "@tanstack/react-router"
 
 import { useHistoryStore } from "@/components/app/GlobalDependenciesProvider"
 import { ErrorFallback } from "@/components/error/ErrorFallback"
@@ -17,7 +17,11 @@ interface ArchivePuzzleData {
 
 export const Route = createFileRoute("/archive/$date")({
   loader: ({ params, context }): ArchivePuzzleData => {
-    const scheduledDate = Iso8601Date(params.date)
+    if (!Iso8601Date.is(params.date)) {
+      // eslint-disable-next-line @typescript-eslint/only-throw-error -- TanStack Router pattern
+      throw redirect({ to: "/history" })
+    }
+    const scheduledDate = params.date
     const puzzleId = context.schedule.findPuzzleForDate(scheduledDate)
 
     if (!puzzleId) {

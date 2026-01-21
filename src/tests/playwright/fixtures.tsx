@@ -46,6 +46,11 @@ class Launcher {
     return new PuzzlePageObject(mountResult).verifyIsShown()
   }
 
+  launchArchivePageWithInvalidDate = async (date: string): Promise<HistoryPageObject> => {
+    const mountResult = await launchApp(this.mount, `/archive/${date}`)
+    return new HistoryPageObject(mountResult).verifyIsShown()
+  }
+
   launchHistoryPage = async (): Promise<HistoryPageObject> => {
     const mountResult = await launchApp(this.mount, "/history")
     return new HistoryPageObject(mountResult).verifyIsShown()
