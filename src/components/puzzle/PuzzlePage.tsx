@@ -97,12 +97,6 @@ const PuzzlePageContents = () => {
                   <AnswerResult />
                 </div>
                 {statsSummary && <StatsPanel summary={statsSummary} />}
-                {!statsSummary && mode === PuzzleMode.REVIEW && (
-                  <Card className="p-4">
-                    <h3 className="text-foreground mb-2 font-serif text-lg font-semibold">Your Statistics</h3>
-                    <p className="text-muted-foreground text-sm">Stats are only tracked for the daily puzzle.</p>
-                  </Card>
-                )}
               </>
             ) : (
               <AnswerInputCard />
