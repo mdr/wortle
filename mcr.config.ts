@@ -7,6 +7,7 @@ const config: CoverageReportOptions = {
   sourceFilter: (sourcePath: string) =>
     sourcePath.startsWith("src/") &&
     !sourcePath.startsWith("src/tests/") &&
+    !sourcePath.startsWith("src/components/shadcn/") &&
     !sourcePath.includes("routeTree.gen") &&
     !sourcePath.endsWith(".css") &&
     !sourcePath.includes(".stryker-tmp"),

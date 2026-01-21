@@ -106,4 +106,13 @@ export class PuzzlePageObject extends PageObject {
 
   verifyShareCopied = (): Promise<void> =>
     this.step("verifyShareCopied", () => expect(this.get(ShareResultTestIds.copiedState)).toBeVisible())
+
+  hoverGlossaryTerm = (term: string): Promise<void> =>
+    this.step(`hoverGlossaryTerm '${term}'`, () => this.page.getByRole("button", { name: term }).hover({ force: true }))
+
+  verifyGlossaryPopover = (term: string, definition: string): Promise<void> =>
+    this.step(`verifyGlossaryPopover '${term}'`, async () => {
+      await expect(this.page.getByText(term, { exact: true })).toBeVisible()
+      await expect(this.page.getByText(definition)).toBeVisible()
+    })
 }

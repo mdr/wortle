@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 
-import { parseTipRegions } from "./TipWithGlossary"
+import { parseTipRegions } from "./parseTipRegions"
 
 describe("parseTipRegions", () => {
   it("returns plain text as a single text region", () => {
