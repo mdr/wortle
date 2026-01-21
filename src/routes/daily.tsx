@@ -1,13 +1,10 @@
 import { createFileRoute, notFound } from "@tanstack/react-router"
 
-import { useHistoryStore } from "@/components/app/GlobalDependenciesProvider"
 import { ErrorFallback } from "@/components/error/ErrorFallback"
 import { NotFoundPage } from "@/components/notFound/NotFoundPage"
-import { PuzzlePage } from "@/components/puzzle/PuzzlePage"
+import { PuzzleMode, PuzzlePage } from "@/components/puzzle/PuzzlePage"
 import { Puzzle } from "@/lib/Puzzle"
 import { findPuzzle } from "@/lib/puzzles"
-import { PuzzleMode } from "@/services/puzzle/PuzzleService"
-import { PuzzleServiceProvider } from "@/services/puzzle/PuzzleServiceProvider"
 import { Iso8601Date } from "@/utils/brandedTypes"
 
 interface DailyPuzzleData {
@@ -39,19 +36,9 @@ export const Route = createFileRoute("/daily")({
 
 const DailyPuzzlePage = () => {
   const { puzzle, scheduledDate } = Route.useLoaderData()
-  const historyStore = useHistoryStore()
   if (!puzzle) {
     return <NotFoundPage message="No puzzle is scheduled for today." />
   }
 
-  return (
-    <PuzzleServiceProvider
-      puzzle={puzzle}
-      scheduledDate={scheduledDate}
-      mode={PuzzleMode.DAILY}
-      historyStore={historyStore}
-    >
-      <PuzzlePage />
-    </PuzzleServiceProvider>
-  )
+  return <PuzzlePage puzzle={puzzle} scheduledDate={scheduledDate} mode={PuzzleMode.DAILY} />
 }

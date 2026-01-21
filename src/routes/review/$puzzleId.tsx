@@ -1,13 +1,10 @@
 import { createFileRoute, notFound } from "@tanstack/react-router"
 
-import { useHistoryStore } from "@/components/app/GlobalDependenciesProvider"
 import { ErrorFallback } from "@/components/error/ErrorFallback"
 import { NotFoundPage } from "@/components/notFound/NotFoundPage"
-import { PuzzlePage } from "@/components/puzzle/PuzzlePage"
+import { PuzzleMode, PuzzlePage } from "@/components/puzzle/PuzzlePage"
 import { PuzzleId } from "@/lib/Puzzle"
 import { findPuzzle } from "@/lib/puzzles"
-import { PuzzleMode } from "@/services/puzzle/PuzzleService"
-import { PuzzleServiceProvider } from "@/services/puzzle/PuzzleServiceProvider"
 
 export const Route = createFileRoute("/review/$puzzleId")({
   loader: ({ params }) => {
@@ -28,10 +25,5 @@ export const Route = createFileRoute("/review/$puzzleId")({
 
 const PuzzlePageWrapper = () => {
   const { puzzle } = Route.useLoaderData()
-  const historyStore = useHistoryStore()
-  return (
-    <PuzzleServiceProvider puzzle={puzzle} mode={PuzzleMode.REVIEW} historyStore={historyStore}>
-      <PuzzlePage showStatsPlaceholder />
-    </PuzzleServiceProvider>
-  )
+  return <PuzzlePage puzzle={puzzle} mode={PuzzleMode.REVIEW} />
 }

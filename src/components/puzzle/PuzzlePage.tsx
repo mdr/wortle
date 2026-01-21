@@ -1,6 +1,7 @@
 import { useUmami } from "@danielgtmn/umami-react"
-import { useEffect, useRef } from "react"
+import { useEffect, useMemo, useRef } from "react"
 
+import { useHistoryStore } from "@/components/app/GlobalDependenciesProvider"
 import { AnswerInputCard } from "@/components/puzzle/answer/AnswerInputCard"
 import { AnswerResult } from "@/components/puzzle/answer/AnswerResult"
 import { AttemptHistory } from "@/components/puzzle/answer/AttemptHistory"
@@ -10,16 +11,37 @@ import { PuzzleHeader } from "@/components/puzzle/PuzzleHeader"
 import { StatsPanel } from "@/components/puzzle/stats/StatsPanel"
 import { useCorrectAnswerConfetti } from "@/components/puzzle/useCorrectAnswerConfetti"
 import { Card } from "@/components/shadcn/Card"
+import { Puzzle } from "@/lib/Puzzle"
 import { selectIsCorrect, selectIsResolved, selectShowAttemptHistory } from "@/services/puzzle/puzzleSelectors"
-import { usePuzzleState } from "@/services/puzzle/puzzleServiceHooks"
+import { PuzzleMode, PuzzleService } from "@/services/puzzle/PuzzleService"
+import { PuzzleServiceContext, usePuzzleState } from "@/services/puzzle/puzzleServiceHooks"
+import { Iso8601Date } from "@/utils/brandedTypes"
 
 import { PuzzleTestIds } from "./PuzzleTestIds"
 
+export { PuzzleMode }
+
 export interface PuzzlePageProps {
-  showStatsPlaceholder?: boolean
+  puzzle: Puzzle
+  scheduledDate?: Iso8601Date
+  mode: PuzzleMode
 }
 
-export const PuzzlePage = ({ showStatsPlaceholder }: PuzzlePageProps) => {
+export const PuzzlePage = ({ puzzle, scheduledDate, mode }: PuzzlePageProps) => {
+  const historyStore = useHistoryStore()
+  const service = useMemo(
+    () => new PuzzleService(puzzle, scheduledDate, mode, historyStore),
+    [puzzle, scheduledDate, mode, historyStore],
+  )
+
+  return (
+    <PuzzleServiceContext.Provider value={service}>
+      <PuzzlePageContents />
+    </PuzzleServiceContext.Provider>
+  )
+}
+
+const PuzzlePageContents = () => {
   const { puzzle, scheduledDate, mode, attempts, statsSummary } = usePuzzleState()
 
   const isCorrect = usePuzzleState(selectIsCorrect)
@@ -75,7 +97,7 @@ export const PuzzlePage = ({ showStatsPlaceholder }: PuzzlePageProps) => {
                   <AnswerResult />
                 </div>
                 {statsSummary && <StatsPanel summary={statsSummary} />}
-                {!statsSummary && showStatsPlaceholder && (
+                {!statsSummary && mode === PuzzleMode.REVIEW && (
                   <Card className="p-4">
                     <h3 className="text-foreground mb-2 font-serif text-lg font-semibold">Your Statistics</h3>
                     <p className="text-muted-foreground text-sm">Stats are only tracked for the daily puzzle.</p>
