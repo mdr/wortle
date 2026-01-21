@@ -6,22 +6,9 @@ import { Button } from "@/components/shadcn/Button"
 import { PassOrFail } from "@/lib/gameStorage/HistoryRecord"
 import { getResultMedal } from "@/lib/resultMedal"
 import { PuzzleOutcome } from "@/services/puzzle/PuzzleService"
-import { usePuzzleState } from "@/services/puzzle/puzzleServiceHooks"
 import { Iso8601Date } from "@/utils/brandedTypes"
 import { formatDate } from "@/utils/dateUtils"
 import { getOrdinal } from "@/utils/getOrdinal"
-
-export const isShareableOutcome = (outcome: PuzzleOutcome): boolean => {
-  switch (outcome) {
-    case PuzzleOutcome.CORRECT:
-    case PuzzleOutcome.OUT_OF_ATTEMPTS:
-      return true
-    case PuzzleOutcome.GAVE_UP:
-    case PuzzleOutcome.NOT_COMPLETED:
-    case PuzzleOutcome.DID_NOT_ATTEMPT:
-      return false
-  }
-}
 
 interface GenerateShareTextArgs {
   scheduledDate: Iso8601Date
@@ -43,13 +30,16 @@ https://wortle.app`
 
 const canShare = (): boolean => "share" in navigator && typeof navigator.share === "function"
 
-export const ShareResultButton = () => {
-  const { scheduledDate, attempts, outcome } = usePuzzleState()
+export interface ShareResultButtonProps {
+  scheduledDate: Iso8601Date
+  attemptCount: number
+  outcome: PuzzleOutcome
+}
+
+export const ShareResultButton = ({ scheduledDate, attemptCount, outcome }: ShareResultButtonProps) => {
   const [copied, setCopied] = useState(false)
 
-  if (!scheduledDate || !outcome || !isShareableOutcome(outcome)) return null
-
-  const shareText = generateShareText({ scheduledDate, attemptCount: attempts.length, outcome })
+  const shareText = generateShareText({ scheduledDate, attemptCount, outcome })
 
   const handleShare = () => {
     const doShare = async () => {

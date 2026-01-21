@@ -7,6 +7,8 @@ import { Button } from "@/components/shadcn/Button"
 import { Card } from "@/components/shadcn/Card"
 import { StatsSummaryGrid } from "@/components/shared/StatsSummaryGrid"
 import { type DailyStatsSummary } from "@/lib/gameStorage/dailyStatsSummary"
+import { isShareableOutcome } from "@/services/puzzle/puzzleSelectors"
+import { usePuzzleState } from "@/services/puzzle/puzzleServiceHooks"
 import { type Clock } from "@/utils/Clock"
 import { formatDuration } from "@/utils/dateUtils"
 
@@ -24,6 +26,9 @@ const getTimeToNextWortle = (clock: Clock): string => {
 
 export const StatsPanel = ({ summary }: StatsPanelProps) => {
   const clock = useClock()
+  const { scheduledDate, attempts, outcome } = usePuzzleState()
+
+  const showShareButton = scheduledDate && outcome && isShareableOutcome(outcome)
 
   return (
     <Card className="p-4">
@@ -39,7 +44,9 @@ export const StatsPanel = ({ summary }: StatsPanelProps) => {
           <span className="text-foreground text-sm font-bold">{getTimeToNextWortle(clock)}</span>
         </div>
 
-        <ShareResultButton />
+        {showShareButton && (
+          <ShareResultButton scheduledDate={scheduledDate} attemptCount={attempts.length} outcome={outcome} />
+        )}
 
         <Button asChild variant="outline" className="w-full bg-transparent" size="sm">
           <Link to="/history">
