@@ -5,7 +5,7 @@ import { test } from "../fixtures"
 test("can navigate to puzzle and answer correctly on first try", async ({ homePage }) => {
   const puzzlePage = await homePage.clickDailyPuzzle()
   await puzzlePage.checkScreenshot("puzzle-page")
-  await puzzlePage.verifyAttemptCounter(1, 3)
+  await puzzlePage.verifyAttemptCounter({ current: 1, max: 3 })
   await puzzlePage.submitAnswer(TestSpeciesIds.devilsBitScabious)
   await puzzlePage.verifyCorrectAnswer()
   await puzzlePage.checkScreenshot("outcome-correct-first-try")
@@ -21,13 +21,13 @@ test("can answer correctly after wrong attempts", async ({ homePage }) => {
 
   await puzzlePage.submitAnswer(TestSpeciesIds.tansy)
   await puzzlePage.verifyAttemptHistory(1)
-  await puzzlePage.verifyAttemptCounter(2, 3)
+  await puzzlePage.verifyAttemptCounter({ current: 2, max: 3 })
 
   await puzzlePage.searchForPlant("Chicory")
   await puzzlePage.selectFirstPlantOption()
   await puzzlePage.confirmSelection()
   await puzzlePage.verifyAttemptHistory(2)
-  await puzzlePage.verifyAttemptCounter(3, 3)
+  await puzzlePage.verifyAttemptCounter({ current: 3, max: 3 })
 
   await puzzlePage.submitAnswer(TestSpeciesIds.daisy)
   await puzzlePage.verifyCorrectAnswer()

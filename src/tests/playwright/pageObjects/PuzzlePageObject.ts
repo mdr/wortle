@@ -64,9 +64,9 @@ export class PuzzlePageObject extends PageObject {
       await expect(this.get(AttemptHistoryTestIds.item)).toHaveCount(count)
     })
 
-  verifyAttemptCounter = (current: number, max: number): Promise<void> =>
-    this.step(`verifyAttemptCounter(${current}/${max})`, () =>
-      expect(this.get(PuzzleTestIds.attemptCounter)).toHaveText(`Attempt ${current} of ${max}`),
+  verifyAttemptCounter = (args: { current: number; max: number }): Promise<void> =>
+    this.step(`verifyAttemptCounter(${args.current}/${args.max})`, () =>
+      expect(this.get(PuzzleTestIds.attemptCounter)).toHaveText(`Attempt ${args.current} of ${args.max}`),
     )
 
   verifySearchInputVisible = (): Promise<void> =>
