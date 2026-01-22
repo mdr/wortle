@@ -2,6 +2,13 @@
 
 A daily plant identification quiz. Each day features a different wild plant with photos and information. Players get up to 3 guesses to identify the plant.
 
+## Architecture
+
+- React/TypeScript frontend built with Vite
+- Hosted on GitHub Pages (no backend)
+- Images served from Cloudflare R2 (`images.wortle.app`)
+- Infrastructure managed with Pulumi (`infra/`)
+
 Use `nix develop -c <command>` to run commands, e.g. `nix develop -c task check`.
 
 Run `task check` to verify work before finishing (runs tsc, lint, format, and tests).
