@@ -5,17 +5,11 @@ import { addCoverageReport } from "monocart-reporter"
 import { TestPuzzles } from "@/lib/testConstants.testUtils"
 import { Iso8601Date } from "@/utils/brandedTypes"
 
-const testScheduleEntries = [
-  { date: "2026-06-08", puzzleId: 43 },
-  { date: "2026-06-09", puzzleId: 41 },
-  { date: "2026-06-10", puzzleId: 42 },
-  { date: "2026-06-11", puzzleId: 40 },
-  { date: "2026-06-12", puzzleId: 44 },
-]
-
+import { NetworkSimulator } from "./NetworkSimulator.testUtils"
 import { ErrorPageObject } from "./pageObjects/ErrorPageObject"
 import { HistoryPageObject } from "./pageObjects/HistoryPageObject"
 import { HomePageObject } from "./pageObjects/HomePageObject"
+import { LoadingPageObject } from "./pageObjects/LoadingPageObject"
 import { NotFoundPageObject } from "./pageObjects/NotFoundPageObject"
 import { PuzzlePageObject } from "./pageObjects/PuzzlePageObject"
 import { TestApp } from "./TestApp"
@@ -34,6 +28,11 @@ interface LaunchHomePageOptions {
 
 class Launcher {
   constructor(private readonly mount: MountFunction) {}
+
+  launchExpectingLoaderPage = async (): Promise<LoadingPageObject> => {
+    const mountResult = await launchApp(this.mount)
+    return new LoadingPageObject(mountResult).verifyIsShown()
+  }
 
   launchHomePage = async (options?: LaunchHomePageOptions): Promise<HomePageObject> => {
     const mountResult = await launchApp(this.mount)
@@ -75,7 +74,7 @@ interface Fixtures {
   archivePage: PuzzlePageObject
   historyPage: HistoryPageObject
   coverageFixture: undefined
-  scheduleFixture: undefined
+  networkSimulator: NetworkSimulator
 }
 
 export const test = ctBase.extend<Fixtures>({
@@ -92,16 +91,11 @@ export const test = ctBase.extend<Fixtures>({
     },
     { auto: true },
   ],
-  scheduleFixture: [
+  networkSimulator: [
     async ({ page }, use) => {
-      await page.route("**/data.wortle.app/schedule.json", (route) => {
-        void route.fulfill({
-          status: 200,
-          contentType: "application/json",
-          body: JSON.stringify({ schedule: testScheduleEntries }),
-        })
-      })
-      await use(undefined)
+      const simulator = new NetworkSimulator(page)
+      await simulator.install()
+      await use(simulator)
     },
     { auto: true },
   ],

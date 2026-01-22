@@ -14,12 +14,12 @@ tasks:
   tsc:
     desc: Type check
     cmds:
-      - pnpm tsc --noEmit
+      - pnpm tsc --noEmit {{.CLI_ARGS}}
 
   lint:
     desc: Run ESLint
     cmds:
-      - pnpm lint
+      - pnpm lint {{.CLI_ARGS}}
 
   format:
     desc: Format code with Prettier
@@ -39,17 +39,17 @@ tasks:
   test:iwft:
     desc: Run isolated whole frontend tests
     cmds:
-      - pnpm test:iwft
+      - pnpm exec playwright test -c playwright-ct.config.ts {{.CLI_ARGS}}
 
   test:iwft:ui:
     desc: Run isolated whole frontend tests with UI
     cmds:
-      - pnpm exec playwright test -c playwright-ct.config.ts --ui
+      - pnpm exec playwright test -c playwright-ct.config.ts --ui {{.CLI_ARGS}}
 
   test:unit:
     desc: Run unit tests
     cmds:
-      - pnpm test:unit
+      - pnpm vitest run {{.CLI_ARGS}}
 
   coverage:unit:
     desc: Run unit tests with coverage
@@ -77,12 +77,12 @@ tasks:
   stryker:
     desc: Run mutation testing with Stryker
     cmds:
-      - pnpm exec stryker run
+      - pnpm exec stryker run {{.CLI_ARGS}}
 
   build:
     desc: Build the project
     cmds:
-      - pnpm build
+      - pnpm build {{.CLI_ARGS}}
 
   analyze:
     desc: Build and analyze bundle size
@@ -93,12 +93,12 @@ tasks:
   knip:
     desc: Find unused code
     cmds:
-      - pnpm exec knip
+      - pnpm exec knip {{.CLI_ARGS}}
 
   knip:prod:
     desc: Find unused code (production only, ignores test usage)
     cmds:
-      - pnpm exec knip --production
+      - pnpm exec knip --production {{.CLI_ARGS}}
 
   check:
     desc: Run all checks (tsc, lint, format, tests)
@@ -144,16 +144,16 @@ tasks:
     desc: Type check infrastructure code
     dir: infra
     cmds:
-      - pnpm tsc --noEmit
+      - pnpm tsc --noEmit {{.CLI_ARGS}}
 
   infra:preview:
     desc: Preview infrastructure changes
     dir: infra
     cmds:
-      - pulumi preview --stack prod
+      - pulumi preview --stack prod {{.CLI_ARGS}}
 
   infra:up:
     desc: Apply infrastructure changes
     dir: infra
     cmds:
-      - pulumi up --stack prod --yes
+      - pulumi up --stack prod --yes {{.CLI_ARGS}}
