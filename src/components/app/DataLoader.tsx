@@ -26,7 +26,7 @@ export const DataLoader = ({ children }: DataLoaderProps) => {
     staleTime: 1000 * 60 * 60, // 1 hour
   })
 
-  const showLoading = useSpinDelay(isPending, { delay: 500, minDuration: 300 })
+  const showLoading = useSpinDelay(isPending, { delay: 500, minDuration: 300, ssr: false })
 
   if (isSuccess) return <>{children(schedule)}</>
 
