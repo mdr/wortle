@@ -8,11 +8,11 @@ import { type Schedule } from "@/lib/schedule"
 import { LoadingErrorScreen } from "./LoadingErrorScreen"
 import { LoadingScreen } from "./LoadingScreen"
 
-interface ScheduleLoaderProps {
+interface DataLoaderProps {
   children: (schedule: Schedule) => ReactNode
 }
 
-export const ScheduleLoader = ({ children }: ScheduleLoaderProps) => {
+export const DataLoader = ({ children }: DataLoaderProps) => {
   const {
     data: schedule,
     isSuccess,
@@ -26,7 +26,7 @@ export const ScheduleLoader = ({ children }: ScheduleLoaderProps) => {
     staleTime: 1000 * 60 * 60, // 1 hour
   })
 
-  const showLoading = useSpinDelay(isPending, { delay: 200, minDuration: 300 })
+  const showLoading = useSpinDelay(isPending, { delay: 500, minDuration: 300 })
 
   if (isSuccess) return <>{children(schedule)}</>
 
