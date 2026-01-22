@@ -6,7 +6,12 @@ import { logger } from "@/utils/Logger"
 const queryClient = new QueryClient({
   queryCache: new QueryCache({
     onError: (error, query) => {
-      logger.error("query.error", `Query failed: ${JSON.stringify(query.queryKey)}`, undefined, error)
+      logger.error(
+        "query.error",
+        `Query failed: ${JSON.stringify(query.queryKey)}`,
+        { queryKey: query.queryKey },
+        error,
+      )
     },
   }),
   defaultOptions: {
