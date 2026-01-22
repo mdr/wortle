@@ -14,7 +14,7 @@ interface ScheduleLoaderProps {
 export const ScheduleLoader = ({ children }: ScheduleLoaderProps) => {
   const {
     data: schedule,
-    isLoading,
+    isSuccess,
     isError,
     refetch,
     isFetching,
@@ -24,7 +24,7 @@ export const ScheduleLoader = ({ children }: ScheduleLoaderProps) => {
     staleTime: 1000 * 60 * 60, // 1 hour
   })
 
-  if (isLoading || !schedule) return <LoadingScreen />
+  if (isSuccess) return <>{children(schedule)}</>
 
   if (isError) {
     return (
@@ -36,5 +36,5 @@ export const ScheduleLoader = ({ children }: ScheduleLoaderProps) => {
     )
   }
 
-  return <>{children(schedule)}</>
+  return <LoadingScreen />
 }
