@@ -9,6 +9,7 @@ import { NetworkSimulator } from "./NetworkSimulator.testUtils"
 import { ErrorPageObject } from "./pageObjects/ErrorPageObject"
 import { HistoryPageObject } from "./pageObjects/HistoryPageObject"
 import { HomePageObject } from "./pageObjects/HomePageObject"
+import { LoadingErrorPageObject } from "./pageObjects/LoadingErrorPageObject"
 import { LoadingPageObject } from "./pageObjects/LoadingPageObject"
 import { NotFoundPageObject } from "./pageObjects/NotFoundPageObject"
 import { PuzzlePageObject } from "./pageObjects/PuzzlePageObject"
@@ -32,6 +33,11 @@ class Launcher {
   launchExpectingLoaderPage = async (): Promise<LoadingPageObject> => {
     const mountResult = await launchApp(this.mount)
     return new LoadingPageObject(mountResult).verifyIsShown()
+  }
+
+  launchExpectingErrorPage = async (): Promise<LoadingErrorPageObject> => {
+    const mountResult = await launchApp(this.mount)
+    return new LoadingErrorPageObject(mountResult).verifyIsShown()
   }
 
   launchHomePage = async (options?: LaunchHomePageOptions): Promise<HomePageObject> => {

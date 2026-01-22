@@ -16,22 +16,25 @@ export const DEFAULT_SCHEDULE_ENTRIES: ScheduleEntry[] = [
 export class NetworkSimulator {
   private scheduleResponse: "default" | "error" | "stall" = "default"
   private customEntries?: ScheduleEntry[]
-  private errorStatus?: number
   private pendingResolve?: (entries: ScheduleEntry[]) => void
 
   constructor(private readonly page: Page) {}
+
+  simulateFetchScheduleSuccess = () => {
+    this.scheduleResponse = "default"
+    this.customEntries = undefined
+  }
 
   setSchedule = (entries: ScheduleEntry[]) => {
     this.scheduleResponse = "default"
     this.customEntries = entries
   }
 
-  setScheduleError = (status: number = 500) => {
+  simulateFetchScheduleError = () => {
     this.scheduleResponse = "error"
-    this.errorStatus = status
   }
 
-  stallSchedule = () => {
+  simulateFetchScheduleStall = () => {
     this.scheduleResponse = "stall"
     return {
       resolve: (entries: ScheduleEntry[] = DEFAULT_SCHEDULE_ENTRIES) => {
@@ -43,7 +46,7 @@ export class NetworkSimulator {
   install = async () => {
     await this.page.route("**/data.wortle.app/schedule.json", async (route) => {
       if (this.scheduleResponse === "error") {
-        await route.fulfill({ status: this.errorStatus ?? 500 })
+        await route.fulfill({ status: 500 })
       } else if (this.scheduleResponse === "stall") {
         const entries = await new Promise<ScheduleEntry[]>((resolve) => {
           this.pendingResolve = resolve

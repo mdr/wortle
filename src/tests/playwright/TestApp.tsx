@@ -4,4 +4,4 @@ interface TestAppProps {
   initialPath?: string
 }
 
-export const TestApp = ({ initialPath = "/" }: TestAppProps) => <App initialPath={initialPath} />
+export const TestApp = ({ initialPath = "/" }: TestAppProps) => <App initialPath={initialPath} disableNetworkRetries />

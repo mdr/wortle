@@ -7,14 +7,15 @@ import { QueryProvider } from "./QueryProvider"
 
 export interface AppProps {
   initialPath?: string
+  disableNetworkRetries?: boolean
 }
 
-export const App = ({ initialPath }: AppProps) => (
+export const App = ({ initialPath, disableNetworkRetries }: AppProps) => (
   <StrictMode>
     {import.meta.env.PROD && (
       <UmamiAnalytics url="https://cloud.umami.is" websiteId="e9196c98-109f-4188-b531-40b430369c15" />
     )}
-    <QueryProvider>
+    <QueryProvider disableRetries={disableNetworkRetries}>
       <DataLoader>{(schedule) => <LoadedApp schedule={schedule} initialPath={initialPath} />}</DataLoader>
     </QueryProvider>
   </StrictMode>

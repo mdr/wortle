@@ -3,29 +3,31 @@ import { type ReactNode } from "react"
 
 import { logger } from "@/utils/Logger"
 
-const queryClient = new QueryClient({
-  queryCache: new QueryCache({
-    onError: (error, query) => {
-      logger.error(
-        "query.error",
-        `Query failed: ${JSON.stringify(query.queryKey)}`,
-        { queryKey: query.queryKey },
-        error,
-      )
+const createQueryClient = (disableRetries: boolean) =>
+  new QueryClient({
+    queryCache: new QueryCache({
+      onError: (error, query) => {
+        logger.error(
+          "query.error",
+          `Query failed: ${JSON.stringify(query.queryKey)}`,
+          { queryKey: query.queryKey },
+          error,
+        )
+      },
+    }),
+    defaultOptions: {
+      queries: {
+        retry: disableRetries ? 0 : 3,
+        retryDelay: (attempt) => Math.min(1000 * 2 ** attempt, 30000),
+      },
     },
-  }),
-  defaultOptions: {
-    queries: {
-      retry: 3,
-      retryDelay: (attempt) => Math.min(1000 * 2 ** attempt, 30000),
-    },
-  },
-})
+  })
 
 interface QueryProviderProps {
   children: ReactNode
+  disableRetries?: boolean
 }
 
-export const QueryProvider = ({ children }: QueryProviderProps) => (
-  <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+export const QueryProvider = ({ children, disableRetries = false }: QueryProviderProps) => (
+  <QueryClientProvider client={createQueryClient(disableRetries)}>{children}</QueryClientProvider>
 )
