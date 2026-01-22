@@ -1,8 +1,8 @@
 import { type ReactNode } from "react"
 
 import { HistoryStore } from "@/lib/gameStorage/HistoryStore"
-import { defaultSchedule, type Schedule } from "@/lib/schedule"
-import { type Clock, defaultClock } from "@/utils/Clock"
+import { type Schedule } from "@/lib/schedule"
+import { type Clock } from "@/utils/Clock"
 import { createOptionalContext, useService } from "@/utils/providerish/serviceHooks"
 
 export interface GlobalDependencies {
@@ -20,12 +20,6 @@ export const useClock = (): Clock => useGlobalDependencies().clock
 export const useSchedule = (): Schedule => useGlobalDependencies().schedule
 
 export const useHistoryStore = (): HistoryStore => useGlobalDependencies().historyStore
-
-export const defaultGlobalDependencies: GlobalDependencies = {
-  clock: defaultClock,
-  schedule: defaultSchedule,
-  historyStore: new HistoryStore(window.localStorage),
-}
 
 interface GlobalDependenciesProviderProps {
   dependencies: GlobalDependencies
