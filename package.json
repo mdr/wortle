@@ -45,6 +45,7 @@
     "react-hotkeys-hook": "5.2.1",
     "react-simple-maps": "3.0.0",
     "react-zoom-pan-pinch": "3.7.0",
+    "spin-delay": "2.0.1",
     "tailwind-merge": "3.4.0",
     "tsafe": "1.8.12",
     "zod": "4.3.5"

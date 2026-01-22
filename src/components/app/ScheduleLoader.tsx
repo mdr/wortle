@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query"
 import { type ReactNode } from "react"
+import { useSpinDelay } from "spin-delay"
 
 import { fetchSchedule } from "@/lib/data/scheduleApi"
 import { type Schedule } from "@/lib/schedule"
@@ -16,6 +17,7 @@ export const ScheduleLoader = ({ children }: ScheduleLoaderProps) => {
     data: schedule,
     isSuccess,
     isError,
+    isPending,
     refetch,
     isFetching,
   } = useQuery({
@@ -23,6 +25,8 @@ export const ScheduleLoader = ({ children }: ScheduleLoaderProps) => {
     queryFn: fetchSchedule,
     staleTime: 1000 * 60 * 60, // 1 hour
   })
+
+  const showLoading = useSpinDelay(isPending, { delay: 200, minDuration: 300 })
 
   if (isSuccess) return <>{children(schedule)}</>
 
@@ -36,5 +40,7 @@ export const ScheduleLoader = ({ children }: ScheduleLoaderProps) => {
     )
   }
 
-  return <LoadingScreen />
+  if (showLoading) return <LoadingScreen />
+
+  return null
 }

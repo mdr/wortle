@@ -51,3 +51,11 @@ This project uses two testing styles:
 - `task infra:tsc`: type check infrastructure code.
 - `task infra:preview`: preview infrastructure changes.
 - `task infra:up`: apply infrastructure changes.
+
+## R2 Bucket Operations
+
+Use wrangler with 1Password credentials and `--remote` flag (wrangler defaults to local simulation otherwise):
+
+```bash
+nix develop -c op run --account=my.1password.com --env-file=.env.wrangler -- pnpm dlx wrangler r2 object put wortle-data/file.json --content-type "application/json" --remote --pipe < file.json
+```

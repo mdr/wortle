@@ -5,6 +5,14 @@ import { addCoverageReport } from "monocart-reporter"
 import { TestPuzzles } from "@/lib/testConstants.testUtils"
 import { Iso8601Date } from "@/utils/brandedTypes"
 
+const testScheduleEntries = [
+  { date: "2026-06-08", puzzleId: 43 },
+  { date: "2026-06-09", puzzleId: 41 },
+  { date: "2026-06-10", puzzleId: 42 },
+  { date: "2026-06-11", puzzleId: 40 },
+  { date: "2026-06-12", puzzleId: 44 },
+]
+
 import { ErrorPageObject } from "./pageObjects/ErrorPageObject"
 import { HistoryPageObject } from "./pageObjects/HistoryPageObject"
 import { HomePageObject } from "./pageObjects/HomePageObject"
@@ -67,6 +75,7 @@ interface Fixtures {
   archivePage: PuzzlePageObject
   historyPage: HistoryPageObject
   coverageFixture: undefined
+  scheduleFixture: undefined
 }
 
 export const test = ctBase.extend<Fixtures>({
@@ -80,6 +89,19 @@ export const test = ctBase.extend<Fixtures>({
         const coverage = await page.coverage.stopJSCoverage()
         await addCoverageReport(coverage, testInfo)
       }
+    },
+    { auto: true },
+  ],
+  scheduleFixture: [
+    async ({ page }, use) => {
+      await page.route("**/data.wortle.app/schedule.json", (route) => {
+        void route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify({ schedule: testScheduleEntries }),
+        })
+      })
+      await use(undefined)
     },
     { auto: true },
   ],

@@ -37,3 +37,26 @@ new cloudflare.R2CustomDomain("data-domain", {
   zoneId: zone.zoneId,
   enabled: true,
 })
+
+// CORS headers for data.wortle.app (required for cross-origin fetch from wortle.app)
+new cloudflare.Ruleset("data-cors", {
+  zoneId: zone.zoneId,
+  name: "Add CORS headers for data subdomain",
+  kind: "zone",
+  phase: "http_response_headers_transform",
+  rules: [
+    {
+      action: "rewrite",
+      actionParameters: {
+        headers: {
+          "Access-Control-Allow-Origin": {
+            operation: "set",
+            value: "*",
+          },
+        },
+      },
+      expression: '(http.host eq "data.wortle.app")',
+      enabled: true,
+    },
+  ],
+})
