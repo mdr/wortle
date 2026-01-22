@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query"
 import { type ReactNode } from "react"
 import { useSpinDelay } from "spin-delay"
 
-import { fetchSchedule } from "@/lib/data/scheduleApi"
+import { dataApi } from "@/lib/data/DataApi"
 import { type Schedule } from "@/lib/schedule"
 
 import { LoadingErrorScreen } from "./LoadingErrorScreen"
@@ -22,7 +22,7 @@ export const ScheduleLoader = ({ children }: ScheduleLoaderProps) => {
     isFetching,
   } = useQuery({
     queryKey: ["schedule"],
-    queryFn: fetchSchedule,
+    queryFn: dataApi.fetchSchedule,
     staleTime: 1000 * 60 * 60, // 1 hour
   })
 
