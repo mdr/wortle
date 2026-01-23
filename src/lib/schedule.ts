@@ -20,7 +20,7 @@ export const scheduleJsonSchema = z.object({
   schedule: z.array(scheduleEntrySchema),
 })
 
-interface ScheduleJson {
+export interface ScheduleJson {
   schedule: ScheduleEntry[]
 }
 

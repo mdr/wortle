@@ -76,7 +76,7 @@ export const puzzlesJsonSchema = z.object({
   puzzles: z.array(puzzleSchema),
 })
 
-interface PuzzlesJson {
+export interface PuzzlesJson {
   puzzles: Puzzle[]
 }
 
