@@ -96,7 +96,7 @@ export class NetworkSimulator {
     })
   }
 
-  private installRoute = <T>(config: EndpointConfig<T>) =>
+  private readonly installRoute = <T>(config: EndpointConfig<T>) =>
     this.page.route(config.routePattern, async (route) => {
       try {
         const json = handleEndpointBehaviour(this.behaviourManager.getBehaviour(config.endpointKey), config.handle)
