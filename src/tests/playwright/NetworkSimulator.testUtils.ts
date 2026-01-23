@@ -18,35 +18,39 @@ export const DEFAULT_PUZZLE_ENTRIES: Puzzle[] = defaultPuzzles
   .getAllPuzzleIds()
   .map((id) => defaultPuzzles.getPuzzle(id))
 
-type ResponseMode = "default" | "error" | "stall"
+enum ResponseMode {
+  DEFAULT = "DEFAULT",
+  ERROR = "ERROR",
+  STALL = "STALL",
+}
 
 export class NetworkSimulator {
-  private scheduleResponse: ResponseMode = "default"
+  private scheduleResponse = ResponseMode.DEFAULT
   private customScheduleEntries?: ScheduleEntry[]
   private pendingScheduleResolve?: (entries: ScheduleEntry[]) => void
 
-  private puzzlesResponse: ResponseMode = "default"
+  private puzzlesResponse = ResponseMode.DEFAULT
   private customPuzzleEntries?: Puzzle[]
   private pendingPuzzlesResolve?: (entries: Puzzle[]) => void
 
   constructor(private readonly page: Page) {}
 
   simulateFetchScheduleSuccess = () => {
-    this.scheduleResponse = "default"
+    this.scheduleResponse = ResponseMode.DEFAULT
     this.customScheduleEntries = undefined
   }
 
   setSchedule = (entries: ScheduleEntry[]) => {
-    this.scheduleResponse = "default"
+    this.scheduleResponse = ResponseMode.DEFAULT
     this.customScheduleEntries = entries
   }
 
   simulateFetchScheduleError = () => {
-    this.scheduleResponse = "error"
+    this.scheduleResponse = ResponseMode.ERROR
   }
 
   simulateFetchScheduleStall = () => {
-    this.scheduleResponse = "stall"
+    this.scheduleResponse = ResponseMode.STALL
     return {
       resolve: (entries: ScheduleEntry[] = DEFAULT_SCHEDULE_ENTRIES) => {
         this.pendingScheduleResolve?.(entries)
@@ -55,21 +59,21 @@ export class NetworkSimulator {
   }
 
   simulateFetchPuzzlesSuccess = () => {
-    this.puzzlesResponse = "default"
+    this.puzzlesResponse = ResponseMode.DEFAULT
     this.customPuzzleEntries = undefined
   }
 
   setPuzzles = (entries: Puzzle[]) => {
-    this.puzzlesResponse = "default"
+    this.puzzlesResponse = ResponseMode.DEFAULT
     this.customPuzzleEntries = entries
   }
 
   simulateFetchPuzzlesError = () => {
-    this.puzzlesResponse = "error"
+    this.puzzlesResponse = ResponseMode.ERROR
   }
 
   simulateFetchPuzzlesStall = () => {
-    this.puzzlesResponse = "stall"
+    this.puzzlesResponse = ResponseMode.STALL
     return {
       resolve: (entries: Puzzle[] = DEFAULT_PUZZLE_ENTRIES) => {
         this.pendingPuzzlesResolve?.(entries)
@@ -89,9 +93,9 @@ export class NetworkSimulator {
 
   install = async () => {
     await this.page.route("**/data.wortle.app/schedule.json", async (route) => {
-      if (this.scheduleResponse === "error") {
+      if (this.scheduleResponse === ResponseMode.ERROR) {
         await route.fulfill({ status: 500 })
-      } else if (this.scheduleResponse === "stall") {
+      } else if (this.scheduleResponse === ResponseMode.STALL) {
         const entries = await new Promise<ScheduleEntry[]>((resolve) => {
           this.pendingScheduleResolve = resolve
         })
@@ -110,9 +114,9 @@ export class NetworkSimulator {
     })
 
     await this.page.route("**/data.wortle.app/puzzles.json", async (route) => {
-      if (this.puzzlesResponse === "error") {
+      if (this.puzzlesResponse === ResponseMode.ERROR) {
         await route.fulfill({ status: 500 })
-      } else if (this.puzzlesResponse === "stall") {
+      } else if (this.puzzlesResponse === ResponseMode.STALL) {
         const entries = await new Promise<Puzzle[]>((resolve) => {
           this.pendingPuzzlesResolve = resolve
         })
