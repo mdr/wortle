@@ -3,7 +3,7 @@ import { type ReactNode } from "react"
 import { useSpinDelay } from "spin-delay"
 
 import { dataApi } from "@/lib/data/DataApi"
-import { defaultPuzzles, type Puzzles } from "@/lib/puzzles"
+import { type Puzzles } from "@/lib/puzzles"
 import { type Schedule } from "@/lib/schedule"
 
 import { LoadingErrorScreen } from "./LoadingErrorScreen"
@@ -14,31 +14,35 @@ interface DataLoaderProps {
 }
 
 export const DataLoader = ({ children }: DataLoaderProps) => {
-  const {
-    data: schedule,
-    isSuccess,
-    isError,
-    isPending,
-    refetch,
-    isFetching,
-  } = useQuery({
+  const scheduleQuery = useQuery({
     queryKey: ["schedule"],
     queryFn: dataApi.fetchSchedule,
     staleTime: Infinity,
   })
 
+  const puzzlesQuery = useQuery({
+    queryKey: ["puzzles"],
+    queryFn: dataApi.fetchPuzzles,
+    staleTime: Infinity,
+  })
+
+  const isPending = scheduleQuery.isPending || puzzlesQuery.isPending
+  const isError = scheduleQuery.isError || puzzlesQuery.isError
+  const isFetching = scheduleQuery.isFetching || puzzlesQuery.isFetching
+
+  const refetch = () => {
+    if (scheduleQuery.isError) void scheduleQuery.refetch()
+    if (puzzlesQuery.isError) void puzzlesQuery.refetch()
+  }
+
   const showLoading = useSpinDelay(isPending, { delay: 500, minDuration: 300, ssr: false })
 
-  if (isSuccess) return <>{children(schedule, defaultPuzzles)}</>
+  if (scheduleQuery.isSuccess && puzzlesQuery.isSuccess) {
+    return <>{children(scheduleQuery.data, puzzlesQuery.data)}</>
+  }
 
   if (isError) {
-    return (
-      <LoadingErrorScreen
-        message="Unable to load today's puzzle schedule."
-        onRetry={() => void refetch()}
-        isRetrying={isFetching}
-      />
-    )
+    return <LoadingErrorScreen message="Unable to load data." onRetry={refetch} isRetrying={isFetching} />
   }
 
   if (showLoading) return <LoadingScreen />
