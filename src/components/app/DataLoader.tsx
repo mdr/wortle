@@ -23,7 +23,7 @@ export const DataLoader = ({ children }: DataLoaderProps) => {
   } = useQuery({
     queryKey: ["schedule"],
     queryFn: dataApi.fetchSchedule,
-    staleTime: 1000 * 60 * 60, // 1 hour
+    staleTime: Infinity,
   })
 
   const showLoading = useSpinDelay(isPending, { delay: 500, minDuration: 300, ssr: false })
