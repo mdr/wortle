@@ -1,6 +1,7 @@
 import { type ReactNode } from "react"
 
 import { HistoryStore } from "@/lib/gameStorage/HistoryStore"
+import { type Puzzles } from "@/lib/puzzles"
 import { type Schedule } from "@/lib/schedule"
 import { type Clock } from "@/utils/Clock"
 import { createOptionalContext, useService } from "@/utils/providerish/serviceHooks"
@@ -8,6 +9,7 @@ import { createOptionalContext, useService } from "@/utils/providerish/serviceHo
 export interface GlobalDependencies {
   clock: Clock
   schedule: Schedule
+  puzzles: Puzzles
   historyStore: HistoryStore
 }
 
@@ -18,6 +20,8 @@ export const useGlobalDependencies = (): GlobalDependencies => useService(Global
 export const useClock = (): Clock => useGlobalDependencies().clock
 
 export const useSchedule = (): Schedule => useGlobalDependencies().schedule
+
+export const usePuzzles = (): Puzzles => useGlobalDependencies().puzzles
 
 export const useHistoryStore = (): HistoryStore => useGlobalDependencies().historyStore
 

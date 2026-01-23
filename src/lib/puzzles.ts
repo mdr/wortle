@@ -6,7 +6,27 @@ import { Option } from "@/utils/types/Option"
 import { ImageKey, type Puzzle, PuzzleId } from "./Puzzle"
 import { SpeciesId } from "./species/Species"
 
-const allPuzzles: Puzzle[] = [
+export interface Puzzles {
+  findPuzzle: (id: PuzzleId) => Option<Puzzle>
+  getPuzzle: (id: PuzzleId) => Puzzle
+  getAllPuzzleIds: () => PuzzleId[]
+}
+
+export class DefaultPuzzles implements Puzzles {
+  constructor(private readonly puzzles: Puzzle[]) {}
+
+  findPuzzle = (id: PuzzleId): Option<Puzzle> => this.puzzles.find((p) => p.id === id)
+
+  getPuzzle = (id: PuzzleId): Puzzle => {
+    const puzzle = this.findPuzzle(id)
+    assert(puzzle, `Unknown puzzle id: ${id}`)
+    return puzzle
+  }
+
+  getAllPuzzleIds = (): PuzzleId[] => this.puzzles.map((p) => p.id)
+}
+
+const defaultPuzzleData: Puzzle[] = [
   {
     id: PuzzleId(40),
     speciesId: SpeciesId("2cd4p9h.xbs"), // Daisy
@@ -104,12 +124,4 @@ const allPuzzles: Puzzle[] = [
   },
 ]
 
-export const findPuzzle = (id: PuzzleId): Option<Puzzle> => allPuzzles.find((p) => p.id === id)
-
-export const getPuzzle = (id: PuzzleId): Puzzle => {
-  const puzzle = findPuzzle(id)
-  assert(puzzle, `Unknown puzzle id: ${id}`)
-  return puzzle
-}
-
-export const getAllPuzzleIds = (): PuzzleId[] => allPuzzles.map((p) => p.id)
+export const defaultPuzzles: Puzzles = new DefaultPuzzles(defaultPuzzleData)

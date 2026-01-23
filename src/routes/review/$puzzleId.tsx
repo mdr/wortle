@@ -4,12 +4,11 @@ import { ErrorFallback } from "@/components/error/ErrorFallback"
 import { NotFoundPage } from "@/components/notFound/NotFoundPage"
 import { PuzzleMode, PuzzlePage } from "@/components/puzzle/PuzzlePage"
 import { PuzzleId } from "@/lib/Puzzle"
-import { findPuzzle } from "@/lib/puzzles"
 
 export const Route = createFileRoute("/review/$puzzleId")({
-  loader: ({ params }) => {
+  loader: ({ params, context }) => {
     const puzzleId = PuzzleId(parseInt(params.puzzleId, 10))
-    const puzzle = findPuzzle(puzzleId)
+    const puzzle = context.puzzles.findPuzzle(puzzleId)
     if (!puzzle) {
       // eslint-disable-next-line @typescript-eslint/only-throw-error -- TanStack Router pattern
       throw notFound()

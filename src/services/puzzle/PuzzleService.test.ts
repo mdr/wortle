@@ -9,7 +9,7 @@ import {
 } from "@/lib/gameStorage/HistoryStore.testUtils"
 import { createMemoryStorage } from "@/lib/gameStorage/storage.testUtils"
 import { Puzzle } from "@/lib/Puzzle"
-import { getPuzzle } from "@/lib/puzzles"
+import { defaultPuzzles } from "@/lib/puzzles"
 import { TestDate, TestPuzzles, TestSpeciesIds } from "@/lib/testConstants.testUtils"
 import { ImageIndex, Iso8601Date } from "@/utils/brandedTypes"
 
@@ -77,7 +77,7 @@ describe("computeInitialOutcome", () => {
   })
 })
 
-const defaultPuzzle = getPuzzle(TestPuzzles.daisy.id)
+const defaultPuzzle = defaultPuzzles.getPuzzle(TestPuzzles.daisy.id)
 
 const makePuzzleService = (
   options: Partial<{ puzzle: Puzzle; mode: PuzzleMode; historyStore: HistoryStore; date: Iso8601Date }> = {},
@@ -286,7 +286,7 @@ describe("PuzzleService", () => {
     })
 
     it("shows genus match feedback when genus matches", () => {
-      const service = makePuzzleService({ puzzle: getPuzzle(TestPuzzles.tansy.id) })
+      const service = makePuzzleService({ puzzle: defaultPuzzles.getPuzzle(TestPuzzles.tansy.id) })
 
       const result = service.submitAttempt(TestSpeciesIds.feverfew)
 

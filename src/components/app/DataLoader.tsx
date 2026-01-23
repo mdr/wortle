@@ -3,13 +3,14 @@ import { type ReactNode } from "react"
 import { useSpinDelay } from "spin-delay"
 
 import { dataApi } from "@/lib/data/DataApi"
+import { defaultPuzzles, type Puzzles } from "@/lib/puzzles"
 import { type Schedule } from "@/lib/schedule"
 
 import { LoadingErrorScreen } from "./LoadingErrorScreen"
 import { LoadingScreen } from "./LoadingScreen"
 
 interface DataLoaderProps {
-  children: (schedule: Schedule) => ReactNode
+  children: (schedule: Schedule, puzzles: Puzzles) => ReactNode
 }
 
 export const DataLoader = ({ children }: DataLoaderProps) => {
@@ -28,7 +29,7 @@ export const DataLoader = ({ children }: DataLoaderProps) => {
 
   const showLoading = useSpinDelay(isPending, { delay: 500, minDuration: 300, ssr: false })
 
-  if (isSuccess) return <>{children(schedule)}</>
+  if (isSuccess) return <>{children(schedule, defaultPuzzles)}</>
 
   if (isError) {
     return (

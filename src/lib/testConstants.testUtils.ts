@@ -1,5 +1,5 @@
 import { PuzzleId } from "@/lib/Puzzle"
-import { getPuzzle } from "@/lib/puzzles"
+import { defaultPuzzles } from "@/lib/puzzles"
 import { defaultSchedule } from "@/lib/schedule"
 import { getSpecies } from "@/lib/species/plants"
 import { SpeciesId } from "@/lib/species/Species"
@@ -14,7 +14,7 @@ export interface TestPuzzle {
 }
 
 const createTestPuzzle = (puzzleId: PuzzleId): TestPuzzle => {
-  const puzzle = getPuzzle(puzzleId)
+  const puzzle = defaultPuzzles.getPuzzle(puzzleId)
   const species = getSpecies(puzzle.speciesId)
   const scheduledDate = defaultSchedule.findFirstDateForPuzzle(puzzleId)
   return {

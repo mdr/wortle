@@ -4,7 +4,6 @@ import { ErrorFallback } from "@/components/error/ErrorFallback"
 import { NotFoundPage } from "@/components/notFound/NotFoundPage"
 import { PuzzleMode, PuzzlePage } from "@/components/puzzle/PuzzlePage"
 import { Puzzle } from "@/lib/Puzzle"
-import { findPuzzle } from "@/lib/puzzles"
 import { Iso8601Date } from "@/utils/brandedTypes"
 
 interface ArchivePuzzleData {
@@ -25,7 +24,7 @@ export const Route = createFileRoute("/archive/$date")({
       return { scheduledDate }
     }
 
-    const puzzle = findPuzzle(puzzleId)
+    const puzzle = context.puzzles.findPuzzle(puzzleId)
     if (!puzzle) {
       // eslint-disable-next-line @typescript-eslint/only-throw-error -- TanStack Router pattern
       throw notFound()

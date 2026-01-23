@@ -1,8 +1,7 @@
 import { Link } from "@tanstack/react-router"
 
-import { useSchedule } from "@/components/app/GlobalDependenciesProvider"
+import { usePuzzles, useSchedule } from "@/components/app/GlobalDependenciesProvider"
 import { type PuzzleHistoryEntry } from "@/lib/gameStorage/HistoryRecord"
-import { getPuzzle } from "@/lib/puzzles"
 import { getResultDescription, getResultMedal } from "@/lib/resultMedal"
 import { getSpecies } from "@/lib/species/plants"
 import { formatDate } from "@/utils/dateUtils"
@@ -16,10 +15,11 @@ interface HistoryItemProps {
 
 export const HistoryItem = ({ entry, isToday }: HistoryItemProps) => {
   const schedule = useSchedule()
+  const puzzles = usePuzzles()
   const puzzleId = schedule.findPuzzleForDate(entry.date)
   if (!puzzleId) return null
 
-  const puzzle = getPuzzle(puzzleId)
+  const puzzle = puzzles.getPuzzle(puzzleId)
   const species = getSpecies(puzzle.speciesId)
   const speciesName = species.commonName
   const attemptCount = entry.submittedSpecies.length

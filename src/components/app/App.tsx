@@ -16,7 +16,9 @@ export const App = ({ initialPath, disableNetworkRetries }: AppProps) => (
       <UmamiAnalytics url="https://cloud.umami.is" websiteId="e9196c98-109f-4188-b531-40b430369c15" />
     )}
     <QueryProvider disableRetries={disableNetworkRetries}>
-      <DataLoader>{(schedule) => <LoadedApp schedule={schedule} initialPath={initialPath} />}</DataLoader>
+      <DataLoader>
+        {(schedule, puzzles) => <LoadedApp schedule={schedule} puzzles={puzzles} initialPath={initialPath} />}
+      </DataLoader>
     </QueryProvider>
   </StrictMode>
 )

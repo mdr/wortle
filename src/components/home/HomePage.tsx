@@ -1,12 +1,11 @@
 import { Link } from "@tanstack/react-router"
 import { useState } from "react"
 
-import { useClock, useSchedule } from "@/components/app/GlobalDependenciesProvider"
+import { useClock, usePuzzles, useSchedule } from "@/components/app/GlobalDependenciesProvider"
 import { Button } from "@/components/shadcn/Button"
 import { Card } from "@/components/shadcn/Card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/shadcn/Select"
 import { HeaderNav } from "@/components/shared/HeaderNav"
-import { getAllPuzzleIds } from "@/lib/puzzles"
 import { Iso8601Date } from "@/utils/brandedTypes"
 import { formatDate } from "@/utils/dateUtils"
 import { assetUrl } from "@/utils/utils"
@@ -14,7 +13,8 @@ import { assetUrl } from "@/utils/utils"
 import { HomeTestIds } from "./HomeTestIds"
 
 export const HomePage = () => {
-  const puzzleIds = getAllPuzzleIds()
+  const puzzles = usePuzzles()
+  const puzzleIds = puzzles.getAllPuzzleIds()
   const clock = useClock()
   const schedule = useSchedule()
   const scheduledDates = schedule.getAllScheduledDates()
