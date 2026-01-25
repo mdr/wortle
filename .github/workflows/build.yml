@@ -105,4 +105,4 @@ jobs:
         if: always()
         uses: vercel/repository-dispatch/actions/status@v1
         with:
-          name: CI
+          name: "Vercel - wortle-game: CI"
