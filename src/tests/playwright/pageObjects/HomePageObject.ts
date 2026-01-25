@@ -1,4 +1,4 @@
-import { HomeTestIds } from "@/components/home/HomeTestIds"
+import { HomeTestIds } from "@/components/pages/home/HomeTestIds"
 import { SharedTestIds } from "@/components/shared/SharedTestIds"
 
 import { expect } from "../fixtures"

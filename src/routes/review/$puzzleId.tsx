@@ -1,8 +1,8 @@
 import { createFileRoute, notFound } from "@tanstack/react-router"
 
-import { ErrorFallback } from "@/components/error/ErrorFallback"
-import { NotFoundPage } from "@/components/notFound/NotFoundPage"
-import { PuzzleMode, PuzzlePage } from "@/components/puzzle/PuzzlePage"
+import { ErrorPage } from "@/components/pages/error/ErrorPage"
+import { NotFoundPage } from "@/components/pages/notFound/NotFoundPage"
+import { PuzzleMode, PuzzlePage } from "@/components/pages/puzzle/PuzzlePage"
 import { PuzzleId } from "@/lib/Puzzle"
 
 export const Route = createFileRoute("/review/$puzzleId")({
@@ -19,7 +19,7 @@ export const Route = createFileRoute("/review/$puzzleId")({
   notFoundComponent: () => (
     <NotFoundPage message="This puzzle doesn't exist. Please choose a puzzle from the home page." />
   ),
-  errorComponent: ({ error }) => <ErrorFallback error={error} />,
+  errorComponent: ({ error }) => <ErrorPage error={error} />,
 })
 
 const PuzzlePageWrapper = () => {

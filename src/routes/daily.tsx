@@ -1,8 +1,8 @@
 import { createFileRoute, notFound } from "@tanstack/react-router"
 
-import { ErrorFallback } from "@/components/error/ErrorFallback"
-import { NotFoundPage } from "@/components/notFound/NotFoundPage"
-import { PuzzleMode, PuzzlePage } from "@/components/puzzle/PuzzlePage"
+import { ErrorPage } from "@/components/pages/error/ErrorPage"
+import { NotFoundPage } from "@/components/pages/notFound/NotFoundPage"
+import { PuzzleMode, PuzzlePage } from "@/components/pages/puzzle/PuzzlePage"
 import { Puzzle } from "@/lib/Puzzle"
 import { Iso8601Date } from "@/utils/brandedTypes"
 
@@ -30,7 +30,7 @@ export const Route = createFileRoute("/daily")({
   },
   component: () => <DailyPuzzlePage />,
   notFoundComponent: () => <NotFoundPage message="Today's puzzle isn't available yet. Please check back later." />,
-  errorComponent: ({ error }) => <ErrorFallback error={error} />,
+  errorComponent: ({ error }) => <ErrorPage error={error} />,
 })
 
 const DailyPuzzlePage = () => {

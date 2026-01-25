@@ -1,4 +1,4 @@
-import { HistoryTestIds } from "@/components/history/HistoryTestIds"
+import { HistoryTestIds } from "@/components/pages/history/HistoryTestIds"
 
 import { expect } from "../fixtures"
 import { HistoryItemPageObject } from "./HistoryItemPageObject"

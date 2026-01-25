@@ -1,7 +1,7 @@
 import { Check, Share2 } from "lucide-react"
 import { useState } from "react"
 
-import { ShareResultTestIds } from "@/components/puzzle/PuzzleTestIds"
+import { ShareResultTestIds } from "@/components/pages/puzzle/PuzzleTestIds"
 import { Button } from "@/components/shadcn/Button"
 import { PassOrFail } from "@/lib/gameStorage/HistoryRecord"
 import { getResultMedal } from "@/lib/resultMedal"

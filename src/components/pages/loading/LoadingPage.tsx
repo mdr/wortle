@@ -4,7 +4,7 @@ import { assetUrl } from "@/utils/utils"
 
 import { LoadingTestIds } from "./LoadingTestIds"
 
-export const LoadingScreen = () => (
+export const LoadingPage = () => (
   <main
     data-testid={LoadingTestIds.loadingScreen}
     className="bg-background flex min-h-screen flex-col items-center justify-center gap-6"

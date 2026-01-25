@@ -2,14 +2,13 @@ import { useQuery } from "@tanstack/react-query"
 import { type ReactNode, useEffect, useRef } from "react"
 import { useSpinDelay } from "spin-delay"
 
+import { LoadingPage } from "@/components/pages/loading/LoadingPage"
+import { LoadingErrorPage } from "@/components/pages/loadingError/LoadingErrorPage"
 import { dataApi } from "@/lib/data/DataApi"
 import { validateDataReferences } from "@/lib/data/validateDataReferences"
 import { DefaultPuzzles, type Puzzles } from "@/lib/puzzles"
 import { DefaultSchedule, type Schedule } from "@/lib/schedule"
 import { DefaultSpeciesRepository, type SpeciesRepository } from "@/lib/species/Species"
-
-import { LoadingErrorScreen } from "./LoadingErrorScreen"
-import { LoadingScreen } from "./LoadingScreen"
 
 interface DataLoaderProps {
   children: (schedule: Schedule, puzzles: Puzzles, speciesRepository: SpeciesRepository) => ReactNode
@@ -63,10 +62,10 @@ export const DataLoader = ({ children }: DataLoaderProps) => {
   }
 
   if (isError) {
-    return <LoadingErrorScreen message="Unable to load data." onRetry={refetch} isRetrying={isFetching} />
+    return <LoadingErrorPage message="Unable to load data." onRetry={refetch} isRetrying={isFetching} />
   }
 
-  if (showLoading) return <LoadingScreen />
+  if (showLoading) return <LoadingPage />
 
   return null
 }

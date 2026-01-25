@@ -1,5 +1,5 @@
-import { GlossaryTerm } from "@/components/puzzle/glossary/GlossaryTerm"
-import { parseTipRegions } from "@/components/puzzle/glossary/parseTipRegions"
+import { GlossaryTerm } from "@/components/pages/puzzle/glossary/GlossaryTerm"
+import { parseTipRegions } from "@/components/pages/puzzle/glossary/parseTipRegions"
 
 export interface TipWithGlossaryProps {
   tip: string

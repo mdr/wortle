@@ -6,17 +6,17 @@ import { assetUrl } from "@/utils/utils"
 
 import { LoadingErrorTestIds } from "./LoadingErrorTestIds"
 
-export interface LoadingErrorScreenProps {
+export interface LoadingErrorPageProps {
   message?: string
   onRetry: () => void
   isRetrying: boolean
 }
 
-export const LoadingErrorScreen = ({
+export const LoadingErrorPage = ({
   message = "Something went wrong loading the app.",
   onRetry,
   isRetrying,
-}: LoadingErrorScreenProps) => (
+}: LoadingErrorPageProps) => (
   <main
     data-testid={LoadingErrorTestIds.screen}
     className="bg-background flex min-h-screen flex-col items-center justify-center p-4"

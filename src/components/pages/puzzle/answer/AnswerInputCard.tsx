@@ -1,8 +1,8 @@
 import { useUmami } from "@danielgtmn/umami-react"
 import { assert } from "tsafe"
 
-import { PlantSearch } from "@/components/puzzle/answer/PlantSearch"
-import { useShakeAnswerInput } from "@/components/puzzle/answer/useShakeAnswerInput"
+import { PlantSearch } from "@/components/pages/puzzle/answer/PlantSearch"
+import { useShakeAnswerInput } from "@/components/pages/puzzle/answer/useShakeAnswerInput"
 import { Button } from "@/components/shadcn/Button"
 import { Card } from "@/components/shadcn/Card"
 import { SpeciesId } from "@/lib/species/Species"

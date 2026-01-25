@@ -1,4 +1,4 @@
-import { ErrorTestIds } from "@/components/error/ErrorTestIds"
+import { ErrorTestIds } from "@/components/pages/error/ErrorTestIds"
 
 import { PageObject } from "./PageObject"
 

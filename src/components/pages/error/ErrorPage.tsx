@@ -9,11 +9,11 @@ import { assetUrl } from "@/utils/utils"
 
 import { ErrorTestIds } from "./ErrorTestIds"
 
-export interface ErrorFallbackProps {
+export interface ErrorPageProps {
   error: Error
 }
 
-export const ErrorFallback = ({ error }: ErrorFallbackProps) => {
+export const ErrorPage = ({ error }: ErrorPageProps) => {
   useEffect(() => {
     logger.error("app.errorBoundary", "Unhandled error caught by error boundary", undefined, error)
   }, [error])

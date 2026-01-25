@@ -1,4 +1,4 @@
-import { NotFoundTestIds } from "@/components/notFound/NotFoundTestIds"
+import { NotFoundTestIds } from "@/components/pages/notFound/NotFoundTestIds"
 
 import { PageObject } from "./PageObject"
 

@@ -1,4 +1,4 @@
-import { FullscreenTestIds, GalleryTestIds } from "@/components/puzzle/imageGallery/GalleryTestIds"
+import { FullscreenTestIds, GalleryTestIds } from "@/components/pages/puzzle/imageGallery/GalleryTestIds"
 
 import { expect } from "../fixtures"
 import { PageObject } from "./PageObject"

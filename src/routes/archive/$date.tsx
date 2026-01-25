@@ -1,8 +1,8 @@
 import { createFileRoute, notFound, redirect } from "@tanstack/react-router"
 
-import { ErrorFallback } from "@/components/error/ErrorFallback"
-import { NotFoundPage } from "@/components/notFound/NotFoundPage"
-import { PuzzleMode, PuzzlePage } from "@/components/puzzle/PuzzlePage"
+import { ErrorPage } from "@/components/pages/error/ErrorPage"
+import { NotFoundPage } from "@/components/pages/notFound/NotFoundPage"
+import { PuzzleMode, PuzzlePage } from "@/components/pages/puzzle/PuzzlePage"
 import { Puzzle } from "@/lib/Puzzle"
 import { Iso8601Date } from "@/utils/brandedTypes"
 
@@ -34,7 +34,7 @@ export const Route = createFileRoute("/archive/$date")({
   },
   component: () => <ArchivePuzzlePage />,
   notFoundComponent: () => <NotFoundPage message="This puzzle doesn't exist." />,
-  errorComponent: ({ error }) => <ErrorFallback error={error} />,
+  errorComponent: ({ error }) => <ErrorPage error={error} />,
 })
 
 const ArchivePuzzlePage = () => {
