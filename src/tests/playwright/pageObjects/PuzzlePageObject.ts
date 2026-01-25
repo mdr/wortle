@@ -5,8 +5,8 @@ import {
   ShareResultTestIds,
 } from "@/components/puzzle/PuzzleTestIds"
 import { SharedTestIds } from "@/components/shared/SharedTestIds"
-import { getSpecies } from "@/lib/species/plants"
 import { SpeciesId } from "@/lib/species/Species"
+import { testSpeciesRepository } from "@/lib/species/testSpecies.testUtils"
 
 import { expect } from "../fixtures"
 import { GalleryPageObject } from "./GalleryPageObject"
@@ -32,7 +32,7 @@ export class PuzzlePageObject extends PageObject {
 
   submitAnswer = (speciesId: SpeciesId): Promise<void> =>
     this.step(`submitAnswer(${speciesId})`, async () => {
-      const species = getSpecies(speciesId)
+      const species = testSpeciesRepository.getSpecies(speciesId)
       await this.searchForPlant(species.commonName)
       await this.selectFirstPlantOption()
       await this.confirmSelection()

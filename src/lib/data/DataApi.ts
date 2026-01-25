@@ -1,6 +1,7 @@
 import { puzzlesJsonSchema } from "@/lib/Puzzle"
 import { DefaultPuzzles, type Puzzles } from "@/lib/puzzles"
 import { DefaultSchedule, type Schedule, scheduleJsonSchema } from "@/lib/schedule"
+import { DefaultSpeciesRepository, speciesJsonSchema, type SpeciesRepository } from "@/lib/species/Species"
 import { Url } from "@/utils/brandedTypes"
 
 const DEFAULT_DATA_URL = Url("https://data.wortle.app")
@@ -26,6 +27,16 @@ export class DataApi {
     const json: unknown = await response.json()
     const parsed = puzzlesJsonSchema.parse(json)
     return new DefaultPuzzles(parsed.puzzles)
+  }
+
+  fetchSpecies = async (): Promise<SpeciesRepository> => {
+    const response = await fetch(`${this.baseUrl}/species.json`)
+    if (!response.ok) {
+      throw new Error(`Failed to fetch species: ${response.status} ${response.statusText}`)
+    }
+    const json: unknown = await response.json()
+    const parsed = speciesJsonSchema.parse(json)
+    return new DefaultSpeciesRepository(parsed.species)
   }
 }
 

@@ -1,6 +1,9 @@
 import { Brand } from "effect"
+import { assert, Equals } from "tsafe"
+import { z } from "zod"
 
 import { Url } from "@/utils/brandedTypes"
+import { Option } from "@/utils/types/Option"
 
 export type SpeciesId = string & Brand.Brand<"SpeciesId">
 export const SpeciesId = Brand.nominal<SpeciesId>()
@@ -42,3 +45,53 @@ const matchesQuery = (species: Species, query: string): boolean => {
 
 export const filterSpecies = (species: Species[], query: string, excludedIds: SpeciesId[] = []): Species[] =>
   species.filter((s) => !excludedIds.includes(s.id) && matchesQuery(s, query))
+
+const speciesLinkSchema = z.object({
+  name: z.string(),
+  url: z.string().transform(Url),
+})
+
+const speciesSchema = z.object({
+  id: z.string().transform(SpeciesId),
+  scientificName: z.string().transform(ScientificName),
+  family: z.string().transform(Family),
+  commonName: z.string().transform(CommonName),
+  alternativeCommonNames: z.array(z.string().transform(CommonName)),
+  links: z.array(speciesLinkSchema),
+  idTips: z.array(z.string()),
+})
+
+export const speciesJsonSchema = z.object({
+  species: z.array(speciesSchema),
+})
+
+export interface SpeciesJson {
+  species: Species[]
+}
+
+type InferredSpeciesJson = z.infer<typeof speciesJsonSchema>
+assert<Equals<InferredSpeciesJson, SpeciesJson>>()
+
+export interface SpeciesRepository {
+  findSpecies: (id: SpeciesId) => Option<Species>
+  getSpecies: (id: SpeciesId) => Species
+  getAllSpecies: () => Species[]
+  filterSpecies: (query: string, excludedIds?: SpeciesId[]) => Species[]
+}
+
+export class DefaultSpeciesRepository implements SpeciesRepository {
+  constructor(private readonly species: Species[]) {}
+
+  findSpecies = (id: SpeciesId): Option<Species> => this.species.find((s) => s.id === id)
+
+  getSpecies = (id: SpeciesId): Species => {
+    const species = this.findSpecies(id)
+    assert(species, `Unknown species id: ${id}`)
+    return species
+  }
+
+  getAllSpecies = (): Species[] => this.species
+
+  filterSpecies = (query: string, excludedIds: SpeciesId[] = []): Species[] =>
+    filterSpecies(this.species, query, excludedIds)
+}

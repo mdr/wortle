@@ -1,6 +1,6 @@
+import { useSpeciesRepository } from "@/components/app/GlobalDependenciesProvider"
 import { Card } from "@/components/shadcn/Card"
 import { AttemptResult } from "@/lib/AttemptResult"
-import { getSpecies } from "@/lib/species/plants"
 import { Option } from "@/utils/types/Option"
 
 import { AttemptHistoryTestIds } from "../PuzzleTestIds"
@@ -22,36 +22,39 @@ const getAttemptStyles = (attempt: AttemptResult): string => {
   return "border-destructive bg-destructive/10"
 }
 
-export const AttemptHistory = ({ attempts }: AttemptHistoryProps) => (
-  <Card className="p-4" data-testid={AttemptHistoryTestIds.container}>
-    <h3 className="text-muted-foreground mb-3 text-sm font-medium">Previous attempts</h3>
-    <div className="space-y-2">
-      {attempts.map((attempt, index) => {
-        const species = getSpecies(attempt.speciesId)
-        const hint = getHintText(attempt)
-        return (
-          <div key={attempt.speciesId} className="flex items-stretch gap-2">
-            <div className="text-muted-foreground flex w-6 items-center justify-center text-sm">#{index + 1}</div>
-            <div
-              className={`flex flex-1 items-stretch justify-between rounded-md border p-3 ${getAttemptStyles(attempt)}`}
-              data-testid={AttemptHistoryTestIds.item}
-            >
-              <div>
-                <p className="text-foreground font-medium">{species.commonName}</p>
-                <p className="text-muted-foreground text-sm italic">{species.scientificName}</p>
-              </div>
-              <div className="flex flex-col items-end text-right">
-                {hint && (
-                  <p className="text-muted-foreground text-sm font-medium" data-testid={AttemptHistoryTestIds.hint}>
-                    {hint}
-                  </p>
-                )}
-                <p className="text-muted-foreground mt-auto text-sm">{species.family}</p>
+export const AttemptHistory = ({ attempts }: AttemptHistoryProps) => {
+  const speciesRepository = useSpeciesRepository()
+  return (
+    <Card className="p-4" data-testid={AttemptHistoryTestIds.container}>
+      <h3 className="text-muted-foreground mb-3 text-sm font-medium">Previous attempts</h3>
+      <div className="space-y-2">
+        {attempts.map((attempt, index) => {
+          const species = speciesRepository.getSpecies(attempt.speciesId)
+          const hint = getHintText(attempt)
+          return (
+            <div key={attempt.speciesId} className="flex items-stretch gap-2">
+              <div className="text-muted-foreground flex w-6 items-center justify-center text-sm">#{index + 1}</div>
+              <div
+                className={`flex flex-1 items-stretch justify-between rounded-md border p-3 ${getAttemptStyles(attempt)}`}
+                data-testid={AttemptHistoryTestIds.item}
+              >
+                <div>
+                  <p className="text-foreground font-medium">{species.commonName}</p>
+                  <p className="text-muted-foreground text-sm italic">{species.scientificName}</p>
+                </div>
+                <div className="flex flex-col items-end text-right">
+                  {hint && (
+                    <p className="text-muted-foreground text-sm font-medium" data-testid={AttemptHistoryTestIds.hint}>
+                      {hint}
+                    </p>
+                  )}
+                  <p className="text-muted-foreground mt-auto text-sm">{species.family}</p>
+                </div>
               </div>
             </div>
-          </div>
-        )
-      })}
-    </div>
-  </Card>
-)
+          )
+        })}
+      </div>
+    </Card>
+  )
+}

@@ -5,8 +5,7 @@ import { calculateDailyStatsSummary, DailyStatsSummary } from "@/lib/gameStorage
 import { PassOrFail } from "@/lib/gameStorage/HistoryRecord"
 import { HistoryStore } from "@/lib/gameStorage/HistoryStore"
 import { Puzzle } from "@/lib/Puzzle"
-import { getSpecies } from "@/lib/species/plants"
-import { SpeciesId } from "@/lib/species/Species"
+import { SpeciesId, SpeciesRepository } from "@/lib/species/Species"
 import { ImageIndex, Iso8601Date } from "@/utils/brandedTypes"
 import { AbstractService } from "@/utils/providerish/AbstractService"
 import { Option } from "@/utils/types/Option"
@@ -104,10 +103,11 @@ export class PuzzleService extends AbstractService<PuzzleServiceState> implement
     scheduledDate: Option<Iso8601Date>,
     private readonly mode: PuzzleMode,
     private readonly historyStore: HistoryStore,
+    private readonly speciesRepository: SpeciesRepository,
   ) {
     const history = mode !== PuzzleMode.REVIEW ? historyStore.load() : undefined
     const pastEntries = history?.entries ?? []
-    const correctSpecies = getSpecies(puzzle.speciesId)
+    const correctSpecies = speciesRepository.getSpecies(puzzle.speciesId)
 
     const existingEntry =
       mode !== PuzzleMode.REVIEW && scheduledDate
@@ -116,7 +116,7 @@ export class PuzzleService extends AbstractService<PuzzleServiceState> implement
 
     const submittedSpecies = existingEntry?.submittedSpecies ?? []
     const attempts = submittedSpecies.map((speciesId) => {
-      const species = getSpecies(speciesId)
+      const species = speciesRepository.getSpecies(speciesId)
       return createAttemptResult(species, correctSpecies)
     })
 
@@ -172,8 +172,8 @@ export class PuzzleService extends AbstractService<PuzzleServiceState> implement
   }
 
   submitAttempt = (speciesId: SpeciesId): boolean => {
-    const species = getSpecies(speciesId)
-    const correctSpecies = getSpecies(this.state.puzzle.speciesId)
+    const species = this.speciesRepository.getSpecies(speciesId)
+    const correctSpecies = this.speciesRepository.getSpecies(this.state.puzzle.speciesId)
     const attemptResult = createAttemptResult(species, correctSpecies)
     const nextAttempts = [...this.state.attempts, attemptResult]
     const incorrectFeedbackText = attemptResult.isCorrect ? undefined : this.getIncorrectFeedbackText(attemptResult)

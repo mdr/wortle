@@ -1,6 +1,7 @@
 export enum EndpointKey {
   SCHEDULE = "SCHEDULE",
   PUZZLES = "PUZZLES",
+  SPECIES = "SPECIES",
 }
 
 export enum EndpointBehaviour {

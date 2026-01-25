@@ -1,8 +1,8 @@
 import { PuzzleId } from "@/lib/Puzzle"
 import { defaultPuzzles } from "@/lib/puzzles"
 import { defaultSchedule } from "@/lib/schedule"
-import { getSpecies } from "@/lib/species/plants"
 import { SpeciesId } from "@/lib/species/Species"
+import { testSpeciesRepository } from "@/lib/species/testSpecies.testUtils"
 import { Iso8601Date } from "@/utils/brandedTypes"
 import { Option } from "@/utils/types/Option"
 
@@ -15,7 +15,7 @@ export interface TestPuzzle {
 
 const createTestPuzzle = (puzzleId: PuzzleId): TestPuzzle => {
   const puzzle = defaultPuzzles.getPuzzle(puzzleId)
-  const species = getSpecies(puzzle.speciesId)
+  const species = testSpeciesRepository.getSpecies(puzzle.speciesId)
   const scheduledDate = defaultSchedule.findFirstDateForPuzzle(puzzleId)
   return {
     id: puzzleId,

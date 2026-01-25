@@ -10,6 +10,7 @@ import {
 import { createMemoryStorage } from "@/lib/gameStorage/storage.testUtils"
 import { Puzzle } from "@/lib/Puzzle"
 import { defaultPuzzles } from "@/lib/puzzles"
+import { testSpeciesRepository } from "@/lib/species/testSpecies.testUtils"
 import { TestDate, TestPuzzles, TestSpeciesIds } from "@/lib/testConstants.testUtils"
 import { ImageIndex, Iso8601Date } from "@/utils/brandedTypes"
 
@@ -84,7 +85,13 @@ const makePuzzleService = (
 ): PuzzleService => {
   const puzzle = options.puzzle ?? defaultPuzzle
   const historyStore = options.historyStore ?? createHistoryStore()
-  return new PuzzleService(puzzle, options.date ?? TestDate, options.mode ?? PuzzleMode.REVIEW, historyStore)
+  return new PuzzleService(
+    puzzle,
+    options.date ?? TestDate,
+    options.mode ?? PuzzleMode.REVIEW,
+    historyStore,
+    testSpeciesRepository,
+  )
 }
 
 describe("PuzzleService", () => {

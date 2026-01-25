@@ -4,6 +4,8 @@ import type { Puzzle, PuzzlesJson } from "@/lib/Puzzle"
 import { PuzzleId } from "@/lib/Puzzle"
 import { defaultPuzzles } from "@/lib/puzzles"
 import type { ScheduleEntry, ScheduleJson } from "@/lib/schedule"
+import type { Species, SpeciesJson } from "@/lib/species/Species"
+import { testSpecies } from "@/lib/species/testSpecies.testUtils"
 import { Iso8601Date } from "@/utils/brandedTypes"
 
 import {
@@ -22,9 +24,9 @@ export const DEFAULT_SCHEDULE_ENTRIES: ScheduleEntry[] = [
   { date: Iso8601Date("2026-06-12"), puzzleId: PuzzleId(44) },
 ]
 
-export const DEFAULT_PUZZLE_ENTRIES: Puzzle[] = defaultPuzzles
-  .getAllPuzzleIds()
-  .map((id) => defaultPuzzles.getPuzzle(id))
+export const DEFAULT_PUZZLES: Puzzle[] = defaultPuzzles.getAllPuzzleIds().map((id) => defaultPuzzles.getPuzzle(id))
+
+export const DEFAULT_SPECIES: Species[] = testSpecies
 
 interface EndpointConfig<T> {
   routePattern: string
@@ -35,7 +37,8 @@ interface EndpointConfig<T> {
 export class NetworkSimulator {
   private readonly behaviourManager = new EndpointBehaviourManager()
   private scheduleEntries: ScheduleEntry[] = DEFAULT_SCHEDULE_ENTRIES
-  private puzzles: Puzzle[] = DEFAULT_PUZZLE_ENTRIES
+  private puzzles: Puzzle[] = DEFAULT_PUZZLES
+  private species: Species[] = DEFAULT_SPECIES
 
   constructor(private readonly page: Page) {}
 
@@ -58,7 +61,7 @@ export class NetworkSimulator {
 
   simulateFetchPuzzlesSuccess = () => {
     this.behaviourManager.setBehaviour(EndpointKey.PUZZLES, EndpointBehaviour.DEFAULT)
-    this.puzzles = DEFAULT_PUZZLE_ENTRIES
+    this.puzzles = DEFAULT_PUZZLES
   }
 
   setPuzzles = (puzzles: Puzzle[]) => {
@@ -72,14 +75,32 @@ export class NetworkSimulator {
 
   simulateFetchPuzzlesStall = () => this.behaviourManager.stall(EndpointKey.PUZZLES, { puzzles: this.puzzles })
 
+  simulateFetchSpeciesSuccess = () => {
+    this.behaviourManager.setBehaviour(EndpointKey.SPECIES, EndpointBehaviour.DEFAULT)
+    this.species = DEFAULT_SPECIES
+  }
+
+  setSpecies = (species: Species[]) => {
+    this.behaviourManager.setBehaviour(EndpointKey.SPECIES, EndpointBehaviour.DEFAULT)
+    this.species = species
+  }
+
+  simulateFetchSpeciesError = () => {
+    this.behaviourManager.setBehaviour(EndpointKey.SPECIES, EndpointBehaviour.ERROR)
+  }
+
+  simulateFetchSpeciesStall = () => this.behaviourManager.stall(EndpointKey.SPECIES, { species: this.species })
+
   simulateFetchAllError = () => {
     this.simulateFetchScheduleError()
     this.simulateFetchPuzzlesError()
+    this.simulateFetchSpeciesError()
   }
 
   simulateFetchAllSuccess = () => {
     this.simulateFetchScheduleSuccess()
     this.simulateFetchPuzzlesSuccess()
+    this.simulateFetchSpeciesSuccess()
   }
 
   install = async () => {
@@ -93,6 +114,12 @@ export class NetworkSimulator {
       routePattern: "**/data.wortle.app/puzzles.json",
       endpointKey: EndpointKey.PUZZLES,
       handle: () => ({ puzzles: this.puzzles }),
+    })
+
+    await this.installRoute<SpeciesJson>({
+      routePattern: "**/data.wortle.app/species.json",
+      endpointKey: EndpointKey.SPECIES,
+      handle: () => ({ species: this.species }),
     })
   }
 

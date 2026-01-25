@@ -1,7 +1,7 @@
 import { useUmami } from "@danielgtmn/umami-react"
 import { useEffect, useMemo, useRef } from "react"
 
-import { useHistoryStore } from "@/components/app/GlobalDependenciesProvider"
+import { useHistoryStore, useSpeciesRepository } from "@/components/app/GlobalDependenciesProvider"
 import { AnswerInputCard } from "@/components/puzzle/answer/AnswerInputCard"
 import { AnswerResult } from "@/components/puzzle/answer/AnswerResult"
 import { AttemptHistory } from "@/components/puzzle/answer/AttemptHistory"
@@ -29,9 +29,10 @@ export interface PuzzlePageProps {
 
 export const PuzzlePage = ({ puzzle, scheduledDate, mode }: PuzzlePageProps) => {
   const historyStore = useHistoryStore()
+  const speciesRepository = useSpeciesRepository()
   const service = useMemo(
-    () => new PuzzleService(puzzle, scheduledDate, mode, historyStore),
-    [puzzle, scheduledDate, mode, historyStore],
+    () => new PuzzleService(puzzle, scheduledDate, mode, historyStore, speciesRepository),
+    [puzzle, scheduledDate, mode, historyStore, speciesRepository],
   )
 
   return (

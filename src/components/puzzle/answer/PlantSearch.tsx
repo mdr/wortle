@@ -1,6 +1,7 @@
 import { clsx } from "clsx"
 import { useEffect, useId, useRef, useState } from "react"
 
+import { useSpeciesRepository } from "@/components/app/GlobalDependenciesProvider"
 import {
   Command,
   CommandEmpty,
@@ -9,7 +10,6 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/shadcn/Command"
-import { filterSpecies, findSpecies, getAllSpecies } from "@/lib/species/plants"
 import { usePuzzleServiceActions, usePuzzleState } from "@/services/puzzle/puzzleServiceHooks"
 
 import { PuzzleTestIds } from "../PuzzleTestIds"
@@ -17,13 +17,14 @@ import { PuzzleTestIds } from "../PuzzleTestIds"
 export const PlantSearch = () => {
   const { attempts, selectedSpeciesId, searchQuery } = usePuzzleState()
   const puzzleActions = usePuzzleServiceActions()
+  const speciesRepository = useSpeciesRepository()
   const excludedSpeciesIds = attempts.map((attempt) => attempt.speciesId)
   const open = searchQuery.length > 0
   const { containerRef, handleFocus, handleBlur } = useScrollToLabelOnFocus(open)
   const inputId = useId()
 
-  const filteredSpecies = filterSpecies(getAllSpecies(), searchQuery, excludedSpeciesIds)
-  const selectedSpecies = selectedSpeciesId ? findSpecies(selectedSpeciesId) : undefined
+  const filteredSpecies = speciesRepository.filterSpecies(searchQuery, excludedSpeciesIds)
+  const selectedSpecies = selectedSpeciesId ? speciesRepository.findSpecies(selectedSpeciesId) : undefined
 
   if (selectedSpecies) {
     return (

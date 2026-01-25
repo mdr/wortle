@@ -1,13 +1,12 @@
 import { Info } from "lucide-react"
 import { assert } from "tsafe"
 
+import { useSpeciesRepository } from "@/components/app/GlobalDependenciesProvider"
 import { TipWithGlossary } from "@/components/puzzle/glossary/TipWithGlossary"
 import { Card } from "@/components/shadcn/Card"
 import { AttemptResult } from "@/lib/AttemptResult"
 import { PassOrFail } from "@/lib/gameStorage/HistoryRecord"
 import { getResultMedal } from "@/lib/resultMedal"
-import { getSpecies } from "@/lib/species/plants"
-import { selectCorrectSpecies } from "@/services/puzzle/puzzleSelectors"
 import { PuzzleOutcome } from "@/services/puzzle/PuzzleService"
 import { usePuzzleState } from "@/services/puzzle/puzzleServiceHooks"
 import { Option } from "@/utils/types/Option"
@@ -30,8 +29,9 @@ const outcomeToTestId: Record<PuzzleOutcome, string> = {
 }
 
 export const AnswerResult = () => {
-  const correctSpecies = usePuzzleState(selectCorrectSpecies)
-  const { attempts, outcome } = usePuzzleState()
+  const speciesRepository = useSpeciesRepository()
+  const { puzzle, attempts, outcome } = usePuzzleState()
+  const correctSpecies = speciesRepository.getSpecies(puzzle.speciesId)
   assert(outcome, "AnswerResult requires an outcome")
 
   const isCorrect = outcome === PuzzleOutcome.CORRECT
@@ -111,7 +111,7 @@ export const AnswerResult = () => {
               </p>
               <div className="space-y-2">
                 {(isCorrect ? attempts.filter((attempt) => !attempt.isCorrect) : attempts).map((attempt, index) => {
-                  const species = getSpecies(attempt.speciesId)
+                  const species = speciesRepository.getSpecies(attempt.speciesId)
                   const hint = getHintText(attempt)
                   return (
                     <div key={attempt.speciesId} className="flex items-stretch gap-2">
