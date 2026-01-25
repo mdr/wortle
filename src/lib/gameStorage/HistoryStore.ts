@@ -58,4 +58,8 @@ export class HistoryStore {
     this.update((current) => ({
       entries: upsertEntry(current.entries, entry),
     }))
+
+  clear = (): void => {
+    this.save(defaultHistory)
+  }
 }

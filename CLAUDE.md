@@ -25,6 +25,7 @@ Run `task check` to verify work before finishing (runs tsc, lint, format, and te
 - In tests, check full objects with `expect(obj).toEqual({...})` rather than individual properties.
 - In tests, only specify values important for that test case; use test factory defaults for everything else.
 - When fixing bugs, write a failing test first, then fix the code to make it pass.
+- Use React's `useId` hook for accessibility label associations (e.g., `htmlFor` and `id` pairs).
 
 ## Testing
 

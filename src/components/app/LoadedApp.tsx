@@ -1,6 +1,7 @@
 import { RouterProvider } from "@tanstack/react-router"
 import { useMemo } from "react"
 
+import { DebugDialog } from "@/components/debug/DebugDialog"
 import { HistoryStore } from "@/lib/gameStorage/HistoryStore"
 import { type Puzzles } from "@/lib/puzzles"
 import { createAppRouter } from "@/lib/router"
@@ -37,6 +38,7 @@ export const LoadedApp = ({ schedule, puzzles, speciesRepository, initialPath }:
       <TestHooksProvider>
         <RouterProvider router={router} />
       </TestHooksProvider>
+      <DebugDialog />
     </GlobalDependenciesProvider>
   )
 }
