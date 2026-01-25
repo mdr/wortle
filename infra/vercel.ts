@@ -21,3 +21,19 @@ new vercel.ProjectDomain("game-domain-www", {
   projectId: gameProject.id,
   domain: "www.wortle.app",
 })
+
+// Admin app project
+export const adminProject = new vercel.Project("admin", {
+  name: "wortle-admin",
+  framework: "nextjs",
+  gitRepository: {
+    type: "github",
+    repo: "mdr/wortle",
+  },
+  rootDirectory: "apps/admin",
+})
+
+new vercel.ProjectDomain("admin-domain", {
+  projectId: adminProject.id,
+  domain: "admin.wortle.app",
+})

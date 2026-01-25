@@ -21,3 +21,13 @@ new cloudflare.DnsRecord("vercel-www", {
   ttl: 300,
   proxied: false,
 })
+
+// admin subdomain CNAME for Vercel
+new cloudflare.DnsRecord("vercel-admin", {
+  zoneId: zone.zoneId,
+  name: "admin",
+  type: "CNAME",
+  content: "cname.vercel-dns.com",
+  ttl: 300,
+  proxied: false,
+})
