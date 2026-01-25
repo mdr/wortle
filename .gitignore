@@ -1,8 +1,14 @@
 # dependencies
 node_modules
 
+# turborepo
+.turbo
+
+# vite cache
+.vite
+
 # build output
-/dist
+dist
 
 # debug
 npm-debug.log*
@@ -22,17 +28,17 @@ yarn-error.log*
 .tanstack/
 
 # playwright
-/playwright/.cache
-/playwright-report
-/test-results
+**/playwright/.cache
+playwright-report
+test-results
 .pnpm-store/
 
 # stryker
 .stryker-tmp/
-/reports/
+reports
 
 # coverage
-/coverage/
+coverage
 
 # wrangler
 .wrangler/

@@ -1,4 +1,8 @@
 **/pnpm-lock.yaml
-src/routeTree.gen.ts
+apps/game/src/routeTree.gen.ts
 dist
 infra/Pulumi*.yaml
+.vite
+**/playwright/.cache
+**/playwright-report
+**/test-results

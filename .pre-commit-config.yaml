@@ -9,13 +9,13 @@ repos:
         stages: [pre-commit]
       - id: tsc
         name: tsc
-        entry: pnpm tsc --noEmit
+        entry: pnpm tsc
         language: system
         pass_filenames: false
         stages: [pre-commit]
       - id: eslint
         name: eslint
-        entry: pnpm eslint --max-warnings=0
+        entry: bash -c 'cd apps/game && pnpm eslint --max-warnings=0 "$@"' --
         language: system
         types: [ts, tsx]
         stages: [pre-commit]
