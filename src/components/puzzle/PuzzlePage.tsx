@@ -1,4 +1,3 @@
-import { useUmami } from "@danielgtmn/umami-react"
 import { useEffect, useMemo, useRef } from "react"
 
 import { useHistoryStore, useSpeciesRepository } from "@/components/app/GlobalDependenciesProvider"
@@ -43,15 +42,13 @@ export const PuzzlePage = ({ puzzle, scheduledDate, mode }: PuzzlePageProps) => 
 }
 
 const PuzzlePageContents = () => {
-  const { puzzle, scheduledDate, mode, attempts, statsSummary } = usePuzzleState()
+  const { puzzle, scheduledDate, attempts, statsSummary } = usePuzzleState()
 
   const isCorrect = usePuzzleState(selectIsCorrect)
   const isResolved = usePuzzleState(selectIsResolved)
   const showAttemptHistory = usePuzzleState(selectShowAttemptHistory)
   const { fireConfetti, panelRef: answerPanelRef } = useCorrectAnswerConfetti()
   const wasCorrectRef = useRef(isCorrect)
-  const wasResolvedRef = useRef(isResolved)
-  const { track } = useUmami()
 
   useEffect(() => {
     if (isCorrect && !wasCorrectRef.current) {
@@ -59,21 +56,6 @@ const PuzzlePageContents = () => {
     }
     wasCorrectRef.current = isCorrect
   }, [fireConfetti, isCorrect])
-
-  useEffect(() => {
-    if (isResolved && !wasResolvedRef.current) {
-      track("puzzleCompleted", {
-        puzzleId: puzzle.id,
-        mode,
-        attempts: attempts.length,
-        correct: isCorrect,
-        attempt1: attempts[0]?.speciesId,
-        attempt2: attempts[1]?.speciesId,
-        attempt3: attempts[2]?.speciesId,
-      })
-    }
-    wasResolvedRef.current = isResolved
-  }, [isResolved, track, puzzle.id, mode, attempts, isCorrect])
 
   return (
     <main className="bg-background min-h-screen" data-testid={PuzzleTestIds.page}>

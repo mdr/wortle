@@ -254,12 +254,12 @@ describe("PuzzleService", () => {
   })
 
   describe("submitAttempt", () => {
-    it("records a correct attempt and returns true", () => {
+    it("records a correct attempt and returns isCorrect and isCompleted", () => {
       const service = makePuzzleService()
 
       const result = service.submitAttempt(defaultPuzzle.speciesId)
 
-      expect(result).toBe(true)
+      expect(result).toEqual({ isCorrect: true, isCompleted: true })
       expect(service.state).toMatchObject({
         attempts: [{ isCorrect: true }],
         selectedSpeciesId: undefined,
@@ -267,12 +267,12 @@ describe("PuzzleService", () => {
       })
     })
 
-    it("records an incorrect attempt with no match and returns false", () => {
+    it("records an incorrect attempt with no match and returns not completed", () => {
       const service = makePuzzleService()
 
       const result = service.submitAttempt(TestSpeciesIds.herbRobert)
 
-      expect(result).toBe(false)
+      expect(result).toEqual({ isCorrect: false, isCompleted: false })
       expect(service.state).toMatchObject({
         attempts: [{ isCorrect: false, genusMatch: false, familyMatch: false }],
         incorrectFeedbackText: "That's not it - have another go.",
@@ -285,7 +285,7 @@ describe("PuzzleService", () => {
 
       const result = service.submitAttempt(TestSpeciesIds.tansy)
 
-      expect(result).toBe(false)
+      expect(result).toEqual({ isCorrect: false, isCompleted: false })
       expect(service.state).toMatchObject({
         attempts: [{ isCorrect: false, genusMatch: false, familyMatch: true }],
         incorrectFeedbackText: "That's in the right family - have another go.",
@@ -297,7 +297,7 @@ describe("PuzzleService", () => {
 
       const result = service.submitAttempt(TestSpeciesIds.feverfew)
 
-      expect(result).toBe(false)
+      expect(result).toEqual({ isCorrect: false, isCompleted: false })
       expect(service.state).toMatchObject({
         attempts: [{ isCorrect: false, genusMatch: true, familyMatch: true }],
         incorrectFeedbackText: "Right genus - you're close!",

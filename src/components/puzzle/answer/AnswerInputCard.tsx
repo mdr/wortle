@@ -1,34 +1,51 @@
-import type { AnimationOptions, DOMKeyframesDefinition } from "motion/react"
-import { useAnimate } from "motion/react"
-import { useCallback } from "react"
+import { useUmami } from "@danielgtmn/umami-react"
 import { assert } from "tsafe"
 
 import { PlantSearch } from "@/components/puzzle/answer/PlantSearch"
+import { useShakeAnswerInput } from "@/components/puzzle/answer/useShakeAnswerInput"
 import { Button } from "@/components/shadcn/Button"
 import { Card } from "@/components/shadcn/Card"
+import { SpeciesId } from "@/lib/species/Species"
 import { MAX_ATTEMPTS } from "@/services/puzzle/PuzzleService"
 import { usePuzzleServiceActions, usePuzzleState } from "@/services/puzzle/puzzleServiceHooks"
 
 import { PuzzleTestIds } from "../PuzzleTestIds"
 
-const SHAKE_ANIMATION: DOMKeyframesDefinition = { x: [0, -6, 6, -4, 4, 0] }
-const SHAKE_TRANSITION: AnimationOptions = { duration: 0.35, ease: "easeInOut" }
-
 export const AnswerInputCard = () => {
-  const [scope, animate] = useAnimate()
+  const { scope, shake } = useShakeAnswerInput()
   const puzzleActions = usePuzzleServiceActions()
-  const { attempts, incorrectFeedbackText, selectedSpeciesId } = usePuzzleState()
+  const { puzzle, mode, attempts, incorrectFeedbackText, selectedSpeciesId } = usePuzzleState()
+  const { track } = useUmami()
 
-  const shake = useCallback(() => {
-    animate(scope.current, SHAKE_ANIMATION, SHAKE_TRANSITION)
-  }, [animate, scope])
+  const trackPuzzleCompleted = (correct: boolean, attemptSpeciesIds: SpeciesId[]) => {
+    track("puzzleCompleted", {
+      puzzleId: puzzle.id,
+      mode,
+      attempts: attemptSpeciesIds.length,
+      correct,
+      attempt1: attemptSpeciesIds[0],
+      attempt2: attemptSpeciesIds[1],
+      attempt3: attemptSpeciesIds[2],
+    })
+  }
 
   const handleSubmit = () => {
     assert(selectedSpeciesId, "Selected species is required to submit an answer.")
-    const isCorrect = puzzleActions.submitAttempt(selectedSpeciesId)
+    const { isCorrect, isCompleted } = puzzleActions.submitAttempt(selectedSpeciesId)
     if (!isCorrect) {
       shake()
     }
+    if (isCompleted) {
+      trackPuzzleCompleted(isCorrect, [...attempts.map((a) => a.speciesId), selectedSpeciesId])
+    }
+  }
+
+  const handleGiveUp = () => {
+    puzzleActions.giveUp()
+    trackPuzzleCompleted(
+      false,
+      attempts.map((a) => a.speciesId),
+    )
   }
 
   return (
@@ -57,7 +74,7 @@ export const AnswerInputCard = () => {
 
           <button
             type="button"
-            onClick={() => puzzleActions.giveUp()}
+            onClick={handleGiveUp}
             className="text-muted-foreground hover:text-foreground w-full text-sm"
             data-testid={PuzzleTestIds.giveUp}
           >

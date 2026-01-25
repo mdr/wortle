@@ -61,6 +61,11 @@ export enum PuzzleOutcome {
   DID_NOT_ATTEMPT = "DID_NOT_ATTEMPT",
 }
 
+export interface SubmitAttemptResult {
+  isCorrect: boolean
+  isCompleted: boolean
+}
+
 export interface PuzzleServiceActions {
   selectImageIndex: (index: ImageIndex) => void
   goToNextImage: () => void
@@ -71,7 +76,7 @@ export interface PuzzleServiceActions {
   setSearchQuery: (query: string) => void
   selectSpecies: (speciesId: SpeciesId) => void
   chooseDifferentPlant: () => void
-  submitAttempt: (speciesId: SpeciesId) => boolean
+  submitAttempt: (speciesId: SpeciesId) => SubmitAttemptResult
   giveUp: () => void
 }
 
@@ -171,14 +176,14 @@ export class PuzzleService extends AbstractService<PuzzleServiceState> implement
     this.setState({ imageGallery: { isFullscreen: false } })
   }
 
-  submitAttempt = (speciesId: SpeciesId): boolean => {
+  submitAttempt = (speciesId: SpeciesId): SubmitAttemptResult => {
     const species = this.speciesRepository.getSpecies(speciesId)
     const correctSpecies = this.speciesRepository.getSpecies(this.state.puzzle.speciesId)
     const attemptResult = createAttemptResult(species, correctSpecies)
     const nextAttempts = [...this.state.attempts, attemptResult]
     const incorrectFeedbackText = attemptResult.isCorrect ? undefined : this.getIncorrectFeedbackText(attemptResult)
-    const isComplete = attemptResult.isCorrect || nextAttempts.length >= MAX_ATTEMPTS
-    const result = isComplete ? (attemptResult.isCorrect ? PassOrFail.PASS : PassOrFail.FAIL) : undefined
+    const isCompleted = attemptResult.isCorrect || nextAttempts.length >= MAX_ATTEMPTS
+    const result = isCompleted ? (attemptResult.isCorrect ? PassOrFail.PASS : PassOrFail.FAIL) : undefined
     const outcome = attemptResult.isCorrect
       ? PuzzleOutcome.CORRECT
       : nextAttempts.length >= MAX_ATTEMPTS
@@ -194,7 +199,7 @@ export class PuzzleService extends AbstractService<PuzzleServiceState> implement
       nextAttempts.map((attempt) => attempt.speciesId),
       result,
     )
-    return attemptResult.isCorrect
+    return { isCorrect: attemptResult.isCorrect, isCompleted }
   }
 
   giveUp = (): void => {
