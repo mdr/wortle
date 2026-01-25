@@ -1,7 +1,8 @@
 import UmamiAnalytics from "@danielgtmn/umami-react"
 import { StrictMode } from "react"
 
-import { DataLoader } from "./DataLoader"
+import { DataLoader } from "@/components/loading/DataLoader"
+
 import { LoadedApp } from "./LoadedApp"
 import { QueryProvider } from "./QueryProvider"
 

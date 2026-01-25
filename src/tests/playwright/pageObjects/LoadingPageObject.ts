@@ -1,4 +1,4 @@
-import { LoadingTestIds } from "@/components/app/LoadingTestIds"
+import { LoadingTestIds } from "@/components/loading/LoadingTestIds"
 
 import { expect } from "../fixtures"
 import { HomePageObject } from "./HomePageObject"
