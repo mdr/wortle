@@ -76,9 +76,9 @@ export const puzzlesJsonSchema = z.object({
   puzzles: z.array(puzzleSchema),
 })
 
-export interface PuzzlesJson {
+export interface PuzzlesData {
   puzzles: Puzzle[]
 }
 
-type InferredPuzzlesJson = z.infer<typeof puzzlesJsonSchema>
-assert<Equals<InferredPuzzlesJson, PuzzlesJson>>()
+type InferredPuzzlesData = z.infer<typeof puzzlesJsonSchema>
+assert<Equals<InferredPuzzlesData, PuzzlesData>>()

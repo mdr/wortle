@@ -65,12 +65,12 @@ export const speciesJsonSchema = z.object({
   species: z.array(speciesSchema),
 })
 
-export interface SpeciesJson {
+export interface SpeciesData {
   species: Species[]
 }
 
-type InferredSpeciesJson = z.infer<typeof speciesJsonSchema>
-assert<Equals<InferredSpeciesJson, SpeciesJson>>()
+type InferredSpeciesData = z.infer<typeof speciesJsonSchema>
+assert<Equals<InferredSpeciesData, SpeciesData>>()
 
 export interface SpeciesRepository {
   findSpecies: (id: SpeciesId) => Option<Species>

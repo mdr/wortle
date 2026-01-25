@@ -1,11 +1,12 @@
 import { useQuery } from "@tanstack/react-query"
-import { type ReactNode } from "react"
+import { type ReactNode, useEffect, useRef } from "react"
 import { useSpinDelay } from "spin-delay"
 
 import { dataApi } from "@/lib/data/DataApi"
-import { type Puzzles } from "@/lib/puzzles"
-import { type Schedule } from "@/lib/schedule"
-import { type SpeciesRepository } from "@/lib/species/Species"
+import { validateDataReferences } from "@/lib/data/validateDataReferences"
+import { DefaultPuzzles, type Puzzles } from "@/lib/puzzles"
+import { DefaultSchedule, type Schedule } from "@/lib/schedule"
+import { DefaultSpeciesRepository, type SpeciesRepository } from "@/lib/species/Species"
 
 import { LoadingErrorScreen } from "./LoadingErrorScreen"
 import { LoadingScreen } from "./LoadingScreen"
@@ -18,18 +19,21 @@ export const DataLoader = ({ children }: DataLoaderProps) => {
   const scheduleQuery = useQuery({
     queryKey: ["schedule"],
     queryFn: dataApi.fetchSchedule,
+    select: (data) => new DefaultSchedule(data.schedule),
     staleTime: Infinity,
   })
 
   const puzzlesQuery = useQuery({
     queryKey: ["puzzles"],
     queryFn: dataApi.fetchPuzzles,
+    select: (data) => new DefaultPuzzles(data.puzzles),
     staleTime: Infinity,
   })
 
   const speciesQuery = useQuery({
     queryKey: ["species"],
     queryFn: dataApi.fetchSpecies,
+    select: (data) => new DefaultSpeciesRepository(data.species),
     staleTime: Infinity,
   })
 
@@ -45,6 +49,14 @@ export const DataLoader = ({ children }: DataLoaderProps) => {
   }
 
   const showLoading = useSpinDelay(isPending, { delay: 500, minDuration: 300, ssr: false })
+
+  const hasValidated = useRef(false)
+  useEffect(() => {
+    if (isSuccess && !hasValidated.current) {
+      hasValidated.current = true
+      validateDataReferences(scheduleQuery.data, puzzlesQuery.data, speciesQuery.data)
+    }
+  }, [isSuccess, scheduleQuery.data, puzzlesQuery.data, speciesQuery.data])
 
   if (isSuccess) {
     return children(scheduleQuery.data, puzzlesQuery.data, speciesQuery.data)

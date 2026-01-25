@@ -2,7 +2,8 @@ import * as mockttp from "mockttp"
 import { describe, expect, it } from "vitest"
 
 import { PuzzleId } from "@/lib/Puzzle"
-import { Iso8601Date } from "@/utils/brandedTypes"
+import { SpeciesId } from "@/lib/species/Species"
+import { Degrees, Iso8601Date } from "@/utils/brandedTypes"
 
 import { DataApi } from "./DataApi"
 import { withMockServer } from "./withMockServer.testUtils"
@@ -24,11 +25,12 @@ describe("DataApi", () => {
           ],
         })
 
-        const schedule = await api.fetchSchedule()
+        const data = await api.fetchSchedule()
 
-        expect(schedule.findPuzzleForDate(Iso8601Date("2026-06-08"))).toBe(PuzzleId(43))
-        expect(schedule.findPuzzleForDate(Iso8601Date("2026-06-09"))).toBe(PuzzleId(41))
-        expect(schedule.findPuzzleForDate(Iso8601Date("2026-06-10"))).toBeUndefined()
+        expect(data.schedule).toEqual([
+          { date: Iso8601Date("2026-06-08"), puzzleId: PuzzleId(43) },
+          { date: Iso8601Date("2026-06-09"), puzzleId: PuzzleId(41) },
+        ])
       }))
 
     it("throws on HTTP error", () =>
@@ -74,14 +76,14 @@ describe("DataApi", () => {
           anotherNewField: "also ignored",
         })
 
-        const schedule = await api.fetchSchedule()
+        const data = await api.fetchSchedule()
 
-        expect(schedule.findPuzzleForDate(Iso8601Date("2026-06-08"))).toBe(PuzzleId(43))
+        expect(data.schedule[0].puzzleId).toEqual(PuzzleId(43))
       }))
   })
 
   describe("fetchPuzzles", () => {
-    const validPuzzle = {
+    const validPuzzleWire = {
       id: 40,
       speciesId: "2cd4p9h.xbs",
       observationDate: "2025-12-19",
@@ -94,13 +96,16 @@ describe("DataApi", () => {
     it("fetches and parses valid puzzles", () =>
       withDataApi(async (api, server) => {
         await server.forGet("/puzzles.json").thenJson(200, {
-          puzzles: [validPuzzle],
+          puzzles: [validPuzzleWire],
         })
 
-        const puzzles = await api.fetchPuzzles()
+        const data = await api.fetchPuzzles()
 
-        expect(puzzles.findPuzzle(PuzzleId(40))).toBeDefined()
-        expect(puzzles.findPuzzle(PuzzleId(99))).toBeUndefined()
+        expect(data.puzzles).toHaveLength(1)
+        expect(data.puzzles[0].id).toEqual(PuzzleId(40))
+        expect(data.puzzles[0].speciesId).toEqual(SpeciesId("2cd4p9h.xbs"))
+        expect(data.puzzles[0].observationDate).toEqual(Iso8601Date("2025-12-19"))
+        expect(data.puzzles[0].location.coordinates).toEqual({ latitude: Degrees(54.0), longitude: Degrees(-1.5) })
       }))
 
     it("throws on HTTP error", () =>
@@ -124,13 +129,13 @@ describe("DataApi", () => {
     it("allows extra fields in response for forward compatibility", () =>
       withDataApi(async (api, server) => {
         await server.forGet("/puzzles.json").thenJson(200, {
-          puzzles: [{ ...validPuzzle, newField: "ignored" }],
+          puzzles: [{ ...validPuzzleWire, newField: "ignored" }],
           anotherNewField: "also ignored",
         })
 
-        const puzzles = await api.fetchPuzzles()
+        const data = await api.fetchPuzzles()
 
-        expect(puzzles.findPuzzle(PuzzleId(40))).toBeDefined()
+        expect(data.puzzles[0].id).toEqual(PuzzleId(40))
       }))
   })
 })

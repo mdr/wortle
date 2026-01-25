@@ -1,7 +1,6 @@
-import { puzzlesJsonSchema } from "@/lib/Puzzle"
-import { DefaultPuzzles, type Puzzles } from "@/lib/puzzles"
-import { DefaultSchedule, type Schedule, scheduleJsonSchema } from "@/lib/schedule"
-import { DefaultSpeciesRepository, speciesJsonSchema, type SpeciesRepository } from "@/lib/species/Species"
+import { type PuzzlesData, puzzlesJsonSchema } from "@/lib/Puzzle"
+import { type ScheduleData, scheduleJsonSchema } from "@/lib/schedule"
+import { type SpeciesData, speciesJsonSchema } from "@/lib/species/Species"
 import { Url } from "@/utils/brandedTypes"
 
 const DEFAULT_DATA_URL = Url("https://data.wortle.app")
@@ -9,34 +8,31 @@ const DEFAULT_DATA_URL = Url("https://data.wortle.app")
 export class DataApi {
   constructor(private readonly baseUrl: Url = DEFAULT_DATA_URL) {}
 
-  fetchSchedule = async (): Promise<Schedule> => {
+  fetchSchedule = async (): Promise<ScheduleData> => {
     const response = await fetch(`${this.baseUrl}/schedule.json`)
     if (!response.ok) {
       throw new Error(`Failed to fetch schedule: ${response.status} ${response.statusText}`)
     }
     const json: unknown = await response.json()
-    const parsed = scheduleJsonSchema.parse(json)
-    return new DefaultSchedule(parsed.schedule)
+    return scheduleJsonSchema.parse(json)
   }
 
-  fetchPuzzles = async (): Promise<Puzzles> => {
+  fetchPuzzles = async (): Promise<PuzzlesData> => {
     const response = await fetch(`${this.baseUrl}/puzzles.json`)
     if (!response.ok) {
       throw new Error(`Failed to fetch puzzles: ${response.status} ${response.statusText}`)
     }
     const json: unknown = await response.json()
-    const parsed = puzzlesJsonSchema.parse(json)
-    return new DefaultPuzzles(parsed.puzzles)
+    return puzzlesJsonSchema.parse(json)
   }
 
-  fetchSpecies = async (): Promise<SpeciesRepository> => {
+  fetchSpecies = async (): Promise<SpeciesData> => {
     const response = await fetch(`${this.baseUrl}/species.json`)
     if (!response.ok) {
       throw new Error(`Failed to fetch species: ${response.status} ${response.statusText}`)
     }
     const json: unknown = await response.json()
-    const parsed = speciesJsonSchema.parse(json)
-    return new DefaultSpeciesRepository(parsed.species)
+    return speciesJsonSchema.parse(json)
   }
 }
 

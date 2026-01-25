@@ -1,10 +1,17 @@
 import * as Sentry from "@sentry/react"
 
 export interface Logger {
+  readonly warn: (code: string, message: string, extraFields?: Record<string, unknown>) => void
   readonly error: (code: string, message: string, extraFields?: Record<string, unknown>, exception?: unknown) => void
 }
 
 export class AppLogger implements Logger {
+  warn = (code: string, message: string, extraFields?: Record<string, unknown>): void => {
+    const parts: unknown[] = [`[${code}]`, message]
+    if (extraFields !== undefined) parts.push(extraFields)
+    console.warn(...parts)
+  }
+
   error = (code: string, message: string, extraFields?: Record<string, unknown>, exception?: unknown): void => {
     const parts: unknown[] = [`[${code}]`, message]
     if (extraFields !== undefined) parts.push(extraFields)

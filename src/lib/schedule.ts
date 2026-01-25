@@ -20,12 +20,12 @@ export const scheduleJsonSchema = z.object({
   schedule: z.array(scheduleEntrySchema),
 })
 
-export interface ScheduleJson {
+export interface ScheduleData {
   schedule: ScheduleEntry[]
 }
 
-type InferredScheduleJson = z.infer<typeof scheduleJsonSchema>
-assert<Equals<InferredScheduleJson, ScheduleJson>>()
+type InferredScheduleData = z.infer<typeof scheduleJsonSchema>
+assert<Equals<InferredScheduleData, ScheduleData>>()
 
 export interface Schedule {
   findPuzzleForDate: (date: Iso8601Date) => Option<PuzzleId>
