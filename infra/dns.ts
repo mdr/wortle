@@ -2,46 +2,22 @@ import * as cloudflare from "@pulumi/cloudflare"
 
 import { zone } from "./config.ts"
 
-// GitHub Pages A records for apex domain (keeping until Vercel cutover)
-// https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site/managing-a-custom-domain-for-your-github-pages-site#configuring-an-apex-domain
-const ghPagesIps = ["185.199.108.153", "185.199.109.153", "185.199.110.153", "185.199.111.153"]
-
-ghPagesIps.forEach((ip, i) => {
-  new cloudflare.DnsRecord(`gh-pages-a-${i}`, {
-    zoneId: zone.zoneId,
-    name: "@",
-    type: "A",
-    content: ip,
-    ttl: 300,
-    proxied: false,
-  })
-})
-
-// www subdomain CNAME for GitHub Pages
-new cloudflare.DnsRecord("gh-pages-www", {
+// Vercel A record for apex domain
+new cloudflare.DnsRecord("vercel-apex", {
   zoneId: zone.zoneId,
-  name: "www",
-  type: "CNAME",
-  content: "mdr.github.io",
+  name: "@",
+  type: "A",
+  content: "216.198.79.1",
   ttl: 300,
   proxied: false,
 })
 
-// Vercel DNS records - uncomment when ready to cut over (and remove GitHub Pages records above)
-// new cloudflare.DnsRecord("vercel-apex", {
-//   zoneId: zone.zoneId,
-//   name: "@",
-//   type: "A",
-//   content: "76.76.21.21",
-//   ttl: 300,
-//   proxied: false,
-// })
-
-// new cloudflare.DnsRecord("vercel-www", {
-//   zoneId: zone.zoneId,
-//   name: "www",
-//   type: "CNAME",
-//   content: "cname.vercel-dns.com",
-//   ttl: 300,
-//   proxied: false,
-// })
+// www subdomain CNAME for Vercel
+new cloudflare.DnsRecord("vercel-www", {
+  zoneId: zone.zoneId,
+  name: "www",
+  type: "CNAME",
+  content: "8c25fa0b5c7ec183.vercel-dns-017.com",
+  ttl: 300,
+  proxied: false,
+})

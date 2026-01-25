@@ -6,24 +6,151 @@ tasks:
     cmds:
       - pnpm install
 
-  dev:
-    desc: Start development server
+  # Game app tasks
+  game:dev:
+    desc: Start game development server
     dir: apps/game
     cmds:
       - pnpm dev
 
-  tsc:
-    desc: Type check
+  game:tsc:
+    desc: Type check game
     dir: apps/game
     cmds:
       - pnpm tsc {{.CLI_ARGS}}
 
-  lint:
-    desc: Run ESLint
+  game:lint:
+    desc: Run ESLint on game
     dir: apps/game
     cmds:
       - pnpm lint {{.CLI_ARGS}}
 
+  game:build:
+    desc: Build game
+    dir: apps/game
+    cmds:
+      - pnpm build {{.CLI_ARGS}}
+
+  game:test:iwft:install:
+    desc: Install Playwright browsers
+    dir: apps/game
+    cmds:
+      - pnpm exec playwright install --with-deps chromium
+
+  game:test:iwft:
+    desc: Run isolated whole frontend tests
+    dir: apps/game
+    cmds:
+      - pnpm exec playwright test -c playwright-ct.config.ts {{.CLI_ARGS}}
+
+  game:test:iwft:ui:
+    desc: Run isolated whole frontend tests with UI
+    dir: apps/game
+    cmds:
+      - pnpm exec playwright test -c playwright-ct.config.ts --ui {{.CLI_ARGS}}
+
+  game:test:unit:
+    desc: Run unit tests
+    dir: apps/game
+    cmds:
+      - pnpm vitest run {{.CLI_ARGS}}
+
+  game:coverage:unit:
+    desc: Run unit tests with coverage
+    dir: apps/game
+    cmds:
+      - pnpm vitest run --coverage
+
+  game:coverage:iwft:
+    desc: Run IWFTs with coverage
+    dir: apps/game
+    cmds:
+      - COVERAGE=true pnpm test:iwft
+
+  game:coverage:merge:
+    desc: Merge unit and IWFT coverage reports
+    dir: apps/game
+    cmds:
+      - pnpm exec tsx scripts/merge-coverage.ts
+
+  game:coverage:
+    desc: Run all tests with coverage and merge reports
+    cmds:
+      - rm -rf coverage
+      - task: game:coverage:unit
+      - task: game:coverage:iwft
+      - task: game:coverage:merge
+
+  game:stryker:
+    desc: Run mutation testing with Stryker
+    dir: apps/game
+    cmds:
+      - pnpm exec stryker run {{.CLI_ARGS}}
+
+  game:analyze:
+    desc: Build and analyze bundle size
+    dir: apps/game
+    cmds:
+      - ANALYZE=true pnpm build
+      - echo Bundle analysis written to dist/stats.html
+
+  game:knip:
+    desc: Find unused code
+    dir: apps/game
+    cmds:
+      - pnpm exec knip {{.CLI_ARGS}}
+
+  game:knip:prod:
+    desc: Find unused code (production only, ignores test usage)
+    dir: apps/game
+    cmds:
+      - pnpm exec knip --production {{.CLI_ARGS}}
+
+  game:ngrok:
+    desc: Expose local dev server via ngrok
+    cmds:
+      - ngrok http 5173
+
+  game:check:
+    desc: Run all checks for game (tsc, lint, tests)
+    cmds:
+      - task: game:tsc
+      - task: game:lint
+      - task: game:test:unit
+      - task: game:test:iwft
+
+  # Admin app tasks
+  admin:dev:
+    desc: Start admin development server
+    dir: apps/admin
+    cmds:
+      - pnpm dev
+
+  admin:tsc:
+    desc: Type check admin
+    dir: apps/admin
+    cmds:
+      - pnpm tsc {{.CLI_ARGS}}
+
+  admin:lint:
+    desc: Run ESLint on admin
+    dir: apps/admin
+    cmds:
+      - pnpm lint {{.CLI_ARGS}}
+
+  admin:build:
+    desc: Build admin
+    dir: apps/admin
+    cmds:
+      - pnpm build {{.CLI_ARGS}}
+
+  admin:check:
+    desc: Run all checks for admin (tsc, lint)
+    cmds:
+      - task: admin:tsc
+      - task: admin:lint
+
+  # Shared tasks
   format:
     desc: Format code with Prettier
     cmds:
@@ -34,101 +161,22 @@ tasks:
     cmds:
       - pnpm format:check
 
-  test:iwft:install:
-    desc: Install Playwright browsers
-    dir: apps/game
-    cmds:
-      - pnpm exec playwright install --with-deps chromium
-
-  test:iwft:
-    desc: Run isolated whole frontend tests
-    dir: apps/game
-    cmds:
-      - pnpm exec playwright test -c playwright-ct.config.ts {{.CLI_ARGS}}
-
-  test:iwft:ui:
-    desc: Run isolated whole frontend tests with UI
-    dir: apps/game
-    cmds:
-      - pnpm exec playwright test -c playwright-ct.config.ts --ui {{.CLI_ARGS}}
-
-  test:unit:
-    desc: Run unit tests
-    dir: apps/game
-    cmds:
-      - pnpm vitest run {{.CLI_ARGS}}
-
-  coverage:unit:
-    desc: Run unit tests with coverage
-    dir: apps/game
-    cmds:
-      - pnpm vitest run --coverage
-
-  coverage:iwft:
-    desc: Run IWFTs with coverage
-    dir: apps/game
-    cmds:
-      - COVERAGE=true pnpm test:iwft
-
-  coverage:merge:
-    desc: Merge unit and IWFT coverage reports
-    dir: apps/game
-    cmds:
-      - pnpm exec tsx scripts/merge-coverage.ts
-
-  coverage:
-    desc: Run all tests with coverage and merge reports
-    cmds:
-      - rm -rf coverage
-      - task: coverage:unit
-      - task: coverage:iwft
-      - task: coverage:merge
-
-  stryker:
-    desc: Run mutation testing with Stryker
-    dir: apps/game
-    cmds:
-      - pnpm exec stryker run {{.CLI_ARGS}}
-
-  build:
-    desc: Build the project
-    dir: apps/game
-    cmds:
-      - pnpm build {{.CLI_ARGS}}
-
-  analyze:
-    desc: Build and analyze bundle size
-    dir: apps/game
-    cmds:
-      - ANALYZE=true pnpm build
-      - echo Bundle analysis written to dist/stats.html
-
-  knip:
-    desc: Find unused code
-    dir: apps/game
-    cmds:
-      - pnpm exec knip {{.CLI_ARGS}}
-
-  knip:prod:
-    desc: Find unused code (production only, ignores test usage)
-    dir: apps/game
-    cmds:
-      - pnpm exec knip --production {{.CLI_ARGS}}
-
   check:
     desc: Run all checks (tsc, lint, format, tests)
     cmds:
-      - task: tsc
+      - task: game:check
+      - task: admin:check
       - task: infra:tsc
-      - task: lint
       - task: format:check
-      - task: test:unit
-      - task: test:iwft
 
-  ngrok:
-    desc: Expose local dev server via ngrok
+  update-screenshots:
+    aliases:
+      - us
+    desc: Trigger GitHub Actions workflow to update snapshots
     cmds:
-      - ngrok http 5173
+      - gh workflow run update-snapshots.yml --ref main
+      - sleep 2
+      - GH_PAGER= gh run list --workflow=update-snapshots.yml --limit=1 --json url --jq '.[0].url'
 
   security:
     desc: Run trivy security scan
@@ -139,15 +187,6 @@ tasks:
     desc: Scan for secrets with gitleaks
     cmds:
       - gitleaks detect --source . -v
-
-  update-screenshots:
-    aliases:
-      - us
-    desc: Trigger GitHub Actions workflow to update snapshots
-    cmds:
-      - gh workflow run update-snapshots.yml --ref main
-      - sleep 2
-      - GH_PAGER= gh run list --workflow=update-snapshots.yml --limit=1 --json url --jq '.[0].url'
 
   infra:tsc:
     desc: Type check infrastructure code

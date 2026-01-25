@@ -11,13 +11,13 @@ export const gameProject = new vercel.Project("game", {
   rootDirectory: "apps/game",
 })
 
-// Production domains - uncomment when ready to cut over
-// new vercel.ProjectDomain("game-domain-apex", {
-//   projectId: gameProject.id,
-//   domain: "wortle.app",
-// })
+// Production domains
+new vercel.ProjectDomain("game-domain-apex", {
+  projectId: gameProject.id,
+  domain: "wortle.app",
+})
 
-// new vercel.ProjectDomain("game-domain-www", {
-//   projectId: gameProject.id,
-//   domain: "www.wortle.app",
-// })
+new vercel.ProjectDomain("game-domain-www", {
+  projectId: gameProject.id,
+  domain: "www.wortle.app",
+})

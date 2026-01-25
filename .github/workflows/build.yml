@@ -52,24 +52,30 @@ jobs:
       - name: Install dependencies
         run: task install
 
-      - name: Type check
-        run: task tsc
+      - name: Type check game
+        run: task game:tsc
+
+      - name: Type check admin
+        run: task admin:tsc
 
       - name: Type check infra
         run: task infra:tsc
 
-      - name: Lint
-        run: task lint
+      - name: Lint game
+        run: task game:lint
+
+      - name: Lint admin
+        run: task admin:lint
 
       - name: Check formatting
         run: task format:check
 
       - name: Install Playwright browsers
-        run: task test:iwft:install
+        run: task game:test:iwft:install
 
       - name: Isolated whole frontend tests
         id: test-iwft
-        run: task test:iwft
+        run: task game:test:iwft
         continue-on-error: ${{ steps.check-us.outputs.update_screenshots == 'true' }}
 
       - name: Update snapshots if tests failed
@@ -91,7 +97,7 @@ jobs:
 
       - name: Re-run IWFTs after snapshot update
         if: steps.check-us.outputs.update_screenshots == 'true' && steps.test-iwft.outcome == 'failure'
-        run: task test:iwft
+        run: task game:test:iwft
 
       - name: Upload Playwright report
         if: failure()
