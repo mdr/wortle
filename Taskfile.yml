@@ -149,12 +149,6 @@ tasks:
       - sleep 2
       - GH_PAGER= gh run list --workflow=update-snapshots.yml --limit=1 --json url --jq '.[0].url'
 
-  infra:install:
-    desc: Install infrastructure dependencies
-    dir: infra
-    cmds:
-      - pnpm install
-
   infra:tsc:
     desc: Type check infrastructure code
     dir: infra

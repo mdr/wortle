@@ -55,9 +55,6 @@ jobs:
       - name: Install dependencies
         run: task install
 
-      - name: Install infra dependencies
-        run: task infra:install
-
       - name: Type check
         run: task tsc
 
