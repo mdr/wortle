@@ -2,7 +2,7 @@ import * as cloudflare from "@pulumi/cloudflare"
 
 import { zone } from "./config.ts"
 
-// GitHub Pages A records for apex domain
+// GitHub Pages A records for apex domain (keeping until Vercel cutover)
 // https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site/managing-a-custom-domain-for-your-github-pages-site#configuring-an-apex-domain
 const ghPagesIps = ["185.199.108.153", "185.199.109.153", "185.199.110.153", "185.199.111.153"]
 
@@ -26,3 +26,22 @@ new cloudflare.DnsRecord("gh-pages-www", {
   ttl: 300,
   proxied: false,
 })
+
+// Vercel DNS records - uncomment when ready to cut over (and remove GitHub Pages records above)
+// new cloudflare.DnsRecord("vercel-apex", {
+//   zoneId: zone.zoneId,
+//   name: "@",
+//   type: "A",
+//   content: "76.76.21.21",
+//   ttl: 300,
+//   proxied: false,
+// })
+
+// new cloudflare.DnsRecord("vercel-www", {
+//   zoneId: zone.zoneId,
+//   name: "www",
+//   type: "CNAME",
+//   content: "cname.vercel-dns.com",
+//   ttl: 300,
+//   proxied: false,
+// })

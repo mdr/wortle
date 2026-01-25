@@ -6,8 +6,7 @@
   "scripts": {
     "tsc": "tsc --noEmit",
     "dev": "vite",
-    "// build": "404.html enables SPA routing on GitHub Pages - serves index.html for unknown paths",
-    "build": "vite build && cp dist/index.html dist/404.html",
+    "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint . --max-warnings=0",
     "format": "prettier --write .",
