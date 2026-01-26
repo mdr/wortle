@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server"
 import { LoginLink, LogoutLink, RegisterLink } from "@kinde-oss/kinde-auth-nextjs/components"
+import { Button } from "@wortle/ui"
 
 import "./globals.css"
 
@@ -16,21 +17,32 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
   return (
     <html lang="en" suppressHydrationWarning>
-      <body suppressHydrationWarning>
-        <header style={{ display: "flex", justifyContent: "flex-end", gap: "1rem", padding: "1rem" }}>
-          {isLoggedIn ? (
-            <>
-              <span>{user?.email}</span>
-              <LogoutLink>Sign out</LogoutLink>
-            </>
-          ) : (
-            <>
-              <LoginLink>Sign in</LoginLink>
-              <RegisterLink>Sign up</RegisterLink>
-            </>
-          )}
+      <body className="min-h-screen" suppressHydrationWarning>
+        <header className="border-b">
+          <div className="flex items-center justify-between px-6 py-4">
+            <h1 className="text-lg font-semibold">Wortle Admin</h1>
+            <div className="flex items-center gap-4">
+              {isLoggedIn ? (
+                <>
+                  <span className="text-muted-foreground text-sm">{user?.email}</span>
+                  <Button variant="ghost" size="sm" asChild>
+                    <LogoutLink>Sign out</LogoutLink>
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button variant="ghost" size="sm" asChild>
+                    <LoginLink>Sign in</LoginLink>
+                  </Button>
+                  <Button size="sm" asChild>
+                    <RegisterLink>Sign up</RegisterLink>
+                  </Button>
+                </>
+              )}
+            </div>
+          </div>
         </header>
-        {children}
+        <main className="px-6 py-8">{children}</main>
       </body>
     </html>
   )
