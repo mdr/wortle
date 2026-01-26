@@ -4,3 +4,9 @@ runtime:
   options:
     typescript: true
 description: Infrastructure for wortle.app
+packages:
+  neon:
+    source: terraform-provider
+    version: 1.0.2
+    parameters:
+      - kislerdm/neon
