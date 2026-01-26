@@ -1,4 +1,7 @@
+import * as pulumi from "@pulumi/pulumi"
 import * as vercel from "@pulumiverse/vercel"
+
+const config = new pulumi.Config()
 
 // Game app project
 export const gameProject = new vercel.Project("game", {
@@ -36,4 +39,49 @@ export const adminProject = new vercel.Project("admin", {
 new vercel.ProjectDomain("admin-domain", {
   projectId: adminProject.id,
   domain: "admin.wortle.app",
+})
+
+// Kinde auth environment variables for admin
+const kindeClientSecret = config.requireSecret("kinde-client-secret")
+
+new vercel.ProjectEnvironmentVariable("admin-kinde-client-id", {
+  projectId: adminProject.id,
+  key: "KINDE_CLIENT_ID",
+  value: "7fcfc9e6121143bbaead8f08a317c8da",
+  targets: ["production", "preview"],
+})
+
+new vercel.ProjectEnvironmentVariable("admin-kinde-client-secret", {
+  projectId: adminProject.id,
+  key: "KINDE_CLIENT_SECRET",
+  value: kindeClientSecret,
+  targets: ["production", "preview"],
+})
+
+new vercel.ProjectEnvironmentVariable("admin-kinde-issuer-url", {
+  projectId: adminProject.id,
+  key: "KINDE_ISSUER_URL",
+  value: "https://wortle.kinde.com",
+  targets: ["production", "preview"],
+})
+
+new vercel.ProjectEnvironmentVariable("admin-kinde-site-url", {
+  projectId: adminProject.id,
+  key: "KINDE_SITE_URL",
+  value: "https://admin.wortle.app",
+  targets: ["production", "preview"],
+})
+
+new vercel.ProjectEnvironmentVariable("admin-kinde-post-logout-redirect", {
+  projectId: adminProject.id,
+  key: "KINDE_POST_LOGOUT_REDIRECT_URL",
+  value: "https://admin.wortle.app",
+  targets: ["production", "preview"],
+})
+
+new vercel.ProjectEnvironmentVariable("admin-kinde-post-login-redirect", {
+  projectId: adminProject.id,
+  key: "KINDE_POST_LOGIN_REDIRECT_URL",
+  value: "https://admin.wortle.app",
+  targets: ["production", "preview"],
 })
