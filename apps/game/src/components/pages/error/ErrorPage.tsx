@@ -1,9 +1,8 @@
 import { Link } from "@tanstack/react-router"
+import { Button, Card } from "@wortle/ui"
 import { AlertTriangle, Home } from "lucide-react"
 import { useEffect } from "react"
 
-import { Button } from "@/components/shadcn/Button"
-import { Card } from "@/components/shadcn/Card"
 import { logger } from "@/utils/Logger"
 import { assetUrl } from "@/utils/utils"
 

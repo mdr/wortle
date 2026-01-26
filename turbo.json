@@ -18,7 +18,9 @@
       "persistent": true
     },
     "lint": {},
-    "tsc": {},
+    "tsc": {
+      "dependsOn": ["^tsc"]
+    },
     "test:unit": {},
     "test:iwft": {
       "cache": false

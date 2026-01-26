@@ -1,7 +1,7 @@
 import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu"
 import * as React from "react"
 
-import { cn } from "@/utils/utils"
+import { cn } from "../utils"
 
 export const DropdownMenu = ({ ...props }: React.ComponentProps<typeof DropdownMenuPrimitive.Root>) => (
   <DropdownMenuPrimitive.Root data-slot="dropdown-menu" {...props} />

@@ -1,3 +1,4 @@
+import { Card } from "@wortle/ui"
 import { useEffect, useMemo, useRef } from "react"
 
 import { useHistoryStore, useSpeciesRepository } from "@/components/app/GlobalDependenciesProvider"
@@ -9,7 +10,6 @@ import { WhereAndWhenCard } from "@/components/pages/puzzle/location/WhereAndWhe
 import { PuzzleHeader } from "@/components/pages/puzzle/PuzzleHeader"
 import { StatsPanel } from "@/components/pages/puzzle/stats/StatsPanel"
 import { useCorrectAnswerConfetti } from "@/components/pages/puzzle/useCorrectAnswerConfetti"
-import { Card } from "@/components/shadcn/Card"
 import { Puzzle } from "@/lib/Puzzle"
 import { selectIsCorrect, selectIsResolved, selectShowAttemptHistory } from "@/services/puzzle/puzzleSelectors"
 import { PuzzleMode, PuzzleService } from "@/services/puzzle/PuzzleService"

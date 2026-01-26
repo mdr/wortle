@@ -1,9 +1,8 @@
+import { Button, Popover, PopoverContent, PopoverTrigger } from "@wortle/ui"
 import { ChevronLeft, ChevronRight, Copyright, Maximize2 } from "lucide-react"
 import { useId } from "react"
 import { TransformComponent, TransformWrapper } from "react-zoom-pan-pinch"
 
-import { Button } from "@/components/shadcn/Button"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/shadcn/Popover"
 import { usePuzzleServiceActions, usePuzzleState } from "@/services/puzzle/puzzleServiceHooks"
 import { ImageIndex, Pixels } from "@/utils/brandedTypes"
 import { imageSrcSet, imageUrl, srcSetPresets } from "@/utils/imageUrls"

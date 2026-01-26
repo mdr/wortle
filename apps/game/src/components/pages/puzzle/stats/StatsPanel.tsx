@@ -1,10 +1,9 @@
 import { Link } from "@tanstack/react-router"
+import { Button, Card } from "@wortle/ui"
 import { Clock as ClockIcon, History } from "lucide-react"
 
 import { useClock } from "@/components/app/GlobalDependenciesProvider"
 import { ShareResultButton } from "@/components/pages/puzzle/stats/ShareResultButton"
-import { Button } from "@/components/shadcn/Button"
-import { Card } from "@/components/shadcn/Card"
 import { StatsSummaryGrid } from "@/components/shared/StatsSummaryGrid"
 import { type DailyStatsSummary } from "@/lib/gameStorage/dailyStatsSummary"
 import { isShareableOutcome } from "@/services/puzzle/puzzleSelectors"

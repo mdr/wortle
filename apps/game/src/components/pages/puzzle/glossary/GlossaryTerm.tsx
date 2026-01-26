@@ -1,4 +1,5 @@
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/shadcn/HoverCard"
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "@wortle/ui"
+
 import { glossary } from "@/lib/glossary"
 
 interface GlossaryTermProps {

@@ -1,9 +1,9 @@
+import { Card } from "@wortle/ui"
 import { Info } from "lucide-react"
 import { assert } from "tsafe"
 
 import { useSpeciesRepository } from "@/components/app/GlobalDependenciesProvider"
 import { TipWithGlossary } from "@/components/pages/puzzle/glossary/TipWithGlossary"
-import { Card } from "@/components/shadcn/Card"
 import { AttemptResult } from "@/lib/AttemptResult"
 import { PassOrFail } from "@/lib/gameStorage/HistoryRecord"
 import { getResultMedal } from "@/lib/resultMedal"

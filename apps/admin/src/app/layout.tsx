@@ -2,6 +2,8 @@ import type { Metadata } from "next"
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server"
 import { LoginLink, LogoutLink, RegisterLink } from "@kinde-oss/kinde-auth-nextjs/components"
 
+import "./globals.css"
+
 export const metadata: Metadata = {
   title: "Wortle Admin",
   description: "Admin dashboard for Wortle",

@@ -1,7 +1,6 @@
+import { Button, Card } from "@wortle/ui"
 import { AlertCircle, Loader2, RefreshCw } from "lucide-react"
 
-import { Button } from "@/components/shadcn/Button"
-import { Card } from "@/components/shadcn/Card"
 import { assetUrl } from "@/utils/utils"
 
 import { LoadingErrorTestIds } from "./LoadingErrorTestIds"

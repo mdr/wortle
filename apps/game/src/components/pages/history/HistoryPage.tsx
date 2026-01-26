@@ -1,10 +1,9 @@
 import { Link } from "@tanstack/react-router"
+import { Button, Card } from "@wortle/ui"
 import { ArrowLeft, Calendar } from "lucide-react"
 import { useMemo } from "react"
 
 import { useClock, useHistoryStore } from "@/components/app/GlobalDependenciesProvider"
-import { Button } from "@/components/shadcn/Button"
-import { Card } from "@/components/shadcn/Card"
 import { StatsSummaryGrid } from "@/components/shared/StatsSummaryGrid"
 import { calculateDailyStatsSummary } from "@/lib/gameStorage/dailyStatsSummary"
 import { assetUrl } from "@/utils/utils"

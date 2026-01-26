@@ -1,10 +1,9 @@
 import { useUmami } from "@danielgtmn/umami-react"
+import { Button, Card } from "@wortle/ui"
 import { assert } from "tsafe"
 
 import { PlantSearch } from "@/components/pages/puzzle/answer/PlantSearch"
 import { useShakeAnswerInput } from "@/components/pages/puzzle/answer/useShakeAnswerInput"
-import { Button } from "@/components/shadcn/Button"
-import { Card } from "@/components/shadcn/Card"
 import { SpeciesId } from "@/lib/species/Species"
 import { MAX_ATTEMPTS } from "@/services/puzzle/PuzzleService"
 import { usePuzzleServiceActions, usePuzzleState } from "@/services/puzzle/puzzleServiceHooks"

@@ -1,7 +1,6 @@
+import { Button } from "@wortle/ui"
 import { RotateCcw, ZoomIn, ZoomOut } from "lucide-react"
 import { useControls } from "react-zoom-pan-pinch"
-
-import { Button } from "@/components/shadcn/Button"
 
 import { FullscreenTestIds } from "./GalleryTestIds"
 

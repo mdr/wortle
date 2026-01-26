@@ -1,8 +1,7 @@
 import { Link } from "@tanstack/react-router"
+import { Button, Card } from "@wortle/ui"
 import { Home, SearchX } from "lucide-react"
 
-import { Button } from "@/components/shadcn/Button"
-import { Card } from "@/components/shadcn/Card"
 import { assetUrl } from "@/utils/utils"
 
 import { NotFoundTestIds } from "./NotFoundTestIds"

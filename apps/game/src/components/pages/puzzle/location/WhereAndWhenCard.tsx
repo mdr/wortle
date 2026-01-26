@@ -1,5 +1,6 @@
+import { Card } from "@wortle/ui"
+
 import { UkLocationMap } from "@/components/pages/puzzle/location/UkLocationMap"
-import { Card } from "@/components/shadcn/Card"
 import { Puzzle } from "@/lib/Puzzle"
 import { ClassNameList } from "@/utils/brandedTypes"
 import { formatDate } from "@/utils/dateUtils"

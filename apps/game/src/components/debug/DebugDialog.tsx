@@ -1,8 +1,7 @@
+import { Button, Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@wortle/ui"
 import { useCallback, useEffect, useId, useState } from "react"
 
 import { useClock, useHistoryStore } from "@/components/app/GlobalDependenciesProvider"
-import { Button } from "@/components/shadcn/Button"
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/shadcn/Dialog"
 import { Iso8601Date } from "@/utils/brandedTypes"
 
 declare global {

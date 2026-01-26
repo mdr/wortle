@@ -1,15 +1,8 @@
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@wortle/ui"
 import { clsx } from "clsx"
 import { useEffect, useId, useRef, useState } from "react"
 
 import { useSpeciesRepository } from "@/components/app/GlobalDependenciesProvider"
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/shadcn/Command"
 import { usePuzzleServiceActions, usePuzzleState } from "@/services/puzzle/puzzleServiceHooks"
 
 import { PuzzleTestIds } from "../PuzzleTestIds"

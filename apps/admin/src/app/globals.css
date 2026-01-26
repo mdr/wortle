@@ -1,7 +1,7 @@
 @import "@wortle/ui/theme.css";
 @import "tailwindcss";
 
-@source "../../../packages/ui/src";
+@source "../../../../packages/ui/src";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -51,28 +51,4 @@
   body {
     @apply bg-background text-foreground;
   }
-}
-
-@media (max-width: 640px) {
-  html {
-    font-size: 18px;
-  }
-}
-
-@keyframes shake {
-  0%,
-  100% {
-    transform: translateX(0);
-  }
-  25%,
-  75% {
-    transform: translateX(-2px);
-  }
-  50% {
-    transform: translateX(2px);
-  }
-}
-
-.animate-shake {
-  animation: shake 0.3s ease-in-out;
 }

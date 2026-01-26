@@ -1,5 +1,6 @@
+import { Card } from "@wortle/ui"
+
 import { useSpeciesRepository } from "@/components/app/GlobalDependenciesProvider"
-import { Card } from "@/components/shadcn/Card"
 import { AttemptResult } from "@/lib/AttemptResult"
 import { Option } from "@/utils/types/Option"
 

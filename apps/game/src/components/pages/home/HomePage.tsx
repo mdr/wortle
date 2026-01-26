@@ -1,10 +1,8 @@
 import { Link } from "@tanstack/react-router"
+import { Button, Card, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@wortle/ui"
 import { useState } from "react"
 
 import { useClock, usePuzzles, useSchedule } from "@/components/app/GlobalDependenciesProvider"
-import { Button } from "@/components/shadcn/Button"
-import { Card } from "@/components/shadcn/Card"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/shadcn/Select"
 import { HeaderNav } from "@/components/shared/HeaderNav"
 import { Iso8601Date } from "@/utils/brandedTypes"
 import { formatDate } from "@/utils/dateUtils"

@@ -52,6 +52,9 @@ jobs:
       - name: Install dependencies
         run: task install
 
+      - name: Type check UI package
+        run: task ui:tsc
+
       - name: Type check game
         run: task game:tsc
 
@@ -60,6 +63,9 @@ jobs:
 
       - name: Type check infra
         run: task infra:tsc
+
+      - name: Lint UI package
+        run: task ui:lint
 
       - name: Lint game
         run: task game:lint

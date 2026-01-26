@@ -1,9 +1,9 @@
+import { Button } from "@wortle/ui"
 import { FocusTrap } from "focus-trap-react"
 import { ChevronLeft, ChevronRight, X } from "lucide-react"
 import { useId } from "react"
 import { TransformComponent, TransformWrapper } from "react-zoom-pan-pinch"
 
-import { Button } from "@/components/shadcn/Button"
 import { usePuzzleServiceActions, usePuzzleState } from "@/services/puzzle/puzzleServiceHooks"
 import { Pixels } from "@/utils/brandedTypes"
 import { imageSrcSet, imageUrl, srcSetPresets } from "@/utils/imageUrls"

@@ -119,6 +119,25 @@ tasks:
       - task: game:test:unit
       - task: game:test:iwft
 
+  # UI package tasks
+  ui:tsc:
+    desc: Type check UI package
+    dir: packages/ui
+    cmds:
+      - pnpm tsc {{.CLI_ARGS}}
+
+  ui:lint:
+    desc: Run ESLint on UI package
+    dir: packages/ui
+    cmds:
+      - pnpm lint {{.CLI_ARGS}}
+
+  ui:check:
+    desc: Run all checks for UI package (tsc, lint)
+    cmds:
+      - task: ui:tsc
+      - task: ui:lint
+
   # Admin app tasks
   admin:dev:
     desc: Start admin development server
@@ -164,6 +183,7 @@ tasks:
   check:
     desc: Run all checks (tsc, lint, format, tests)
     cmds:
+      - task: ui:check
       - task: game:check
       - task: admin:check
       - task: infra:tsc
