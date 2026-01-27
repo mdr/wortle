@@ -4,19 +4,19 @@ import { eq } from "drizzle-orm"
 import { z } from "zod"
 
 import { apiSpeciesSchema } from "@/api/types"
-import { db } from "@/db"
+import { getDb } from "@/db"
 import { species } from "@/db/schema"
 
 import { publicProcedure, router } from "./init"
 
 const speciesRouter = router({
   list: publicProcedure.query(async () => {
-    const rows = await db.select().from(species)
+    const rows = await getDb().select().from(species)
     return rows.map((row) => row.data)
   }),
 
   get: publicProcedure.input(z.object({ id: z.string().transform(SpeciesId) })).query(async ({ input }) => {
-    const rows = await db.select().from(species).where(eq(species.id, input.id))
+    const rows = await getDb().select().from(species).where(eq(species.id, input.id))
     if (rows.length === 0) {
       throw new TRPCError({ code: "NOT_FOUND" })
     }
@@ -24,7 +24,7 @@ const speciesRouter = router({
   }),
 
   create: publicProcedure.input(apiSpeciesSchema).mutation(async ({ input }) => {
-    return await db.transaction(async (tx) => {
+    return await getDb().transaction(async (tx) => {
       const existing = await tx.select().from(species).where(eq(species.id, input.id))
       if (existing.length > 0) {
         throw new TRPCError({
@@ -38,7 +38,7 @@ const speciesRouter = router({
   }),
 
   update: publicProcedure.input(apiSpeciesSchema).mutation(async ({ input }) => {
-    const result = await db.update(species).set({ data: input }).where(eq(species.id, input.id)).returning()
+    const result = await getDb().update(species).set({ data: input }).where(eq(species.id, input.id)).returning()
     if (result.length === 0) {
       throw new TRPCError({ code: "NOT_FOUND" })
     }
@@ -46,7 +46,7 @@ const speciesRouter = router({
   }),
 
   delete: publicProcedure.input(z.object({ id: z.string().transform(SpeciesId) })).mutation(async ({ input }) => {
-    const result = await db.delete(species).where(eq(species.id, input.id)).returning()
+    const result = await getDb().delete(species).where(eq(species.id, input.id)).returning()
     if (result.length === 0) {
       throw new TRPCError({ code: "NOT_FOUND" })
     }
