@@ -47,5 +47,3 @@ coverage
 # generated images (uploaded to R2)
 dist/optimized-images/
 
-# pulumi generated SDKs
-infra/sdks/

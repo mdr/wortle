@@ -2,6 +2,7 @@
 apps/game/src/routeTree.gen.ts
 dist
 infra/Pulumi*.yaml
+infra/sdks
 .vite
 **/playwright/.cache
 **/playwright-report

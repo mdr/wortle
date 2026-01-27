@@ -49,9 +49,6 @@ jobs:
       - name: Setup devShell
         uses: nicknovitski/nix-develop@v1
 
-      - name: Generate Pulumi Neon SDK
-        run: cd infra && pulumi package add terraform-provider kislerdm/neon
-
       - name: Install dependencies
         run: task install
 
