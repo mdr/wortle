@@ -1,17 +1,10 @@
 import { Pool } from "@neondatabase/serverless"
-import { drizzle, type NeonDatabase } from "drizzle-orm/neon-serverless"
+import { drizzle } from "drizzle-orm/neon-serverless"
+
+import { env } from "@/env"
 
 import * as schema from "./schema"
 
-let _db: NeonDatabase<typeof schema> | undefined
+const pool = new Pool({ connectionString: env.DATABASE_URL })
 
-export const getDb = () => {
-  if (!_db) {
-    if (!process.env.DATABASE_URL) {
-      throw new Error("DATABASE_URL is not set")
-    }
-    const pool = new Pool({ connectionString: process.env.DATABASE_URL })
-    _db = drizzle(pool, { schema })
-  }
-  return _db
-}
+export const db = drizzle(pool, { schema })
