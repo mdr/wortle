@@ -119,6 +119,25 @@ tasks:
       - task: game:test:unit
       - task: game:test:iwft
 
+  # Shared package tasks
+  shared:tsc:
+    desc: Type check shared package
+    dir: packages/shared
+    cmds:
+      - pnpm tsc {{.CLI_ARGS}}
+
+  shared:lint:
+    desc: Run ESLint on shared package
+    dir: packages/shared
+    cmds:
+      - pnpm lint {{.CLI_ARGS}}
+
+  shared:check:
+    desc: Run all checks for shared package (tsc, lint)
+    cmds:
+      - task: shared:tsc
+      - task: shared:lint
+
   # UI package tasks
   ui:tsc:
     desc: Type check UI package
@@ -183,6 +202,7 @@ tasks:
   check:
     desc: Run all checks (tsc, lint, format, tests)
     cmds:
+      - task: shared:check
       - task: ui:check
       - task: game:check
       - task: admin:check
