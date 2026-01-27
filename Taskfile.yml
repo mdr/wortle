@@ -188,6 +188,24 @@ tasks:
       - task: admin:tsc
       - task: admin:lint
 
+  admin:db:push:dev:
+    desc: Push database schema to dev
+    dir: apps/admin
+    env:
+      DATABASE_URL:
+        sh: cd ../../infra && pulumi stack output devDatabaseUrl --show-secrets --stack prod
+    cmds:
+      - pnpm drizzle-kit push
+
+  admin:db:push:prod:
+    desc: Push database schema to prod
+    dir: apps/admin
+    env:
+      DATABASE_URL:
+        sh: cd ../../infra && pulumi stack output prodDatabaseUrl --show-secrets --stack prod
+    cmds:
+      - pnpm drizzle-kit push
+
   # Shared tasks
   format:
     desc: Format code with Prettier

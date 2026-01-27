@@ -1,3 +1,4 @@
+import Link from "next/link"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@wortle/ui"
 
 export default function Home() {
@@ -9,7 +10,13 @@ export default function Home() {
           <CardDescription>Manage Wortle puzzles and content</CardDescription>
         </CardHeader>
         <CardContent>
-          <p className="text-muted-foreground">Admin features coming soon.</p>
+          <ul className="space-y-2">
+            <li>
+              <Link href="/species" className="text-blue-600 hover:underline">
+                Species
+              </Link>
+            </li>
+          </ul>
         </CardContent>
       </Card>
     </div>
