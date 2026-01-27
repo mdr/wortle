@@ -24,8 +24,17 @@ const speciesRouter = router({
   }),
 
   create: publicProcedure.input(apiSpeciesSchema).mutation(async ({ input }) => {
-    await db.insert(species).values({ id: input.id, data: input })
-    return input
+    return await db.transaction(async (tx) => {
+      const existing = await tx.select().from(species).where(eq(species.id, input.id))
+      if (existing.length > 0) {
+        throw new TRPCError({
+          code: "CONFLICT",
+          message: `Species with ID "${input.id}" already exists`,
+        })
+      }
+      await tx.insert(species).values({ id: input.id, data: input })
+      return input
+    })
   }),
 
   update: publicProcedure.input(apiSpeciesSchema).mutation(async ({ input }) => {
