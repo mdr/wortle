@@ -1,22 +1,26 @@
-import { Brand } from "effect"
 import { z } from "zod"
 
-import { Url } from "./brandedTypes"
+import { type Url, urlSchema } from "./brandedTypes"
 
-export type SpeciesId = string & Brand.Brand<"SpeciesId">
-export const SpeciesId = Brand.nominal<SpeciesId>()
+export const speciesIdSchema = z.string().brand<"SpeciesId", "inout">()
+export type SpeciesId = z.output<typeof speciesIdSchema>
+export const SpeciesId = (s: string): SpeciesId => speciesIdSchema.parse(s)
 
-export type ScientificName = string & Brand.Brand<"ScientificName">
-export const ScientificName = Brand.nominal<ScientificName>()
+export const scientificNameSchema = z.string().brand<"ScientificName", "inout">()
+export type ScientificName = z.output<typeof scientificNameSchema>
+export const ScientificName = (s: string): ScientificName => scientificNameSchema.parse(s)
 
-export type CommonName = string & Brand.Brand<"CommonName">
-export const CommonName = Brand.nominal<CommonName>()
+export const commonNameSchema = z.string().brand<"CommonName", "inout">()
+export type CommonName = z.output<typeof commonNameSchema>
+export const CommonName = (s: string): CommonName => commonNameSchema.parse(s)
 
-export type Genus = string & Brand.Brand<"Genus">
-export const Genus = Brand.nominal<Genus>()
+export const genusSchema = z.string().brand<"Genus", "inout">()
+export type Genus = z.output<typeof genusSchema>
+export const Genus = (s: string): Genus => genusSchema.parse(s)
 
-export type Family = string & Brand.Brand<"Family">
-export const Family = Brand.nominal<Family>()
+export const familySchema = z.string().brand<"Family", "inout">()
+export type Family = z.output<typeof familySchema>
+export const Family = (s: string): Family => familySchema.parse(s)
 
 export interface SpeciesLink {
   name: string
@@ -35,15 +39,15 @@ export interface Species {
 
 const speciesLinkSchema = z.object({
   name: z.string(),
-  url: z.string().transform(Url),
+  url: urlSchema,
 })
 
 const speciesSchema = z.object({
-  id: z.string().transform(SpeciesId),
-  scientificName: z.string().transform(ScientificName),
-  family: z.string().transform(Family),
-  commonName: z.string().transform(CommonName),
-  alternativeCommonNames: z.array(z.string().transform(CommonName)),
+  id: speciesIdSchema,
+  scientificName: scientificNameSchema,
+  family: familySchema,
+  commonName: commonNameSchema,
+  alternativeCommonNames: z.array(commonNameSchema),
   links: z.array(speciesLinkSchema),
   idTips: z.array(z.string()),
 })

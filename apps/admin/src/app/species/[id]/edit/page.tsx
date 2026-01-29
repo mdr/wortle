@@ -1,12 +1,14 @@
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
+import { CommonName, Family, ScientificName, SpeciesId } from "@wortle/shared"
 import { useParams, useRouter } from "next/navigation"
 import { useEffect } from "react"
 import { useFieldArray, useForm } from "react-hook-form"
 import { Button } from "@wortle/ui"
 import { z } from "zod"
 
+import { type ApiSpecies, type ApiSpeciesLink } from "@/api/types"
 import { FAMILIES } from "@/constants/families"
 import { trpc } from "@/trpc/client"
 
@@ -27,22 +29,58 @@ const formSchema = z.object({
 
 type FormData = z.infer<typeof formSchema>
 
+const formDataToApiSpecies = (data: FormData, links: ApiSpeciesLink[] = []): ApiSpecies => ({
+  id: SpeciesId(data.id),
+  commonName: CommonName(data.commonName),
+  scientificName: ScientificName(data.scientificName),
+  family: Family(data.family),
+  alternativeCommonNames: data.alternativeCommonNames
+    .map((n) => n.value)
+    .filter(Boolean)
+    .map(CommonName),
+  links,
+  idTips: data.idTips.map((t) => t.value).filter(Boolean),
+})
+
 export default function EditSpeciesPage() {
   const router = useRouter()
   const params = useParams<{ id: string }>()
-  const { data: species, isLoading } = trpc.species.get.useQuery({ id: params.id })
+  const utils = trpc.useUtils()
+  const { data: species, isLoading } = trpc.species.get.useQuery({ id: SpeciesId(params.id) })
 
   const updateMutation = trpc.species.update.useMutation({
+    onMutate: async (updatedSpecies) => {
+      await utils.species.list.cancel()
+      const previous = utils.species.list.getData()
+      utils.species.list.setData(undefined, (old) => old?.map((s) => (s.id === updatedSpecies.id ? updatedSpecies : s)))
+      return { previous }
+    },
+    onError: (_err, _updatedSpecies, context) => {
+      if (context?.previous) {
+        utils.species.list.setData(undefined, context.previous)
+      }
+    },
     onSuccess: () => router.push("/species"),
   })
 
   const deleteMutation = trpc.species.delete.useMutation({
+    onMutate: async ({ id }) => {
+      await utils.species.list.cancel()
+      const previous = utils.species.list.getData()
+      utils.species.list.setData(undefined, (old) => old?.filter((s) => s.id !== id))
+      return { previous }
+    },
+    onError: (_err, _input, context) => {
+      if (context?.previous) {
+        utils.species.list.setData(undefined, context.previous)
+      }
+    },
     onSuccess: () => router.push("/species"),
   })
 
   const handleDelete = () => {
     if (confirm(`Delete "${species?.commonName}"?`)) {
-      deleteMutation.mutate({ id: params.id })
+      deleteMutation.mutate({ id: SpeciesId(params.id) })
     }
   }
 
@@ -75,15 +113,7 @@ export default function EditSpeciesPage() {
   const tips = useFieldArray({ control: form.control, name: "idTips" })
 
   const onSubmit = (data: FormData) => {
-    updateMutation.mutate({
-      id: data.id,
-      commonName: data.commonName,
-      scientificName: data.scientificName,
-      family: data.family,
-      alternativeCommonNames: data.alternativeCommonNames.map((n) => n.value).filter(Boolean),
-      links: species?.links ?? [],
-      idTips: data.idTips.map((t) => t.value).filter(Boolean),
-    })
+    updateMutation.mutate(formDataToApiSpecies(data, species?.links))
   }
 
   if (isLoading) return <div>Loading...</div>

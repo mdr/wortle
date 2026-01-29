@@ -1,4 +1,4 @@
-import { SpeciesId } from "@wortle/shared"
+import { speciesIdSchema } from "@wortle/shared"
 import { TRPCError } from "@trpc/server"
 import { eq } from "drizzle-orm"
 import { z } from "zod"
@@ -15,7 +15,7 @@ const speciesRouter = router({
     return rows.map((row) => row.data)
   }),
 
-  get: protectedProcedure.input(z.object({ id: z.string().transform(SpeciesId) })).query(async ({ input }) => {
+  get: protectedProcedure.input(z.object({ id: speciesIdSchema })).query(async ({ input }) => {
     const rows = await db.select().from(species).where(eq(species.id, input.id))
     if (rows.length === 0) {
       throw new TRPCError({ code: "NOT_FOUND" })
@@ -45,7 +45,7 @@ const speciesRouter = router({
     return result[0].data
   }),
 
-  delete: protectedProcedure.input(z.object({ id: z.string().transform(SpeciesId) })).mutation(async ({ input }) => {
+  delete: protectedProcedure.input(z.object({ id: speciesIdSchema })).mutation(async ({ input }) => {
     const result = await db.delete(species).where(eq(species.id, input.id)).returning()
     if (result.length === 0) {
       throw new TRPCError({ code: "NOT_FOUND" })

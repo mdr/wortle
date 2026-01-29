@@ -1,7 +1,6 @@
 import { Brand } from "effect"
 
-export type Url = string & Brand.Brand<"Url">
-export const Url = Brand.nominal<Url>()
+export { Url } from "@wortle/shared"
 
 export type Iso8601Date = string & Brand.Brand<"Iso8601Date">
 const iso8601DatePattern = /^\d{4}-\d{2}-\d{2}$/

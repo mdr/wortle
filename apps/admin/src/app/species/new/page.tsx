@@ -1,11 +1,13 @@
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
+import { CommonName, Family, ScientificName, SpeciesId } from "@wortle/shared"
 import { useRouter } from "next/navigation"
 import { useFieldArray, useForm } from "react-hook-form"
 import { Button } from "@wortle/ui"
 import { z } from "zod"
 
+import { type ApiSpecies, type ApiSpeciesLink } from "@/api/types"
 import { FAMILIES } from "@/constants/families"
 import { trpc } from "@/trpc/client"
 
@@ -26,9 +28,34 @@ const formSchema = z.object({
 
 type FormData = z.infer<typeof formSchema>
 
+const formDataToApiSpecies = (data: FormData, links: ApiSpeciesLink[] = []): ApiSpecies => ({
+  id: SpeciesId(data.id),
+  commonName: CommonName(data.commonName),
+  scientificName: ScientificName(data.scientificName),
+  family: Family(data.family),
+  alternativeCommonNames: data.alternativeCommonNames
+    .map((n) => n.value)
+    .filter(Boolean)
+    .map(CommonName),
+  links,
+  idTips: data.idTips.map((t) => t.value).filter(Boolean),
+})
+
 export default function NewSpeciesPage() {
   const router = useRouter()
+  const utils = trpc.useUtils()
   const createMutation = trpc.species.create.useMutation({
+    onMutate: async (newSpecies) => {
+      await utils.species.list.cancel()
+      const previous = utils.species.list.getData()
+      utils.species.list.setData(undefined, (old) => [...(old ?? []), newSpecies])
+      return { previous }
+    },
+    onError: (_err, _newSpecies, context) => {
+      if (context?.previous) {
+        utils.species.list.setData(undefined, context.previous)
+      }
+    },
     onSuccess: () => router.push("/species"),
   })
 
@@ -48,15 +75,7 @@ export default function NewSpeciesPage() {
   const tips = useFieldArray({ control: form.control, name: "idTips" })
 
   const onSubmit = (data: FormData) => {
-    createMutation.mutate({
-      id: data.id,
-      commonName: data.commonName,
-      scientificName: data.scientificName,
-      family: data.family,
-      alternativeCommonNames: data.alternativeCommonNames.map((n) => n.value).filter(Boolean),
-      links: [],
-      idTips: data.idTips.map((t) => t.value).filter(Boolean),
-    })
+    createMutation.mutate(formDataToApiSpecies(data))
   }
 
   return (

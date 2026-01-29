@@ -1,17 +1,17 @@
-import { CommonName, Family, ScientificName, SpeciesId, Url } from "@wortle/shared"
+import { commonNameSchema, familySchema, scientificNameSchema, speciesIdSchema, urlSchema } from "@wortle/shared"
 import { z } from "zod"
 
 const apiSpeciesLinkSchema = z.object({
   name: z.string(),
-  url: z.string().transform(Url),
+  url: urlSchema,
 })
 
 export const apiSpeciesSchema = z.object({
-  id: z.string().transform(SpeciesId),
-  scientificName: z.string().transform(ScientificName),
-  family: z.string().transform(Family),
-  commonName: z.string().transform(CommonName),
-  alternativeCommonNames: z.array(z.string().transform(CommonName)),
+  id: speciesIdSchema,
+  scientificName: scientificNameSchema,
+  family: familySchema,
+  commonName: commonNameSchema,
+  alternativeCommonNames: z.array(commonNameSchema),
   links: z.array(apiSpeciesLinkSchema),
   idTips: z.array(z.string()),
 })
