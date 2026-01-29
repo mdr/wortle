@@ -13,8 +13,9 @@ import { restrictToVerticalAxis } from "@dnd-kit/modifiers"
 import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from "@dnd-kit/sortable"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { CommonName, Family, ScientificName, SpeciesId, Url } from "@wortle/shared"
-import { Button } from "@wortle/ui"
-import { ExternalLink } from "lucide-react"
+import { Button, Input, Label } from "@wortle/ui"
+import { ExternalLink, Plus, Trash2 } from "lucide-react"
+import { useId } from "react"
 import { useFieldArray, useForm } from "react-hook-form"
 import { z } from "zod"
 
@@ -100,6 +101,7 @@ export const SpeciesForm = ({
   onDelete,
   isDeleting,
 }: SpeciesFormProps) => {
+  const formId = useId()
   const form = useForm<SpeciesFormData>({
     resolver: zodResolver(formSchema),
     defaultValues: initialValues ?? emptyFormData,
@@ -129,28 +131,33 @@ export const SpeciesForm = ({
   const isEditMode = mode === "edit"
 
   return (
-    <form onSubmit={(e) => void form.handleSubmit(handleFormSubmit)(e)} className="space-y-4">
-      <div>
-        <label className="mb-1 block text-sm font-medium">ID (BSBI DDB)</label>
-        <input
+    <form onSubmit={(e) => void form.handleSubmit(handleFormSubmit)(e)} className="space-y-6">
+      <div className="space-y-1">
+        <Label htmlFor={`${formId}-id`}>ID (BSBI DDB)</Label>
+        <Input
+          id={`${formId}-id`}
           {...form.register("id")}
-          className={`w-full rounded border p-2 ${isEditMode ? "bg-gray-100" : ""}`}
+          className={isEditMode ? "bg-muted" : ""}
           disabled={isEditMode}
         />
-        {form.formState.errors.id && <p className="mt-1 text-sm text-red-600">{form.formState.errors.id.message}</p>}
+        {form.formState.errors.id && <p className="text-destructive text-sm">{form.formState.errors.id.message}</p>}
       </div>
 
-      <div>
-        <label className="mb-1 block text-sm font-medium">Scientific Name</label>
-        <input {...form.register("scientificName")} className="w-full rounded border p-2" placeholder="Genus species" />
+      <div className="space-y-1">
+        <Label htmlFor={`${formId}-scientificName`}>Scientific Name</Label>
+        <Input id={`${formId}-scientificName`} {...form.register("scientificName")} placeholder="Genus species" />
         {form.formState.errors.scientificName && (
-          <p className="mt-1 text-sm text-red-600">{form.formState.errors.scientificName.message}</p>
+          <p className="text-destructive text-sm">{form.formState.errors.scientificName.message}</p>
         )}
       </div>
 
-      <div>
-        <label className="mb-1 block text-sm font-medium">Family</label>
-        <select {...form.register("family")} className="w-full rounded border bg-white p-2">
+      <div className="space-y-1">
+        <Label htmlFor={`${formId}-family`}>Family</Label>
+        <select
+          id={`${formId}-family`}
+          {...form.register("family")}
+          className="border-input bg-background text-foreground focus-visible:ring-ring/50 flex h-9 w-full rounded-md border px-3 py-1 text-sm shadow-xs outline-none focus-visible:ring-[3px]"
+        >
           <option value="">Select a family...</option>
           {FAMILIES.map((family) => (
             <option key={family} value={family}>
@@ -159,21 +166,21 @@ export const SpeciesForm = ({
           ))}
         </select>
         {form.formState.errors.family && (
-          <p className="mt-1 text-sm text-red-600">{form.formState.errors.family.message}</p>
+          <p className="text-destructive text-sm">{form.formState.errors.family.message}</p>
         )}
       </div>
 
-      <div>
-        <label className="mb-1 block text-sm font-medium">Common Name</label>
-        <input {...form.register("commonName")} className="w-full rounded border p-2" />
+      <div className="space-y-1">
+        <Label htmlFor={`${formId}-commonName`}>Common Name</Label>
+        <Input id={`${formId}-commonName`} {...form.register("commonName")} />
         {form.formState.errors.commonName && (
-          <p className="mt-1 text-sm text-red-600">{form.formState.errors.commonName.message}</p>
+          <p className="text-destructive text-sm">{form.formState.errors.commonName.message}</p>
         )}
       </div>
 
-      <div>
-        <label className="mb-1 block text-sm font-medium">Alternative Common Names</label>
-        <div className="space-y-2">
+      <div className="space-y-2">
+        <Label>Alternative Common Names</Label>
+        <div className="bg-muted/30 space-y-2 rounded-md border p-3">
           <DndContext
             sensors={sensors}
             collisionDetection={closestCenter}
@@ -183,13 +190,16 @@ export const SpeciesForm = ({
             <SortableContext items={altNames.fields.map((f) => f.id)} strategy={verticalListSortingStrategy}>
               {altNames.fields.map((field, index) => (
                 <SortableItem key={field.id} id={field.id} showHandle={altNames.fields.length > 1}>
-                  <div className="flex gap-2">
-                    <input
-                      {...form.register(`alternativeCommonNames.${index}.value`)}
-                      className="flex-1 rounded border p-2"
-                    />
-                    <Button type="button" variant="outline" size="sm" onClick={() => altNames.remove(index)}>
-                      Remove
+                  <div className="flex items-center gap-2">
+                    <Input {...form.register(`alternativeCommonNames.${index}.value`)} className="flex-1" />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon-sm"
+                      onClick={() => altNames.remove(index)}
+                      aria-label="Remove name"
+                    >
+                      <Trash2 className="text-muted-foreground h-4 w-4" />
                     </Button>
                   </div>
                 </SortableItem>
@@ -197,14 +207,15 @@ export const SpeciesForm = ({
             </SortableContext>
           </DndContext>
           <Button type="button" variant="outline" size="sm" onClick={() => altNames.append({ value: "" })}>
+            <Plus className="h-4 w-4" />
             Add Name
           </Button>
         </div>
       </div>
 
-      <div>
-        <label className="mb-1 block text-sm font-medium">Links</label>
-        <div className="space-y-2">
+      <div className="space-y-2">
+        <Label>Links</Label>
+        <div className="bg-muted/30 space-y-2 rounded-md border p-3">
           <DndContext
             sensors={sensors}
             collisionDetection={closestCenter}
@@ -219,33 +230,42 @@ export const SpeciesForm = ({
                 return (
                   <SortableItem key={field.id} id={field.id} showHandle={links.fields.length > 1}>
                     <div className="flex flex-col gap-1">
-                      <div className="flex gap-2">
-                        <input
+                      <div className="flex items-center gap-2">
+                        <Input
                           {...form.register(`links.${index}.name`)}
                           placeholder="Name"
-                          className={`w-1/3 rounded border p-2 ${nameError ? "border-red-500" : ""}`}
+                          className="w-1/3"
+                          aria-invalid={!!nameError}
                         />
-                        <input
+                        <Input
                           {...form.register(`links.${index}.url`)}
                           placeholder="URL"
-                          className={`flex-1 rounded border p-2 ${urlError ? "border-red-500" : ""}`}
+                          className="flex-1"
+                          aria-invalid={!!urlError}
                         />
-                        <a
-                          href={url || "#"}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className={`inline-flex items-center rounded border px-2 ${
-                            url && !urlError ? "hover:bg-gray-100" : "pointer-events-none opacity-30"
-                          }`}
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon-sm"
+                          asChild
+                          className={url && !urlError ? "" : "pointer-events-none opacity-30"}
                         >
-                          <ExternalLink className="h-4 w-4" />
-                        </a>
-                        <Button type="button" variant="outline" size="sm" onClick={() => links.remove(index)}>
-                          Remove
+                          <a href={url || "#"} target="_blank" rel="noopener noreferrer" aria-label="Open link">
+                            <ExternalLink className="text-muted-foreground h-4 w-4" />
+                          </a>
+                        </Button>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon-sm"
+                          onClick={() => links.remove(index)}
+                          aria-label="Remove link"
+                        >
+                          <Trash2 className="text-muted-foreground h-4 w-4" />
                         </Button>
                       </div>
                       {(nameError || urlError) && (
-                        <p className="text-sm text-red-600">{nameError?.message || urlError?.message}</p>
+                        <p className="text-destructive text-sm">{nameError?.message || urlError?.message}</p>
                       )}
                     </div>
                   </SortableItem>
@@ -254,14 +274,15 @@ export const SpeciesForm = ({
             </SortableContext>
           </DndContext>
           <Button type="button" variant="outline" size="sm" onClick={() => links.append({ name: "", url: "" })}>
+            <Plus className="h-4 w-4" />
             Add Link
           </Button>
         </div>
       </div>
 
-      <div>
-        <label className="mb-1 block text-sm font-medium">ID Tips</label>
-        <div className="space-y-2">
+      <div className="space-y-2">
+        <Label>ID Tips</Label>
+        <div className="bg-muted/30 space-y-2 rounded-md border p-3">
           <DndContext
             sensors={sensors}
             collisionDetection={closestCenter}
@@ -271,10 +292,16 @@ export const SpeciesForm = ({
             <SortableContext items={tips.fields.map((f) => f.id)} strategy={verticalListSortingStrategy}>
               {tips.fields.map((field, index) => (
                 <SortableItem key={field.id} id={field.id} showHandle={tips.fields.length > 1}>
-                  <div className="flex gap-2">
-                    <input {...form.register(`idTips.${index}.value`)} className="flex-1 rounded border p-2" />
-                    <Button type="button" variant="outline" size="sm" onClick={() => tips.remove(index)}>
-                      Remove
+                  <div className="flex items-center gap-2">
+                    <Input {...form.register(`idTips.${index}.value`)} className="flex-1" />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon-sm"
+                      onClick={() => tips.remove(index)}
+                      aria-label="Remove tip"
+                    >
+                      <Trash2 className="text-muted-foreground h-4 w-4" />
                     </Button>
                   </div>
                 </SortableItem>
@@ -282,14 +309,15 @@ export const SpeciesForm = ({
             </SortableContext>
           </DndContext>
           <Button type="button" variant="outline" size="sm" onClick={() => tips.append({ value: "" })}>
+            <Plus className="h-4 w-4" />
             Add Tip
           </Button>
         </div>
       </div>
 
-      {error && <div className="text-sm text-red-600">{error.message}</div>}
+      {error && <div className="text-destructive text-sm">{error.message}</div>}
 
-      <div className="flex gap-2">
+      <div className="flex gap-2 pt-2">
         <Button type="submit" disabled={isPending}>
           {isPending ? (isEditMode ? "Saving..." : "Creating...") : isEditMode ? "Save" : "Create"}
         </Button>

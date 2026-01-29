@@ -2,6 +2,10 @@ export { cn } from "./utils"
 
 export { Button, buttonVariants } from "./components/Button"
 
+export { Input } from "./components/Input"
+
+export { Label } from "./components/Label"
+
 export { Card, CardAction, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "./components/Card"
 
 export {
