@@ -9,7 +9,7 @@ A daily plant identification quiz. Each day features a different wild plant with
 - Images served from Cloudflare R2 (`images.wortle.app`)
 - Infrastructure managed with Pulumi (`infra/`)
 
-Use `nix develop -c <command>` to run commands, e.g. `nix develop -c task check`.
+All CLI commands (`pnpm`, `task`, `npx`, etc.) must be run in the nix environment via `nix develop -c <command>`, e.g. `nix develop -c task check` or `nix develop -c pnpm add some-package`.
 
 Run `task check` to verify work before finishing (runs tsc, lint, format, and tests).
 
