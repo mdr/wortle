@@ -1,14 +1,15 @@
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
-import { CommonName, Family, ScientificName, SpeciesId } from "@wortle/shared"
+import { CommonName, Family, ScientificName, SpeciesId, Url } from "@wortle/shared"
+import { ExternalLink } from "lucide-react"
 import { useParams, useRouter } from "next/navigation"
 import { useEffect } from "react"
 import { useFieldArray, useForm } from "react-hook-form"
 import { Button } from "@wortle/ui"
 import { z } from "zod"
 
-import { type ApiSpecies, type ApiSpeciesLink } from "@/api/types"
+import { type ApiSpecies } from "@/api/types"
 import { FAMILIES } from "@/constants/families"
 import { trpc } from "@/trpc/client"
 
@@ -24,12 +25,18 @@ const formSchema = z.object({
     .regex(/^[A-Z][a-z]+ [a-z]+(-[a-z]+)*$/, "Must be in format 'Genus species' (e.g., Taraxacum officinale)"),
   family: z.enum(FAMILIES, { message: "Please select a family" }),
   alternativeCommonNames: z.array(z.object({ value: z.string() })),
+  links: z.array(
+    z.object({
+      name: z.string().min(1, "Name is required"),
+      url: z.url({ message: "Must be a valid URL" }),
+    }),
+  ),
   idTips: z.array(z.object({ value: z.string() })),
 })
 
 type FormData = z.infer<typeof formSchema>
 
-const formDataToApiSpecies = (data: FormData, links: ApiSpeciesLink[] = []): ApiSpecies => ({
+const formDataToApiSpecies = (data: FormData): ApiSpecies => ({
   id: SpeciesId(data.id),
   commonName: CommonName(data.commonName),
   scientificName: ScientificName(data.scientificName),
@@ -38,7 +45,7 @@ const formDataToApiSpecies = (data: FormData, links: ApiSpeciesLink[] = []): Api
     .map((n) => n.value)
     .filter(Boolean)
     .map(CommonName),
-  links,
+  links: data.links.map((l) => ({ name: l.name, url: Url(l.url) })),
   idTips: data.idTips.map((t) => t.value).filter(Boolean),
 })
 
@@ -92,6 +99,7 @@ export default function EditSpeciesPage() {
       scientificName: "",
       family: undefined,
       alternativeCommonNames: [],
+      links: [],
       idTips: [],
     },
   })
@@ -104,17 +112,17 @@ export default function EditSpeciesPage() {
         scientificName: species.scientificName,
         family: species.family as FormData["family"],
         alternativeCommonNames: species.alternativeCommonNames.map((n) => ({ value: n })),
+        links: species.links.map((l) => ({ name: l.name, url: l.url })),
         idTips: species.idTips.map((t) => ({ value: t })),
       })
     }
   }, [species, form])
 
   const altNames = useFieldArray({ control: form.control, name: "alternativeCommonNames" })
+  const links = useFieldArray({ control: form.control, name: "links" })
   const tips = useFieldArray({ control: form.control, name: "idTips" })
 
-  const onSubmit = (data: FormData) => {
-    updateMutation.mutate(formDataToApiSpecies(data, species?.links))
-  }
+  const onSubmit = (data: FormData) => updateMutation.mutate(formDataToApiSpecies(data))
 
   if (isLoading) return <div>Loading...</div>
   if (!species) return <div>Species not found</div>
@@ -180,6 +188,52 @@ export default function EditSpeciesPage() {
             ))}
             <Button type="button" variant="outline" size="sm" onClick={() => altNames.append({ value: "" })}>
               Add Name
+            </Button>
+          </div>
+        </div>
+
+        <div>
+          <label className="mb-1 block text-sm font-medium">Links</label>
+          <div className="space-y-2">
+            {links.fields.map((field, index) => {
+              const url = form.watch(`links.${index}.url`)
+              const nameError = form.formState.errors.links?.[index]?.name
+              const urlError = form.formState.errors.links?.[index]?.url
+              return (
+                <div key={field.id} className="flex flex-col gap-1">
+                  <div className="flex gap-2">
+                    <input
+                      {...form.register(`links.${index}.name`)}
+                      placeholder="Name"
+                      className={`w-1/3 rounded border p-2 ${nameError ? "border-red-500" : ""}`}
+                    />
+                    <input
+                      {...form.register(`links.${index}.url`)}
+                      placeholder="URL"
+                      className={`flex-1 rounded border p-2 ${urlError ? "border-red-500" : ""}`}
+                    />
+                    <a
+                      href={url || "#"}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`inline-flex items-center rounded border px-2 ${
+                        url && !urlError ? "hover:bg-gray-100" : "pointer-events-none opacity-30"
+                      }`}
+                    >
+                      <ExternalLink className="h-4 w-4" />
+                    </a>
+                    <Button type="button" variant="outline" size="sm" onClick={() => links.remove(index)}>
+                      Remove
+                    </Button>
+                  </div>
+                  {(nameError || urlError) && (
+                    <p className="text-sm text-red-600">{nameError?.message || urlError?.message}</p>
+                  )}
+                </div>
+              )
+            })}
+            <Button type="button" variant="outline" size="sm" onClick={() => links.append({ name: "", url: "" })}>
+              Add Link
             </Button>
           </div>
         </div>
