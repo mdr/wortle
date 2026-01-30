@@ -1,8 +1,13 @@
 "use client"
 
 import { SpeciesId } from "@wortle/shared"
+import { Button, Card, CardContent, CardHeader, CardTitle } from "@wortle/ui"
+import { ArrowLeft } from "lucide-react"
+import Link from "next/link"
 import { useParams, useRouter } from "next/navigation"
+import { useState } from "react"
 
+import { ConfirmDeleteSpeciesDialog } from "@/components/ConfirmDeleteSpeciesDialog"
 import { apiSpeciesToFormData, SpeciesForm } from "@/components/SpeciesForm"
 import { trpc } from "@/trpc/client"
 
@@ -10,6 +15,7 @@ export default function EditSpeciesPage() {
   const router = useRouter()
   const params = useParams<{ id: string }>()
   const utils = trpc.useUtils()
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const { data: species, isLoading } = trpc.species.get.useQuery({ id: SpeciesId(params.id) })
 
   const updateMutation = trpc.species.update.useMutation({
@@ -30,7 +36,6 @@ export default function EditSpeciesPage() {
         utils.species.get.setData({ id: updatedSpecies.id }, context.previousGet)
       }
     },
-    onSuccess: () => router.push("/species"),
   })
 
   const deleteMutation = trpc.species.delete.useMutation({
@@ -48,10 +53,9 @@ export default function EditSpeciesPage() {
     onSuccess: () => router.push("/species"),
   })
 
-  const handleDelete = () => {
-    if (confirm(`Delete "${species?.commonName}"?`)) {
-      deleteMutation.mutate({ id: SpeciesId(params.id) })
-    }
+  const confirmDelete = () => {
+    deleteMutation.mutate({ id: SpeciesId(params.id) })
+    setDeleteDialogOpen(false)
   }
 
   if (isLoading) return <div>Loading...</div>
@@ -60,17 +64,37 @@ export default function EditSpeciesPage() {
   const error = updateMutation.error ?? deleteMutation.error
 
   return (
-    <div className="max-w-xl">
-      <h2 className="mb-4 text-xl font-semibold">Edit Species</h2>
-      <SpeciesForm
-        mode="edit"
-        initialValues={apiSpeciesToFormData(species)}
-        onSubmit={(data) => updateMutation.mutate(data)}
-        onCancel={() => router.push("/species")}
-        isPending={updateMutation.isPending}
-        error={error}
-        onDelete={handleDelete}
-        isDeleting={deleteMutation.isPending}
+    <div className="mx-auto max-w-2xl">
+      <Card>
+        <CardHeader>
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" size="icon-sm" asChild>
+              <Link href="/species" aria-label="Back to species list">
+                <ArrowLeft className="h-4 w-4" />
+              </Link>
+            </Button>
+            <CardTitle>Edit Species</CardTitle>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <SpeciesForm
+            mode="edit"
+            initialValues={apiSpeciesToFormData(species)}
+            onSubmit={(data) => updateMutation.mutate(data)}
+            onCancel={() => router.push("/species")}
+            isPending={updateMutation.isPending}
+            error={error}
+            onDelete={() => setDeleteDialogOpen(true)}
+            isDeleting={deleteMutation.isPending}
+          />
+        </CardContent>
+      </Card>
+
+      <ConfirmDeleteSpeciesDialog
+        speciesName={species.commonName}
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        onConfirm={confirmDelete}
       />
     </div>
   )

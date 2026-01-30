@@ -1,5 +1,17 @@
 export { cn } from "./utils"
 
+export {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "./components/AlertDialog"
+
 export { Button, buttonVariants } from "./components/Button"
 
 export { Input } from "./components/Input"
@@ -51,3 +63,14 @@ export {
   SelectTrigger,
   SelectValue,
 } from "./components/Select"
+
+export {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableFooter,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "./components/Table"

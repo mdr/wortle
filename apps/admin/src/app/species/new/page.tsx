@@ -1,5 +1,8 @@
 "use client"
 
+import { Button, Card, CardContent, CardHeader, CardTitle } from "@wortle/ui"
+import { ArrowLeft } from "lucide-react"
+import Link from "next/link"
 import { useRouter } from "next/navigation"
 
 import { SpeciesForm } from "@/components/SpeciesForm"
@@ -21,19 +24,32 @@ export default function NewSpeciesPage() {
         utils.species.list.setData(undefined, context.previous)
       }
     },
-    onSuccess: () => router.push("/species"),
+    onSuccess: (_data, variables) => router.push(`/species/${variables.id}/edit`),
   })
 
   return (
-    <div className="max-w-xl">
-      <h2 className="mb-4 text-xl font-semibold">New Species</h2>
-      <SpeciesForm
-        mode="new"
-        onSubmit={(data) => createMutation.mutate(data)}
-        onCancel={() => router.push("/species")}
-        isPending={createMutation.isPending}
-        error={createMutation.error}
-      />
+    <div className="mx-auto max-w-2xl">
+      <Card>
+        <CardHeader>
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" size="icon-sm" asChild>
+              <Link href="/species" aria-label="Back to species list">
+                <ArrowLeft className="h-4 w-4" />
+              </Link>
+            </Button>
+            <CardTitle>New Species</CardTitle>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <SpeciesForm
+            mode="new"
+            onSubmit={(data) => createMutation.mutate(data)}
+            onCancel={() => router.push("/species")}
+            isPending={createMutation.isPending}
+            error={createMutation.error}
+          />
+        </CardContent>
+      </Card>
     </div>
   )
 }
