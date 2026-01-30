@@ -1,56 +1,48 @@
 import { speciesIdSchema } from "@wortle/shared"
 import { TRPCError } from "@trpc/server"
-import { eq } from "drizzle-orm"
 import { z } from "zod"
 
 import { apiSpeciesSchema } from "@/api/types"
-import { db } from "@/db"
-import { species } from "@/db/schema"
+import { CreateResult, DeleteResult, speciesRepository, UpdateResult } from "@/db/SpeciesRepository"
 import { logger } from "@/utils/logger"
 
 import { protectedProcedure, router } from "./init"
 
 export const speciesRouter = router({
-  list: protectedProcedure.query(async () => {
-    const rows = await db.select().from(species)
-    return rows.map((row) => row.data)
-  }),
+  list: protectedProcedure.query(() => speciesRepository.list()),
 
   get: protectedProcedure.input(z.object({ id: speciesIdSchema })).query(async ({ input }) => {
-    const rows = await db.select().from(species).where(eq(species.id, input.id))
-    if (rows.length === 0) {
+    const species = await speciesRepository.findById(input.id)
+    if (species === undefined) {
       throw new TRPCError({ code: "NOT_FOUND" })
     }
-    return rows[0].data
+    return species
   }),
 
   create: protectedProcedure.input(apiSpeciesSchema).mutation(async ({ input }) => {
-    return await db.transaction(async (tx) => {
-      const existing = await tx.select().from(species).where(eq(species.id, input.id))
-      if (existing.length > 0) {
-        throw new TRPCError({
-          code: "CONFLICT",
-          message: `Species with ID "${input.id}" already exists`,
-        })
-      }
-      await tx.insert(species).values({ id: input.id, data: input })
-      logger.info("species.created", `Created species ${input.id}`, { speciesId: input.id })
-      return input
-    })
+    const result = await speciesRepository.create(input)
+    if (result === CreateResult.ALREADY_EXISTS) {
+      throw new TRPCError({
+        code: "CONFLICT",
+        message: `Species with ID "${input.id}" already exists`,
+      })
+    }
+    logger.info("species.created", `Created species ${input.id}`, { speciesId: input.id })
+    return input
   }),
 
   update: protectedProcedure.input(apiSpeciesSchema).mutation(async ({ input }) => {
-    const result = await db.update(species).set({ data: input }).where(eq(species.id, input.id)).returning()
-    if (result.length === 0) {
+    const result = await speciesRepository.update(input)
+    if (result === UpdateResult.NOT_FOUND) {
       throw new TRPCError({ code: "NOT_FOUND" })
     }
     logger.info("species.updated", `Updated species ${input.id}`, { speciesId: input.id })
-    return result[0].data
+    return input
   }),
 
   delete: protectedProcedure.input(z.object({ id: speciesIdSchema })).mutation(async ({ input }) => {
-    const result = await db.delete(species).where(eq(species.id, input.id)).returning()
-    if (result.length === 0) {
+    const result = await speciesRepository.delete(input.id)
+    if (result === DeleteResult.NOT_FOUND) {
       throw new TRPCError({ code: "NOT_FOUND" })
     }
     logger.info("species.deleted", `Deleted species ${input.id}`, { speciesId: input.id })

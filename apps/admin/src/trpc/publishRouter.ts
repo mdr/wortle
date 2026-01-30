@@ -1,7 +1,6 @@
 import { speciesJsonSchema } from "@wortle/shared"
 
-import { db } from "@/db"
-import { species } from "@/db/schema"
+import { speciesRepository } from "@/db/SpeciesRepository"
 import { toSpeciesData } from "@/db/toSpecies"
 import { logger } from "@/utils/logger"
 import { uploadToR2 } from "@/utils/r2"
@@ -10,8 +9,8 @@ import { protectedProcedure, router } from "./init"
 
 export const publishRouter = router({
   species: protectedProcedure.mutation(async () => {
-    const rows = await db.select().from(species)
-    const speciesData = toSpeciesData(rows.map((row) => row.data))
+    const speciesList = await speciesRepository.list()
+    const speciesData = toSpeciesData(speciesList)
 
     const validated = speciesJsonSchema.parse(speciesData)
 
