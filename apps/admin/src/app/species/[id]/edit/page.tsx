@@ -64,7 +64,7 @@ export default function EditSpeciesPage() {
   const error = updateMutation.error ?? deleteMutation.error
 
   return (
-    <div className="mx-auto max-w-2xl">
+    <div className="mx-auto max-w-3xl">
       <Card>
         <CardHeader>
           <div className="flex items-center gap-2">

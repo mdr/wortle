@@ -19,11 +19,13 @@ const main = async () => {
 
   console.log(localFile ? `Reading from local file: ${localFile}` : `Fetching from ${DATA_URL}`)
 
-  const json = localFile ? JSON.parse(await readFile(localFile, "utf-8")) : await fetch(DATA_URL).then((r) => r.json())
+  const json: unknown = localFile
+    ? JSON.parse(await readFile(localFile, "utf-8"))
+    : await fetch(DATA_URL).then((r) => r.json())
 
   const parsed = speciesJsonSchema.safeParse(json)
   if (!parsed.success) {
-    console.error("Invalid species data:", parsed.error.format())
+    console.error("Invalid species data:", parsed.error.message)
     process.exit(1)
   }
 
@@ -55,7 +57,7 @@ const main = async () => {
   await pool.end()
 }
 
-main().catch((err) => {
+main().catch((err: unknown) => {
   console.error(err)
   process.exit(1)
 })

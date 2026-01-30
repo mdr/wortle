@@ -34,6 +34,7 @@ import { z } from "zod"
 
 import { type ApiSpecies } from "@/api/types"
 import { FAMILIES } from "@/constants/families"
+import { validateGlossaryBrackets } from "@/utils/validateGlossaryBrackets"
 
 import { SortableItem } from "./SortableItem"
 
@@ -55,7 +56,14 @@ const formSchema = z.object({
       url: z.url({ message: "Must be a valid URL" }),
     }),
   ),
-  idTips: z.array(z.object({ value: z.string().min(1, "Cannot be empty") })),
+  idTips: z.array(
+    z.object({
+      value: z
+        .string()
+        .min(1, "Cannot be empty")
+        .refine(validateGlossaryBrackets, { message: "Unmatched [[ or ]] brackets" }),
+    }),
+  ),
 })
 
 export type SpeciesFormData = z.infer<typeof formSchema>
@@ -300,7 +308,7 @@ export const SpeciesForm = ({
                           onClick={() => altNames.remove(index)}
                           aria-label="Remove name"
                         >
-                          <Trash2 className="text-muted-foreground h-4 w-4" />
+                          <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
                       {error && <p className="text-destructive text-sm">{error.message}</p>}
@@ -346,7 +354,7 @@ export const SpeciesForm = ({
                         <Input
                           {...form.register(`links.${index}.name`)}
                           placeholder="Name"
-                          className="w-1/3"
+                          className="w-40 shrink-0"
                           aria-invalid={!!nameError}
                         />
                         <Input
@@ -363,7 +371,7 @@ export const SpeciesForm = ({
                           className={url && !urlError ? "" : "pointer-events-none opacity-30"}
                         >
                           <a href={url || "#"} target="_blank" rel="noopener noreferrer" aria-label="Open link">
-                            <ExternalLink className="text-muted-foreground h-4 w-4" />
+                            <ExternalLink className="h-4 w-4" />
                           </a>
                         </Button>
                         <Button
@@ -373,7 +381,7 @@ export const SpeciesForm = ({
                           onClick={() => links.remove(index)}
                           aria-label="Remove link"
                         >
-                          <Trash2 className="text-muted-foreground h-4 w-4" />
+                          <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
                       {(nameError || urlError) && (
@@ -424,7 +432,7 @@ export const SpeciesForm = ({
                           onClick={() => tips.remove(index)}
                           aria-label="Remove tip"
                         >
-                          <Trash2 className="text-muted-foreground h-4 w-4" />
+                          <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
                       {error && <p className="text-destructive text-sm">{error.message}</p>}

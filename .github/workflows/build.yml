@@ -82,6 +82,12 @@ jobs:
       - name: Check formatting
         run: task format:check
 
+      - name: Unit tests (game)
+        run: task game:test:unit
+
+      - name: Unit tests (admin)
+        run: task admin:test
+
       - name: Install Playwright browsers
         run: task game:test:iwft:install
 

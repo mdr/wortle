@@ -182,11 +182,18 @@ tasks:
     cmds:
       - pnpm build {{.CLI_ARGS}}
 
+  admin:test:
+    desc: Run admin unit tests
+    dir: apps/admin
+    cmds:
+      - pnpm test {{.CLI_ARGS}}
+
   admin:check:
-    desc: Run all checks for admin (tsc, lint)
+    desc: Run all checks for admin (tsc, lint, test)
     cmds:
       - task: admin:tsc
       - task: admin:lint
+      - task: admin:test
 
   admin:db:push:dev:
     desc: Push database schema to dev
