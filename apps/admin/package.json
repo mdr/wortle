@@ -43,6 +43,7 @@
     "drizzle-kit": "0.31.8",
     "eslint": "^9",
     "tailwindcss": "^4",
+    "tsx": "^4",
     "typescript": "^5",
     "typescript-eslint": "^8"
   }

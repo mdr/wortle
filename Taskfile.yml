@@ -206,6 +206,24 @@ tasks:
     cmds:
       - pnpm drizzle-kit push
 
+  admin:db:seed:dev:
+    desc: Seed species data to dev database from data.wortle.app
+    dir: apps/admin
+    env:
+      DATABASE_URL:
+        sh: cd ../../infra && pulumi stack output devDatabaseUrl --show-secrets --stack prod
+    cmds:
+      - pnpm exec tsx scripts/seed-species.ts {{.CLI_ARGS}}
+
+  admin:db:seed:prod:
+    desc: Seed species data to prod database from data.wortle.app
+    dir: apps/admin
+    env:
+      DATABASE_URL:
+        sh: cd ../../infra && pulumi stack output prodDatabaseUrl --show-secrets --stack prod
+    cmds:
+      - pnpm exec tsx scripts/seed-species.ts {{.CLI_ARGS}}
+
   # Shared tasks
   format:
     desc: Format code with Prettier
