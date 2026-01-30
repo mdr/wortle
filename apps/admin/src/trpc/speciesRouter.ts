@@ -2,28 +2,34 @@ import { speciesIdSchema } from "@wortle/shared"
 import { TRPCError } from "@trpc/server"
 import { z } from "zod"
 
+import { toApiSpecies, toDbSpecies } from "@/api/speciesConversions"
 import { apiSpeciesSchema } from "@/api/types"
-import { CreateResult, DeleteResult, speciesRepository, UpdateResult } from "@/db/SpeciesRepository"
+import { speciesRepository } from "@/db"
+import { CreateResult, DeleteResult, UpdateResult } from "@/db/SpeciesRepository"
 import { logger } from "@/utils/logger"
 
+import { TrpcErrorCode } from "./errorCodes"
 import { protectedProcedure, router } from "./init"
 
 export const speciesRouter = router({
-  list: protectedProcedure.query(() => speciesRepository.list()),
+  list: protectedProcedure.query(async () => {
+    const dbSpecies = await speciesRepository.list()
+    return dbSpecies.map(toApiSpecies)
+  }),
 
   get: protectedProcedure.input(z.object({ id: speciesIdSchema })).query(async ({ input }) => {
-    const species = await speciesRepository.findById(input.id)
-    if (species === undefined) {
-      throw new TRPCError({ code: "NOT_FOUND" })
+    const dbSpecies = await speciesRepository.findById(input.id)
+    if (dbSpecies === undefined) {
+      throw new TRPCError({ code: TrpcErrorCode.NOT_FOUND })
     }
-    return species
+    return toApiSpecies(dbSpecies)
   }),
 
   create: protectedProcedure.input(apiSpeciesSchema).mutation(async ({ input }) => {
-    const result = await speciesRepository.create(input)
+    const result = await speciesRepository.create(toDbSpecies(input))
     if (result === CreateResult.ALREADY_EXISTS) {
       throw new TRPCError({
-        code: "CONFLICT",
+        code: TrpcErrorCode.CONFLICT,
         message: `Species with ID "${input.id}" already exists`,
       })
     }
@@ -32,9 +38,9 @@ export const speciesRouter = router({
   }),
 
   update: protectedProcedure.input(apiSpeciesSchema).mutation(async ({ input }) => {
-    const result = await speciesRepository.update(input)
+    const result = await speciesRepository.update(toDbSpecies(input))
     if (result === UpdateResult.NOT_FOUND) {
-      throw new TRPCError({ code: "NOT_FOUND" })
+      throw new TRPCError({ code: TrpcErrorCode.NOT_FOUND })
     }
     logger.info("species.updated", `Updated species ${input.id}`, { speciesId: input.id })
     return input
@@ -43,7 +49,7 @@ export const speciesRouter = router({
   delete: protectedProcedure.input(z.object({ id: speciesIdSchema })).mutation(async ({ input }) => {
     const result = await speciesRepository.delete(input.id)
     if (result === DeleteResult.NOT_FOUND) {
-      throw new TRPCError({ code: "NOT_FOUND" })
+      throw new TRPCError({ code: TrpcErrorCode.NOT_FOUND })
     }
     logger.info("species.deleted", `Deleted species ${input.id}`, { speciesId: input.id })
     return { success: true }

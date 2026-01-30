@@ -195,23 +195,29 @@ tasks:
       - task: admin:lint
       - task: admin:test
 
-  admin:db:push:dev:
-    desc: Push database schema to dev
+  admin:db:generate:
+    desc: Generate a new migration from schema changes
+    dir: apps/admin
+    cmds:
+      - pnpm drizzle-kit generate {{.CLI_ARGS}}
+
+  admin:db:migrate:dev:
+    desc: Run migrations on dev database
     dir: apps/admin
     env:
       DATABASE_URL:
         sh: cd ../../infra && pulumi stack output devDatabaseUrl --show-secrets --stack prod
     cmds:
-      - pnpm drizzle-kit push
+      - pnpm drizzle-kit migrate
 
-  admin:db:push:prod:
-    desc: Push database schema to prod
+  admin:db:migrate:prod:
+    desc: Run migrations on prod database
     dir: apps/admin
     env:
       DATABASE_URL:
         sh: cd ../../infra && pulumi stack output prodDatabaseUrl --show-secrets --stack prod
     cmds:
-      - pnpm drizzle-kit push
+      - pnpm drizzle-kit migrate
 
   admin:db:seed:dev:
     desc: Seed species data to dev database from data.wortle.app

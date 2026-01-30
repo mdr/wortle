@@ -1,6 +1,6 @@
 import { speciesJsonSchema } from "@wortle/shared"
 
-import { speciesRepository } from "@/db/SpeciesRepository"
+import { speciesRepository } from "@/db"
 import { toSpeciesData } from "@/db/toSpecies"
 import { logger } from "@/utils/logger"
 import { uploadToR2 } from "@/utils/r2"

@@ -1,11 +1,10 @@
 import { Option } from "@wortle/shared"
 import { eq } from "drizzle-orm"
+import { PgDatabase } from "drizzle-orm/pg-core"
 
-import { ApiSpecies } from "@/api/types"
-
-import { db } from "./index"
+import * as schema from "./schema"
 import { species } from "./schema"
-import { SpeciesId } from "./types"
+import { DbSpecies, SpeciesId } from "./types"
 
 export enum CreateResult {
   CREATED = "CREATED",
@@ -22,19 +21,24 @@ export enum DeleteResult {
   NOT_FOUND = "NOT_FOUND",
 }
 
-class SpeciesRepository {
-  list = async (): Promise<ApiSpecies[]> => {
-    const rows = await db.select().from(species)
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type Database = PgDatabase<any, typeof schema>
+
+export class SpeciesRepository {
+  constructor(private readonly db: Database) {}
+
+  list = async (): Promise<DbSpecies[]> => {
+    const rows = await this.db.select().from(species)
     return rows.map((row) => row.data)
   }
 
-  findById = async (id: SpeciesId): Promise<Option<ApiSpecies>> => {
-    const rows = await db.select().from(species).where(eq(species.id, id))
+  findById = async (id: SpeciesId): Promise<Option<DbSpecies>> => {
+    const rows = await this.db.select().from(species).where(eq(species.id, id))
     return rows[0]?.data
   }
 
-  create = async (data: ApiSpecies): Promise<CreateResult> => {
-    return await db.transaction(async (tx) => {
+  create = async (data: DbSpecies): Promise<CreateResult> =>
+    this.db.transaction(async (tx) => {
       const existing = await tx.select({ id: species.id }).from(species).where(eq(species.id, data.id))
       if (existing.length > 0) {
         return CreateResult.ALREADY_EXISTS
@@ -42,17 +46,14 @@ class SpeciesRepository {
       await tx.insert(species).values({ id: data.id, data })
       return CreateResult.CREATED
     })
-  }
 
-  update = async (data: ApiSpecies): Promise<UpdateResult> => {
-    const result = await db.update(species).set({ data }).where(eq(species.id, data.id)).returning()
+  update = async (data: DbSpecies): Promise<UpdateResult> => {
+    const result = await this.db.update(species).set({ data }).where(eq(species.id, data.id)).returning()
     return result.length > 0 ? UpdateResult.UPDATED : UpdateResult.NOT_FOUND
   }
 
   delete = async (id: SpeciesId): Promise<DeleteResult> => {
-    const result = await db.delete(species).where(eq(species.id, id)).returning()
+    const result = await this.db.delete(species).where(eq(species.id, id)).returning()
     return result.length > 0 ? DeleteResult.DELETED : DeleteResult.NOT_FOUND
   }
 }
-
-export const speciesRepository = new SpeciesRepository()
