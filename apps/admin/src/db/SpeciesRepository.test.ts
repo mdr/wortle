@@ -1,4 +1,4 @@
-import { CommonName, Family, ScientificName, SpeciesId } from "@wortle/shared"
+import { CommonName, Family, ScientificName, TestSpeciesIds } from "@wortle/shared"
 import { describe, expect, it } from "vitest"
 
 import { CreateResult, DeleteResult, SpeciesRepository, UpdateResult } from "./SpeciesRepository"
@@ -6,7 +6,7 @@ import { createTestDb } from "./testDb.testUtils"
 import { DbSpecies } from "./types"
 
 const makeDbSpecies = (overrides: Partial<DbSpecies> = {}): DbSpecies => ({
-  id: SpeciesId("test-species"),
+  id: TestSpeciesIds.daisy,
   scientificName: ScientificName("Bellis perennis"),
   family: Family("Asteraceae"),
   commonName: CommonName("Daisy"),
@@ -33,8 +33,8 @@ describe("SpeciesRepository", () => {
 
     it("returns all species", async () => {
       const repository = await makeSpeciesRepository()
-      const species1 = makeDbSpecies({ id: SpeciesId("species-1") })
-      const species2 = makeDbSpecies({ id: SpeciesId("species-2") })
+      const species1 = makeDbSpecies({ id: TestSpeciesIds.daisy })
+      const species2 = makeDbSpecies({ id: TestSpeciesIds.tansy })
       await repository.create(species1)
       await repository.create(species2)
 
@@ -48,7 +48,7 @@ describe("SpeciesRepository", () => {
     it("returns undefined when species does not exist", async () => {
       const repository = await makeSpeciesRepository()
 
-      const result = await repository.findById(SpeciesId("nonexistent"))
+      const result = await repository.findById(TestSpeciesIds.alexanders)
 
       expect(result).toBeUndefined()
     })
@@ -98,10 +98,10 @@ describe("SpeciesRepository", () => {
 
     it("updates existing species and returns UPDATED", async () => {
       const repository = await makeSpeciesRepository()
-      const species = makeDbSpecies()
+      const species = makeDbSpecies({ commonName: CommonName("Daisy") })
       await repository.create(species)
-      const updated = { ...species, commonName: CommonName("Common Daisy") }
 
+      const updated = { ...species, commonName: CommonName("Common Daisy") }
       const result = await repository.update(updated)
 
       expect(result).toBe(UpdateResult.UPDATED)
@@ -113,7 +113,7 @@ describe("SpeciesRepository", () => {
     it("returns NOT_FOUND when species does not exist", async () => {
       const repository = await makeSpeciesRepository()
 
-      const result = await repository.delete(SpeciesId("nonexistent"))
+      const result = await repository.delete(TestSpeciesIds.alexanders)
 
       expect(result).toBe(DeleteResult.NOT_FOUND)
     })

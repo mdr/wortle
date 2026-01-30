@@ -1,4 +1,4 @@
-import { TestSpeciesIds } from "@/lib/testConstants.testUtils"
+import { TestSpeciesIds } from "@wortle/shared"
 
 import { test } from "../fixtures"
 

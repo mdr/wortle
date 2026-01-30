@@ -1,9 +1,9 @@
-import { speciesJsonSchema } from "@wortle/shared"
+import { BucketName, ObjectKey, speciesJsonSchema } from "@wortle/shared"
 
 import { speciesRepository } from "@/db"
 import { toSpeciesData } from "@/db/toSpecies"
 import { logger } from "@/utils/logger"
-import { uploadToR2 } from "@/utils/r2"
+import { MediaType, r2Client } from "@/utils/R2Client"
 
 import { protectedProcedure, router } from "./init"
 
@@ -14,11 +14,11 @@ export const publishRouter = router({
 
     const validated = speciesJsonSchema.parse(speciesData)
 
-    await uploadToR2({
-      bucket: "wortle-data",
-      key: "species.json",
+    await r2Client.upload({
+      bucket: BucketName("wortle-data"),
+      key: ObjectKey("species.json"),
       body: JSON.stringify(validated),
-      contentType: "application/json",
+      contentType: MediaType.APPLICATION_JSON,
     })
 
     logger.info("publish.species", `Published ${validated.species.length} species`, {

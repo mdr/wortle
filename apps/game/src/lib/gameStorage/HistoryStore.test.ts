@@ -1,6 +1,6 @@
+import { TestSpeciesIds } from "@wortle/shared"
 import { describe, expect, it } from "vitest"
 
-import { TestSpeciesIds } from "@/lib/testConstants.testUtils"
 import { Iso8601Date } from "@/utils/brandedTypes"
 
 import { PassOrFail } from "./HistoryRecord"

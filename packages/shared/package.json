@@ -4,7 +4,8 @@
   "private": true,
   "type": "module",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./*.testUtils": "./src/*.testUtils.ts"
   },
   "scripts": {
     "tsc": "tsc --noEmit",
@@ -16,6 +17,7 @@
   },
   "devDependencies": {
     "eslint": "^9",
+    "mockttp": "4.2.1",
     "typescript": "^5",
     "typescript-eslint": "^8"
   }

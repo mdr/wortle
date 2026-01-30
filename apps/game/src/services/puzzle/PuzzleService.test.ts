@@ -1,3 +1,4 @@
+import { TestSpeciesIds } from "@wortle/shared"
 import { describe, expect, it } from "vitest"
 
 import { PassOrFail } from "@/lib/gameStorage/HistoryRecord"
@@ -11,7 +12,7 @@ import { createMemoryStorage } from "@/lib/gameStorage/storage.testUtils"
 import { Puzzle } from "@/lib/Puzzle"
 import { defaultPuzzles } from "@/lib/puzzles"
 import { testSpeciesRepository } from "@/lib/species/testSpecies.testUtils"
-import { TestDate, TestPuzzles, TestSpeciesIds } from "@/lib/testConstants.testUtils"
+import { TestDate, TestPuzzles } from "@/lib/testConstants.testUtils"
 import { ImageIndex, Iso8601Date } from "@/utils/brandedTypes"
 
 import { computeInitialOutcome, MAX_ATTEMPTS, PuzzleMode, PuzzleOutcome, PuzzleService } from "./PuzzleService"

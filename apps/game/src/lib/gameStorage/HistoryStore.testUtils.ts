@@ -1,4 +1,6 @@
-import { TestDate, TestSpeciesIds } from "@/lib/testConstants.testUtils"
+import { TestSpeciesIds } from "@wortle/shared"
+
+import { TestDate } from "@/lib/testConstants.testUtils"
 
 import { PassOrFail, type PuzzleHistoryEntry } from "./HistoryRecord"
 import { HistoryStore } from "./HistoryStore"
