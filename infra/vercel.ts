@@ -41,8 +41,8 @@ new vercel.ProjectDomain("admin-domain", {
   domain: "admin.wortle.app",
 })
 
-// Cloudflare credentials for R2 uploads
-const cloudflareApiToken = config.requireSecret("cloudflare-api-token")
+// Cloudflare credentials for admin app R2 uploads (runtime, not infra provisioning)
+const adminR2ApiToken = config.requireSecret("admin-r2-api-token")
 
 new vercel.ProjectEnvironmentVariable("admin-cloudflare-account-id", {
   projectId: adminProject.id,
@@ -54,7 +54,7 @@ new vercel.ProjectEnvironmentVariable("admin-cloudflare-account-id", {
 new vercel.ProjectEnvironmentVariable("admin-cloudflare-api-token", {
   projectId: adminProject.id,
   key: "CLOUDFLARE_API_TOKEN",
-  value: cloudflareApiToken,
+  value: adminR2ApiToken,
   targets: ["production", "preview"],
 })
 
