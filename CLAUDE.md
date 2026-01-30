@@ -11,7 +11,7 @@ A daily plant identification quiz. Each day features a different wild plant with
 
 All CLI commands (`pnpm`, `task`, `npx`, etc.) must be run in the nix environment via `nix develop -c <command>`, e.g. `nix develop -c task check` or `nix develop -c pnpm add some-package`.
 
-Run `task check` to verify work before finishing (runs tsc, lint, format, and tests).
+Run `task check` to verify work before finishing (runs tsc, lint, format, and tests). When only changing code in a single package (e.g., `apps/admin`), run targeted checks instead (e.g., `task admin:check`) since IWFTs are slow. Always run `task format` first to avoid wasting time on checks that fail due to formatting.
 
 ## Coding Standards
 

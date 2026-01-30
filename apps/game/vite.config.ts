@@ -34,6 +34,10 @@ export default defineConfig({
   base: "/",
   test: {
     setupFiles: ["./src/tests/vitest.setup.ts"],
+    env: {
+      LC_ALL: "en_GB.UTF-8",
+      TZ: "UTC",
+    },
     coverage: {
       provider: "custom",
       customProviderModule: "vitest-monocart-coverage",

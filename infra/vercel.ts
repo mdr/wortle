@@ -41,6 +41,23 @@ new vercel.ProjectDomain("admin-domain", {
   domain: "admin.wortle.app",
 })
 
+// Cloudflare credentials for R2 uploads
+const cloudflareApiToken = config.requireSecret("cloudflare-api-token")
+
+new vercel.ProjectEnvironmentVariable("admin-cloudflare-account-id", {
+  projectId: adminProject.id,
+  key: "CLOUDFLARE_ACCOUNT_ID",
+  value: "b9b4484585e9307f7c60257ca27dd5ab",
+  targets: ["production", "preview"],
+})
+
+new vercel.ProjectEnvironmentVariable("admin-cloudflare-api-token", {
+  projectId: adminProject.id,
+  key: "CLOUDFLARE_API_TOKEN",
+  value: cloudflareApiToken,
+  targets: ["production", "preview"],
+})
+
 // Kinde auth environment variables for admin
 const kindeClientSecret = config.requireSecret("kinde-client-secret")
 
