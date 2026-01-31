@@ -1,12 +1,12 @@
-import { BucketName, ObjectKey } from "@wortle/shared"
+import { BucketName, CloudflareAccountId, CloudflareApiToken, ObjectKey } from "@wortle/shared"
 import { withMockServer } from "@wortle/shared/src/withMockServer.testUtils"
 import * as mockttp from "mockttp"
 import { describe, expect, it } from "vitest"
 
 import { MediaType, R2Client } from "./R2Client"
 
-const TEST_ACCOUNT_ID = "test-account-id"
-const TEST_API_TOKEN = "test-api-token"
+const TEST_ACCOUNT_ID = CloudflareAccountId("test-account-id")
+const TEST_API_TOKEN = CloudflareApiToken("test-api-token")
 
 const withR2Client = async (callback: (client: R2Client, server: mockttp.Mockttp) => Promise<void>): Promise<void> =>
   withMockServer(async (server, baseUrl) => {

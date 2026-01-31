@@ -22,9 +22,10 @@ export {
   genusSchema,
   ScientificName,
   scientificNameSchema,
+  SPECIES_DATA_KEY,
+  speciesDataJsonSchema,
   SpeciesId,
   speciesIdSchema,
-  speciesJsonSchema,
 } from "./species"
 
 export type { Species, SpeciesData, SpeciesLink } from "./species"

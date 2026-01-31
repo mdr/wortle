@@ -1,10 +1,11 @@
 import type { Page } from "@playwright/test"
 
+import { DEFAULT_DATA_URL } from "@/lib/data/DataApi"
 import type { Puzzle, PuzzlesData } from "@/lib/Puzzle"
 import { PuzzleId } from "@/lib/Puzzle"
 import { defaultPuzzles } from "@/lib/puzzles"
 import type { ScheduleData, ScheduleEntry } from "@/lib/schedule"
-import type { Species, SpeciesData } from "@/lib/species/Species"
+import { type Species, type SpeciesData, SPECIES_DATA_KEY } from "@/lib/species/Species"
 import { testSpecies } from "@/lib/species/testSpecies.testUtils"
 import { Iso8601Date } from "@/utils/brandedTypes"
 
@@ -105,19 +106,19 @@ export class NetworkSimulator {
 
   install = async () => {
     await this.installRoute<ScheduleData>({
-      routePattern: "**/data.wortle.app/schedule.json",
+      routePattern: `${DEFAULT_DATA_URL}/schedule.json`,
       endpointKey: EndpointKey.SCHEDULE,
       handle: () => ({ schedule: this.scheduleEntries }),
     })
 
     await this.installRoute<PuzzlesData>({
-      routePattern: "**/data.wortle.app/puzzles.json",
+      routePattern: `${DEFAULT_DATA_URL}/puzzles.json`,
       endpointKey: EndpointKey.PUZZLES,
       handle: () => ({ puzzles: this.puzzles }),
     })
 
     await this.installRoute<SpeciesData>({
-      routePattern: "**/data.wortle.app/species.json",
+      routePattern: `${DEFAULT_DATA_URL}/${SPECIES_DATA_KEY}`,
       endpointKey: EndpointKey.SPECIES,
       handle: () => ({ species: this.species }),
     })

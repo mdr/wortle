@@ -12,7 +12,7 @@ export async function createContext() {
   return { user, isSuperUser }
 }
 
-type Context = Awaited<ReturnType<typeof createContext>>
+export type Context = Awaited<ReturnType<typeof createContext>>
 
 const t = initTRPC.context<Context>().create()
 

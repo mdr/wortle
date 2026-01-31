@@ -1,4 +1,4 @@
-import { BucketName, ObjectKey, Url } from "@wortle/shared"
+import { BucketName, CloudflareAccountId, CloudflareApiToken, ObjectKey, Url } from "@wortle/shared"
 
 const DEFAULT_BASE_URL = Url("https://api.cloudflare.com/client/v4")
 
@@ -8,22 +8,26 @@ export enum MediaType {
 }
 
 interface R2ClientConfig {
-  accountId: string
-  apiToken: string
+  accountId: CloudflareAccountId
+  apiToken: CloudflareApiToken
   baseUrl?: Url
 }
 
-interface UploadParams {
+export interface UploadParams {
   bucket: BucketName
   key: ObjectKey
   body: string
   contentType: MediaType
 }
 
-export class R2Client {
+export interface IR2Client {
+  upload: (params: UploadParams) => Promise<void>
+}
+
+export class R2Client implements IR2Client {
   private readonly baseUrl: Url
-  private readonly accountId: string
-  private readonly apiToken: string
+  private readonly accountId: CloudflareAccountId
+  private readonly apiToken: CloudflareApiToken
 
   constructor(config: R2ClientConfig) {
     this.baseUrl = config.baseUrl ?? DEFAULT_BASE_URL
@@ -52,7 +56,7 @@ export class R2Client {
 
 let _r2Client: R2Client | undefined
 
-export const r2Client = {
+export const r2Client: IR2Client = {
   upload: async (params: UploadParams): Promise<void> => {
     if (_r2Client === undefined) {
       const { env } = await import("@/env")

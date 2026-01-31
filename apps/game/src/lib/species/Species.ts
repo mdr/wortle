@@ -9,8 +9,9 @@ export {
   ScientificName,
   type Species,
   type SpeciesData,
+  SPECIES_DATA_KEY,
+  speciesDataJsonSchema,
   SpeciesId,
-  speciesJsonSchema,
   type SpeciesLink,
   Url,
 } from "@wortle/shared"

@@ -1,4 +1,4 @@
-import { speciesJsonSchema } from "@wortle/shared"
+import { speciesDataJsonSchema, SPECIES_DATA_KEY } from "@wortle/shared"
 import { Pool } from "@neondatabase/serverless"
 import { sql } from "drizzle-orm"
 import { drizzle } from "drizzle-orm/neon-serverless"
@@ -6,7 +6,7 @@ import { readFile } from "fs/promises"
 
 import * as schema from "../src/db/schema"
 
-const DATA_URL = "https://data.wortle.app/species.json"
+const DATA_URL = `https://data.wortle.app/${SPECIES_DATA_KEY}`
 
 const main = async () => {
   const databaseUrl = process.env.DATABASE_URL
@@ -23,7 +23,7 @@ const main = async () => {
     ? JSON.parse(await readFile(localFile, "utf-8"))
     : await fetch(DATA_URL).then((r) => r.json())
 
-  const parsed = speciesJsonSchema.safeParse(json)
+  const parsed = speciesDataJsonSchema.safeParse(json)
   if (!parsed.success) {
     console.error("Invalid species data:", parsed.error.message)
     process.exit(1)

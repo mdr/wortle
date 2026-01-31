@@ -24,7 +24,15 @@ export enum DeleteResult {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Database = PgDatabase<any, typeof schema>
 
-export class SpeciesRepository {
+export interface ISpeciesRepository {
+  list: () => Promise<DbSpecies[]>
+  findById: (id: SpeciesId) => Promise<Option<DbSpecies>>
+  create: (data: DbSpecies) => Promise<CreateResult>
+  update: (data: DbSpecies) => Promise<UpdateResult>
+  delete: (id: SpeciesId) => Promise<DeleteResult>
+}
+
+export class SpeciesRepository implements ISpeciesRepository {
   constructor(private readonly db: Database) {}
 
   list = async (): Promise<DbSpecies[]> => {

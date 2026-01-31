@@ -1,9 +1,9 @@
 import { type PuzzlesData, puzzlesJsonSchema } from "@/lib/Puzzle"
 import { type ScheduleData, scheduleJsonSchema } from "@/lib/schedule"
-import { type SpeciesData, speciesJsonSchema } from "@/lib/species/Species"
+import { type SpeciesData, speciesDataJsonSchema, SPECIES_DATA_KEY } from "@/lib/species/Species"
 import { Url } from "@/utils/brandedTypes"
 
-const DEFAULT_DATA_URL = Url("https://data.wortle.app")
+export const DEFAULT_DATA_URL = Url("https://data.wortle.app")
 
 export class DataApi {
   constructor(private readonly baseUrl: Url = DEFAULT_DATA_URL) {}
@@ -27,12 +27,12 @@ export class DataApi {
   }
 
   fetchSpecies = async (): Promise<SpeciesData> => {
-    const response = await fetch(`${this.baseUrl}/species.json`)
+    const response = await fetch(`${this.baseUrl}/${SPECIES_DATA_KEY}`)
     if (!response.ok) {
       throw new Error(`Failed to fetch species: ${response.status} ${response.statusText}`)
     }
     const json: unknown = await response.json()
-    return speciesJsonSchema.parse(json)
+    return speciesDataJsonSchema.parse(json)
   }
 }
 

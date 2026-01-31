@@ -1,30 +1,34 @@
-import { BucketName, ObjectKey, speciesJsonSchema } from "@wortle/shared"
+import { BucketName, speciesDataJsonSchema, SPECIES_DATA_KEY } from "@wortle/shared"
 
-import { speciesRepository } from "@/db"
+import { ISpeciesRepository } from "@/db/SpeciesRepository"
 import { toSpeciesData } from "@/db/toSpecies"
 import { logger } from "@/utils/logger"
-import { MediaType, r2Client } from "@/utils/R2Client"
+import { IR2Client, MediaType } from "@/utils/R2Client"
 
 import { protectedProcedure, router } from "./init"
 
-export const publishRouter = router({
-  species: protectedProcedure.mutation(async () => {
-    const speciesList = await speciesRepository.list()
-    const speciesData = toSpeciesData(speciesList)
+interface PublishRouterDeps {
+  speciesRepository: ISpeciesRepository
+  r2Client: IR2Client
+}
 
-    const validated = speciesJsonSchema.parse(speciesData)
+export const createPublishRouter = ({ speciesRepository, r2Client }: PublishRouterDeps) =>
+  router({
+    all: protectedProcedure.mutation(async () => {
+      const speciesList = await speciesRepository.list()
+      const speciesData = toSpeciesData(speciesList)
 
-    await r2Client.upload({
-      bucket: BucketName("wortle-data"),
-      key: ObjectKey("species.json"),
-      body: JSON.stringify(validated),
-      contentType: MediaType.APPLICATION_JSON,
-    })
+      const validated = speciesDataJsonSchema.parse(speciesData)
 
-    logger.info("publish.species", `Published ${validated.species.length} species`, {
-      speciesCount: validated.species.length,
-    })
+      await r2Client.upload({
+        bucket: BucketName("wortle-data"),
+        key: SPECIES_DATA_KEY,
+        body: JSON.stringify(validated),
+        contentType: MediaType.APPLICATION_JSON,
+      })
 
-    return { success: true, speciesCount: validated.species.length }
-  }),
-})
+      logger.info("publish.all", `Published all data`, { speciesCount: validated.species.length })
+
+      return { success: true, speciesCount: validated.species.length }
+    }),
+  })
