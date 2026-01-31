@@ -8,9 +8,5 @@ export const env = createEnv({
     CLOUDFLARE_ACCOUNT_ID: cloudflareAccountIdSchema.optional(),
     CLOUDFLARE_API_TOKEN: cloudflareApiTokenSchema.optional(),
   },
-  runtimeEnv: {
-    DATABASE_URL: process.env.DATABASE_URL,
-    CLOUDFLARE_ACCOUNT_ID: process.env.CLOUDFLARE_ACCOUNT_ID,
-    CLOUDFLARE_API_TOKEN: process.env.CLOUDFLARE_API_TOKEN,
-  },
+  experimental__runtimeEnv: process.env,
 })
