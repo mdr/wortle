@@ -1,54 +1,55 @@
-import { BucketName, CloudflareAccountId, CloudflareApiToken, ObjectKey } from "@wortle/shared"
+import { BucketName, CloudflareAccountId, CloudflareApiToken, getOnlyElement, ObjectKey } from "@wortle/shared"
 import { withMockServer } from "@wortle/shared/src/withMockServer.testUtils"
 import * as mockttp from "mockttp"
 import { describe, expect, it } from "vitest"
 
-import { MediaType, R2Client } from "./R2Client"
+import { MediaType, R2BucketStorage } from "./R2BucketStorage"
 
 const TEST_ACCOUNT_ID = CloudflareAccountId("test-account-id")
 const TEST_API_TOKEN = CloudflareApiToken("test-api-token")
 
-const withR2Client = async (callback: (client: R2Client, server: mockttp.Mockttp) => Promise<void>): Promise<void> =>
+const withBucketStorage = async (
+  callback: (storage: R2BucketStorage, server: mockttp.Mockttp) => Promise<void>,
+): Promise<void> =>
   withMockServer(async (server, baseUrl) => {
-    const client = new R2Client({
+    const storage = new R2BucketStorage({
       accountId: TEST_ACCOUNT_ID,
       apiToken: TEST_API_TOKEN,
       baseUrl,
     })
-    await callback(client, server)
+    await callback(storage, server)
   })
 
-describe("R2Client", () => {
+describe("R2BucketStorage", () => {
   describe("upload", () => {
     it("uploads to correct URL with auth header and body", () =>
-      withR2Client(async (client, server) => {
+      withBucketStorage(async (storage, server) => {
         const endpoint = await server
           .forPut(`/accounts/${TEST_ACCOUNT_ID}/r2/buckets/my-bucket/objects/my-key.json`)
           .thenReply(200, "")
 
         const body = '{"data": "test"}'
-        await client.upload({
+        await storage.upload({
           bucket: BucketName("my-bucket"),
           key: ObjectKey("my-key.json"),
           body,
           contentType: MediaType.APPLICATION_JSON,
         })
 
-        const requests = await endpoint.getSeenRequests()
-        expect(requests).toHaveLength(1)
-        expect(requests[0].headers.authorization).toBe(`Bearer ${TEST_API_TOKEN}`)
-        expect(requests[0].headers["content-type"]).toBe("application/json")
-        expect(await requests[0].body.getText()).toBe(body)
+        const request = getOnlyElement(await endpoint.getSeenRequests())
+        expect(request.headers.authorization).toBe(`Bearer ${TEST_API_TOKEN}`)
+        expect(request.headers["content-type"]).toBe("application/json")
+        expect(await request.body.getText()).toBe(body)
       }))
 
     it("throws on HTTP error", () =>
-      withR2Client(async (client, server) => {
+      withBucketStorage(async (storage, server) => {
         await server
           .forPut(`/accounts/${TEST_ACCOUNT_ID}/r2/buckets/my-bucket/objects/my-key.json`)
           .thenReply(403, "Forbidden")
 
         await expect(
-          client.upload({
+          storage.upload({
             bucket: BucketName("my-bucket"),
             key: ObjectKey("my-key.json"),
             body: "test",

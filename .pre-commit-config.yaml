@@ -13,11 +13,33 @@ repos:
         language: system
         pass_filenames: false
         stages: [pre-commit]
-      - id: eslint
-        name: eslint
-        entry: bash -c 'cd apps/game && pnpm eslint --max-warnings=0 "$@"' --
+      - id: eslint-game
+        name: eslint (game)
+        entry: bash -c 'cd apps/game && pnpm eslint --max-warnings=0 "${@/apps\/game\//}"' _
         language: system
-        types: [ts, tsx]
+        files: ^apps/game/
+        types_or: [ts, tsx]
+        stages: [pre-commit]
+      - id: eslint-admin
+        name: eslint (admin)
+        entry: bash -c 'cd apps/admin && pnpm eslint --max-warnings=0 "${@/apps\/admin\//}"' _
+        language: system
+        files: ^apps/admin/
+        types_or: [ts, tsx]
+        stages: [pre-commit]
+      - id: eslint-shared
+        name: eslint (shared)
+        entry: bash -c 'cd packages/shared && pnpm eslint --max-warnings=0 "${@/packages\/shared\//}"' _
+        language: system
+        files: ^packages/shared/
+        types_or: [ts, tsx]
+        stages: [pre-commit]
+      - id: eslint-ui
+        name: eslint (ui)
+        entry: bash -c 'cd packages/ui && pnpm eslint --max-warnings=0 "${@/packages\/ui\//}"' _
+        language: system
+        files: ^packages/ui/
+        types_or: [ts, tsx]
         stages: [pre-commit]
       - id: gitleaks
         name: gitleaks

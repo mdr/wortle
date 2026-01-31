@@ -1,18 +1,18 @@
-import { BucketName, speciesDataJsonSchema, SPECIES_DATA_KEY } from "@wortle/shared"
+import { SPECIES_DATA_BUCKET, SPECIES_DATA_KEY, speciesDataJsonSchema } from "@wortle/shared"
 
 import { ISpeciesRepository } from "@/db/SpeciesRepository"
 import { toSpeciesData } from "@/db/toSpecies"
 import { logger } from "@/utils/logger"
-import { IR2Client, MediaType } from "@/utils/R2Client"
+import { IBucketStorage, MediaType } from "@/utils/R2BucketStorage"
 
 import { protectedProcedure, router } from "./init"
 
 interface PublishRouterDeps {
   speciesRepository: ISpeciesRepository
-  r2Client: IR2Client
+  bucketStorage: IBucketStorage
 }
 
-export const createPublishRouter = ({ speciesRepository, r2Client }: PublishRouterDeps) =>
+export const createPublishRouter = ({ speciesRepository, bucketStorage }: PublishRouterDeps) =>
   router({
     all: protectedProcedure.mutation(async () => {
       const speciesList = await speciesRepository.list()
@@ -20,8 +20,8 @@ export const createPublishRouter = ({ speciesRepository, r2Client }: PublishRout
 
       const validated = speciesDataJsonSchema.parse(speciesData)
 
-      await r2Client.upload({
-        bucket: BucketName("wortle-data"),
+      await bucketStorage.upload({
+        bucket: SPECIES_DATA_BUCKET,
         key: SPECIES_DATA_KEY,
         body: JSON.stringify(validated),
         contentType: MediaType.APPLICATION_JSON,

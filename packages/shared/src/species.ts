@@ -1,6 +1,6 @@
 import { z } from "zod"
 
-import { ObjectKey, type Url, urlSchema } from "./brandedTypes"
+import { type Url, urlSchema } from "./brandedTypes"
 
 export const speciesIdSchema = z.string().brand<"SpeciesId", "inout">()
 export type SpeciesId = z.output<typeof speciesIdSchema>
@@ -59,5 +59,3 @@ export const speciesDataJsonSchema = z.object({
 export interface SpeciesData {
   species: Species[]
 }
-
-export const SPECIES_DATA_KEY = ObjectKey("species.json")

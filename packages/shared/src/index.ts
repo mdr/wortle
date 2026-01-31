@@ -13,6 +13,8 @@ export {
   urlSchema,
 } from "./brandedTypes"
 
+export { SPECIES_DATA_BUCKET, SPECIES_DATA_KEY } from "./bucketConstants"
+
 export {
   CommonName,
   commonNameSchema,
@@ -22,12 +24,13 @@ export {
   genusSchema,
   ScientificName,
   scientificNameSchema,
-  SPECIES_DATA_KEY,
   speciesDataJsonSchema,
   SpeciesId,
   speciesIdSchema,
 } from "./species"
 
 export type { Species, SpeciesData, SpeciesLink } from "./species"
+
+export { getOnlyElement } from "./getOnlyElement.testUtils"
 
 export { TestSpeciesIds } from "./testConstants.testUtils"

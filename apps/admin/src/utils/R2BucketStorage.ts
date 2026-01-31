@@ -7,7 +7,7 @@ export enum MediaType {
   TEXT_PLAIN = "text/plain",
 }
 
-interface R2ClientConfig {
+interface R2BucketStorageConfig {
   accountId: CloudflareAccountId
   apiToken: CloudflareApiToken
   baseUrl?: Url
@@ -20,16 +20,16 @@ export interface UploadParams {
   contentType: MediaType
 }
 
-export interface IR2Client {
+export interface IBucketStorage {
   upload: (params: UploadParams) => Promise<void>
 }
 
-export class R2Client implements IR2Client {
+export class R2BucketStorage implements IBucketStorage {
   private readonly baseUrl: Url
   private readonly accountId: CloudflareAccountId
   private readonly apiToken: CloudflareApiToken
 
-  constructor(config: R2ClientConfig) {
+  constructor(config: R2BucketStorageConfig) {
     this.baseUrl = config.baseUrl ?? DEFAULT_BASE_URL
     this.accountId = config.accountId
     this.apiToken = config.apiToken
@@ -54,19 +54,19 @@ export class R2Client implements IR2Client {
   }
 }
 
-let _r2Client: R2Client | undefined
+let _bucketStorage: R2BucketStorage | undefined
 
-export const r2Client: IR2Client = {
+export const bucketStorage: IBucketStorage = {
   upload: async (params: UploadParams): Promise<void> => {
-    if (_r2Client === undefined) {
+    if (_bucketStorage === undefined) {
       const { env } = await import("@/env")
       const accountId = env.CLOUDFLARE_ACCOUNT_ID
       const apiToken = env.CLOUDFLARE_API_TOKEN
       if (accountId === undefined || apiToken === undefined) {
         throw new Error("CLOUDFLARE_ACCOUNT_ID and CLOUDFLARE_API_TOKEN must be set")
       }
-      _r2Client = new R2Client({ accountId, apiToken })
+      _bucketStorage = new R2BucketStorage({ accountId, apiToken })
     }
-    return _r2Client.upload(params)
+    return _bucketStorage.upload(params)
   },
 }
