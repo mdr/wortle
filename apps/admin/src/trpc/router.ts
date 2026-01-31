@@ -1,5 +1,5 @@
 import { speciesRepository } from "@/db"
-import { bucketStorage } from "@/utils/R2BucketStorage"
+import { bucketStorage } from "@/utils/bucketStorage"
 
 import { router } from "./init"
 import { createPublishRouter } from "./publishRouter"

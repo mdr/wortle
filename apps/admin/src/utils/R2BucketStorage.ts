@@ -53,20 +53,3 @@ export class R2BucketStorage implements IBucketStorage {
     }
   }
 }
-
-let _bucketStorage: R2BucketStorage | undefined
-
-export const bucketStorage: IBucketStorage = {
-  upload: async (params: UploadParams): Promise<void> => {
-    if (_bucketStorage === undefined) {
-      const { env } = await import("@/env")
-      const accountId = env.CLOUDFLARE_ACCOUNT_ID
-      const apiToken = env.CLOUDFLARE_API_TOKEN
-      if (accountId === undefined || apiToken === undefined) {
-        throw new Error("CLOUDFLARE_ACCOUNT_ID and CLOUDFLARE_API_TOKEN must be set")
-      }
-      _bucketStorage = new R2BucketStorage({ accountId, apiToken })
-    }
-    return _bucketStorage.upload(params)
-  },
-}
