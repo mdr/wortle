@@ -1,5 +1,5 @@
 import { BucketName, ObjectKey } from "@wortle/shared"
-import { withMockServer } from "@wortle/shared/withMockServer.testUtils"
+import { withMockServer } from "@wortle/shared/src/withMockServer.testUtils"
 import * as mockttp from "mockttp"
 import { describe, expect, it } from "vitest"
 

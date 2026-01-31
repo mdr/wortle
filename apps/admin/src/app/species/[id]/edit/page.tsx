@@ -16,16 +16,16 @@ export default function EditSpeciesPage() {
   const params = useParams<{ id: string }>()
   const utils = trpc.useUtils()
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
-  const { data: species, isLoading } = trpc.species.get.useQuery({ id: SpeciesId(params.id) })
+  const { data: species, isLoading } = trpc.species.get.useQuery(SpeciesId(params.id))
 
   const updateMutation = trpc.species.update.useMutation({
     onMutate: async (updatedSpecies) => {
       await utils.species.list.cancel()
-      await utils.species.get.cancel({ id: updatedSpecies.id })
+      await utils.species.get.cancel(updatedSpecies.id)
       const previousList = utils.species.list.getData()
-      const previousGet = utils.species.get.getData({ id: updatedSpecies.id })
+      const previousGet = utils.species.get.getData(updatedSpecies.id)
       utils.species.list.setData(undefined, (old) => old?.map((s) => (s.id === updatedSpecies.id ? updatedSpecies : s)))
-      utils.species.get.setData({ id: updatedSpecies.id }, updatedSpecies)
+      utils.species.get.setData(updatedSpecies.id, updatedSpecies)
       return { previousList, previousGet }
     },
     onError: (_err, updatedSpecies, context) => {
@@ -33,16 +33,16 @@ export default function EditSpeciesPage() {
         utils.species.list.setData(undefined, context.previousList)
       }
       if (context?.previousGet) {
-        utils.species.get.setData({ id: updatedSpecies.id }, context.previousGet)
+        utils.species.get.setData(updatedSpecies.id, context.previousGet)
       }
     },
   })
 
   const deleteMutation = trpc.species.delete.useMutation({
-    onMutate: async ({ id }) => {
+    onMutate: async (speciesId) => {
       await utils.species.list.cancel()
       const previous = utils.species.list.getData()
-      utils.species.list.setData(undefined, (old) => old?.filter((s) => s.id !== id))
+      utils.species.list.setData(undefined, (old) => old?.filter((s) => s.id !== speciesId))
       return { previous }
     },
     onError: (_err, _input, context) => {
@@ -54,7 +54,7 @@ export default function EditSpeciesPage() {
   })
 
   const confirmDelete = () => {
-    deleteMutation.mutate({ id: SpeciesId(params.id) })
+    deleteMutation.mutate(SpeciesId(params.id))
     setDeleteDialogOpen(false)
   }
 

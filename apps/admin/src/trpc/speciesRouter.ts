@@ -1,6 +1,5 @@
 import { speciesIdSchema } from "@wortle/shared"
 import { TRPCError } from "@trpc/server"
-import { z } from "zod"
 
 import { toApiSpecies, toDbSpecies } from "@/api/speciesConversions"
 import { apiSpeciesSchema } from "@/api/types"
@@ -17,41 +16,41 @@ export const speciesRouter = router({
     return dbSpecies.map(toApiSpecies)
   }),
 
-  get: protectedProcedure.input(z.object({ id: speciesIdSchema })).query(async ({ input }) => {
-    const dbSpecies = await speciesRepository.findById(input.id)
+  get: protectedProcedure.input(speciesIdSchema).query(async ({ input: speciesId }) => {
+    const dbSpecies = await speciesRepository.findById(speciesId)
     if (dbSpecies === undefined) {
       throw new TRPCError({ code: TrpcErrorCode.NOT_FOUND })
     }
     return toApiSpecies(dbSpecies)
   }),
 
-  create: protectedProcedure.input(apiSpeciesSchema).mutation(async ({ input }) => {
-    const result = await speciesRepository.create(toDbSpecies(input))
+  create: protectedProcedure.input(apiSpeciesSchema).mutation(async ({ input: apiSpecies }) => {
+    const result = await speciesRepository.create(toDbSpecies(apiSpecies))
     if (result === CreateResult.ALREADY_EXISTS) {
       throw new TRPCError({
         code: TrpcErrorCode.CONFLICT,
-        message: `Species with ID "${input.id}" already exists`,
+        message: `Species with ID "${apiSpecies.id}" already exists`,
       })
     }
-    logger.info("species.created", `Created species ${input.id}`, { speciesId: input.id })
-    return input
+    logger.info("species.created", `Created species "${apiSpecies.commonName}"`, { speciesId: apiSpecies.id })
+    return apiSpecies
   }),
 
-  update: protectedProcedure.input(apiSpeciesSchema).mutation(async ({ input }) => {
-    const result = await speciesRepository.update(toDbSpecies(input))
+  update: protectedProcedure.input(apiSpeciesSchema).mutation(async ({ input: apiSpecies }) => {
+    const result = await speciesRepository.update(toDbSpecies(apiSpecies))
     if (result === UpdateResult.NOT_FOUND) {
       throw new TRPCError({ code: TrpcErrorCode.NOT_FOUND })
     }
-    logger.info("species.updated", `Updated species ${input.id}`, { speciesId: input.id })
-    return input
+    logger.info("species.updated", `Updated species "${apiSpecies.commonName}"`, { speciesId: apiSpecies.id })
+    return apiSpecies
   }),
 
-  delete: protectedProcedure.input(z.object({ id: speciesIdSchema })).mutation(async ({ input }) => {
-    const result = await speciesRepository.delete(input.id)
+  delete: protectedProcedure.input(speciesIdSchema).mutation(async ({ input: speciesId }) => {
+    const result = await speciesRepository.delete(speciesId)
     if (result === DeleteResult.NOT_FOUND) {
       throw new TRPCError({ code: TrpcErrorCode.NOT_FOUND })
     }
-    logger.info("species.deleted", `Deleted species ${input.id}`, { speciesId: input.id })
+    logger.info("species.deleted", `Deleted species ${speciesId}`, { speciesId })
     return { success: true }
   }),
 })

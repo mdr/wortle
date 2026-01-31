@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import Link from "next/link"
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server"
 import { LoginLink, LogoutLink, RegisterLink } from "@kinde-oss/kinde-auth-nextjs/components"
 import { Button } from "@wortle/ui"
@@ -22,7 +23,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <body className="min-h-screen" suppressHydrationWarning>
         <header className="border-b">
           <div className="flex items-center justify-between px-6 py-4">
-            <h1 className="text-lg font-semibold">Wortle Admin</h1>
+            <h1 className="text-lg font-semibold">
+              <Link href="/">Wortle Admin</Link>
+            </h1>
             <div className="flex items-center gap-4">
               {isLoggedIn ? (
                 <>

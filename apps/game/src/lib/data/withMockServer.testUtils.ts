@@ -1,1 +1,1 @@
-export { withMockServer } from "@wortle/shared/withMockServer.testUtils"
+export { withMockServer } from "@wortle/shared/src/withMockServer.testUtils"
