@@ -255,7 +255,7 @@ tasks:
       - task: ui:check
       - task: game:check
       - task: admin:check
-      - task: infra:tsc
+      - task: infra:check
       - task: format:check
 
   update-screenshots:
@@ -281,7 +281,19 @@ tasks:
     desc: Type check infrastructure code
     dir: infra
     cmds:
-      - pnpm tsc --noEmit {{.CLI_ARGS}}
+      - pnpm tsc {{.CLI_ARGS}}
+
+  infra:lint:
+    desc: Run ESLint on infrastructure code
+    dir: infra
+    cmds:
+      - pnpm lint {{.CLI_ARGS}}
+
+  infra:check:
+    desc: Run all checks for infra (tsc, lint)
+    cmds:
+      - task: infra:tsc
+      - task: infra:lint
 
   infra:preview:
     desc: Preview infrastructure changes

@@ -79,6 +79,9 @@ jobs:
       - name: Lint admin
         run: task admin:lint
 
+      - name: Lint infra
+        run: task infra:lint
+
       - name: Check formatting
         run: task format:check
 

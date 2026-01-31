@@ -5,7 +5,7 @@ import type { Puzzle, PuzzlesData } from "@/lib/Puzzle"
 import { PuzzleId } from "@/lib/Puzzle"
 import { defaultPuzzles } from "@/lib/puzzles"
 import type { ScheduleData, ScheduleEntry } from "@/lib/schedule"
-import { type Species, type SpeciesData, SPECIES_DATA_KEY } from "@/lib/species/Species"
+import { type Species, SPECIES_DATA_KEY, type SpeciesData } from "@/lib/species/Species"
 import { testSpecies } from "@/lib/species/testSpecies.testUtils"
 import { Iso8601Date } from "@/utils/brandedTypes"
 

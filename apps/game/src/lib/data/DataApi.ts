@@ -1,6 +1,6 @@
 import { type PuzzlesData, puzzlesJsonSchema } from "@/lib/Puzzle"
 import { type ScheduleData, scheduleJsonSchema } from "@/lib/schedule"
-import { type SpeciesData, speciesDataJsonSchema, SPECIES_DATA_KEY } from "@/lib/species/Species"
+import { SPECIES_DATA_KEY, type SpeciesData, speciesDataJsonSchema } from "@/lib/species/Species"
 import { Url } from "@/utils/brandedTypes"
 
 export const DEFAULT_DATA_URL = Url("https://data.wortle.app")
