@@ -38,18 +38,21 @@ import { validateGlossaryBrackets } from "@/utils/validateGlossaryBrackets"
 
 import { SortableItem } from "./SortableItem"
 
+const scientificNameSchema = z
+  .string()
+  .min(1, "Scientific name is required")
+  .regex(/^[A-Z][a-z]+ [a-z]+(-[a-z]+)*$/, "Must be in format 'Genus species' (e.g., Taraxacum officinale)")
+
 const formSchema = z.object({
   id: z
     .string()
     .min(1, "ID is required")
     .regex(/^2cd4p9h\.[a-z0-9]+$/, "Must be a valid BSBI DDb ID (e.g., 2cd4p9h.23w)"),
   commonName: z.string().min(1, "Common name is required"),
-  scientificName: z
-    .string()
-    .min(1, "Scientific name is required")
-    .regex(/^[A-Z][a-z]+ [a-z]+(-[a-z]+)*$/, "Must be in format 'Genus species' (e.g., Taraxacum officinale)"),
+  scientificName: scientificNameSchema,
   family: z.enum(FAMILIES, { message: "Please select a family" }),
   alternativeCommonNames: z.array(z.object({ value: z.string().min(1, "Cannot be empty") })),
+  alternativeScientificNames: z.array(z.object({ value: scientificNameSchema })),
   links: z.array(
     z.object({
       name: z.string().min(1, "Name is required"),
@@ -77,6 +80,10 @@ const formDataToApiSpecies = (data: SpeciesFormData): ApiSpecies => ({
     .map((n) => n.value)
     .filter(Boolean)
     .map(CommonName),
+  alternativeScientificNames: data.alternativeScientificNames
+    .map((n) => n.value)
+    .filter(Boolean)
+    .map(ScientificName),
   links: data.links.map((l) => ({ name: l.name, url: Url(l.url) })),
   idTips: data.idTips.map((t) => t.value).filter(Boolean),
 })
@@ -87,6 +94,7 @@ export const apiSpeciesToFormData = (species: ApiSpecies): SpeciesFormData => ({
   scientificName: species.scientificName,
   family: species.family as SpeciesFormData["family"],
   alternativeCommonNames: species.alternativeCommonNames.map((n) => ({ value: n })),
+  alternativeScientificNames: species.alternativeScientificNames.map((n) => ({ value: n })),
   links: species.links.map((l) => ({ name: l.name, url: l.url })),
   idTips: species.idTips.map((t) => ({ value: t })),
 })
@@ -97,6 +105,7 @@ const emptyFormData: SpeciesFormData = {
   scientificName: "",
   family: undefined as unknown as SpeciesFormData["family"],
   alternativeCommonNames: [],
+  alternativeScientificNames: [],
   links: [],
   idTips: [],
 }
@@ -183,10 +192,11 @@ export const SpeciesForm = ({
   })
 
   const altNames = useFieldArray({ control: form.control, name: "alternativeCommonNames" })
+  const altScientificNames = useFieldArray({ control: form.control, name: "alternativeScientificNames" })
   const links = useFieldArray({ control: form.control, name: "links" })
   const tips = useFieldArray({ control: form.control, name: "idTips" })
 
-  const pendingFocusRef = useRef<"altNames" | "links" | "tips" | null>(null)
+  const pendingFocusRef = useRef<"altNames" | "altScientificNames" | "links" | "tips" | null>(null)
   const prevIsPendingRef = useRef(isPending)
 
   // Reset form after successful save (isPending goes from true to false with no error)
@@ -203,6 +213,13 @@ export const SpeciesForm = ({
       pendingFocusRef.current = null
     }
   }, [altNames.fields.length, form])
+
+  useEffect(() => {
+    if (pendingFocusRef.current === "altScientificNames" && altScientificNames.fields.length > 0) {
+      form.setFocus(`alternativeScientificNames.${altScientificNames.fields.length - 1}.value`)
+      pendingFocusRef.current = null
+    }
+  }, [altScientificNames.fields.length, form])
 
   useEffect(() => {
     if (pendingFocusRef.current === "links" && links.fields.length > 0) {
@@ -325,6 +342,60 @@ export const SpeciesForm = ({
             onClick={() => {
               pendingFocusRef.current = "altNames"
               altNames.append({ value: "" })
+            }}
+          >
+            <Plus className="h-4 w-4" />
+            Add Name
+          </Button>
+        </div>
+      </div>
+
+      <div className="space-y-2">
+        <Label>Alternative Scientific Names</Label>
+        <div className="space-y-2 rounded-md border p-3">
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            modifiers={[restrictToVerticalAxis]}
+            onDragEnd={handleDragEnd(altScientificNames.fields, altScientificNames.move)}
+          >
+            <SortableContext items={altScientificNames.fields.map((f) => f.id)} strategy={verticalListSortingStrategy}>
+              {altScientificNames.fields.map((field, index) => {
+                const error = form.formState.errors.alternativeScientificNames?.[index]?.value
+                return (
+                  <SortableItem key={field.id} id={field.id} showHandle={altScientificNames.fields.length > 1}>
+                    <div className="flex flex-col gap-1">
+                      <div className="flex items-center gap-2">
+                        <Input
+                          {...form.register(`alternativeScientificNames.${index}.value`)}
+                          className="flex-1"
+                          placeholder="Genus species"
+                          aria-invalid={!!error}
+                        />
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon-sm"
+                          onClick={() => altScientificNames.remove(index)}
+                          aria-label="Remove name"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                      {error && <p className="text-destructive text-sm">{error.message}</p>}
+                    </div>
+                  </SortableItem>
+                )
+              })}
+            </SortableContext>
+          </DndContext>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              pendingFocusRef.current = "altScientificNames"
+              altScientificNames.append({ value: "" })
             }}
           >
             <Plus className="h-4 w-4" />

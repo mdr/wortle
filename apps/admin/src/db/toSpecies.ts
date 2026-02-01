@@ -8,6 +8,7 @@ export const toSpecies = (dbSpecies: DbSpecies): Species => ({
   family: dbSpecies.family,
   commonName: dbSpecies.commonName,
   alternativeCommonNames: dbSpecies.alternativeCommonNames,
+  alternativeScientificNames: dbSpecies.alternativeScientificNames,
   links: dbSpecies.links,
   idTips: dbSpecies.idTips,
 })

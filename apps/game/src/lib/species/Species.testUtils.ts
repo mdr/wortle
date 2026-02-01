@@ -5,6 +5,7 @@ export const createTestSpecies = (overrides: Partial<Species> & { id: SpeciesId 
   family: Family("Testaceae"),
   commonName: CommonName("Common"),
   alternativeCommonNames: [],
+  alternativeScientificNames: [],
   links: [],
   idTips: [],
   ...overrides,

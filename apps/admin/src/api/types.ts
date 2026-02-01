@@ -12,6 +12,7 @@ export const apiSpeciesSchema = z.object({
   family: familySchema,
   commonName: commonNameSchema,
   alternativeCommonNames: z.array(commonNameSchema),
+  alternativeScientificNames: z.array(scientificNameSchema),
   links: z.array(apiSpeciesLinkSchema),
   idTips: z.array(z.string()),
 })

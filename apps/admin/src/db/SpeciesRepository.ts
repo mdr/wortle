@@ -4,7 +4,7 @@ import { PgDatabase } from "drizzle-orm/pg-core"
 
 import * as schema from "./schema"
 import { species } from "./schema"
-import { DbSpecies, SpeciesId } from "./types"
+import { DbSpecies, dbSpeciesSchema, SpeciesId } from "./types"
 
 export enum CreateResult {
   CREATED = "CREATED",
@@ -24,6 +24,8 @@ export enum DeleteResult {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Database = PgDatabase<any, typeof schema>
 
+const parseDbSpecies = (data: unknown): DbSpecies => dbSpeciesSchema.parse(data)
+
 export interface ISpeciesRepository {
   list: () => Promise<DbSpecies[]>
   findById: (id: SpeciesId) => Promise<Option<DbSpecies>>
@@ -37,12 +39,12 @@ export class SpeciesRepository implements ISpeciesRepository {
 
   list = async (): Promise<DbSpecies[]> => {
     const rows = await this.db.select().from(species)
-    return rows.map((row) => row.data)
+    return rows.map((row) => parseDbSpecies(row.data))
   }
 
   findById = async (id: SpeciesId): Promise<Option<DbSpecies>> => {
     const rows = await this.db.select().from(species).where(eq(species.id, id))
-    return rows[0]?.data
+    return rows[0] ? parseDbSpecies(rows[0].data) : undefined
   }
 
   create = async (data: DbSpecies): Promise<CreateResult> =>

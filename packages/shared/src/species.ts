@@ -33,6 +33,7 @@ export interface Species {
   family: Family
   commonName: CommonName
   alternativeCommonNames: CommonName[]
+  alternativeScientificNames: ScientificName[]
   links: SpeciesLink[]
   idTips: string[]
 }
@@ -48,6 +49,7 @@ const speciesSchema = z.object({
   family: familySchema,
   commonName: commonNameSchema,
   alternativeCommonNames: z.array(commonNameSchema),
+  alternativeScientificNames: z.array(scientificNameSchema).default([]),
   links: z.array(speciesLinkSchema),
   idTips: z.array(z.string()),
 })

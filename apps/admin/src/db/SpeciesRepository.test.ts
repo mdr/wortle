@@ -11,6 +11,7 @@ const makeDbSpecies = (overrides: Partial<DbSpecies> = {}): DbSpecies => ({
   family: Family("Asteraceae"),
   commonName: CommonName("Daisy"),
   alternativeCommonNames: [],
+  alternativeScientificNames: [],
   links: [],
   idTips: [],
   ...overrides,

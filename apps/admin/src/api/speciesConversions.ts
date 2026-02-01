@@ -8,6 +8,7 @@ export const toApiSpecies = (species: DbSpecies): ApiSpecies => ({
   family: species.family,
   commonName: species.commonName,
   alternativeCommonNames: species.alternativeCommonNames,
+  alternativeScientificNames: species.alternativeScientificNames,
   links: species.links,
   idTips: species.idTips,
 })
@@ -18,6 +19,7 @@ export const toDbSpecies = (species: ApiSpecies): DbSpecies => ({
   family: species.family,
   commonName: species.commonName,
   alternativeCommonNames: species.alternativeCommonNames,
+  alternativeScientificNames: species.alternativeScientificNames,
   links: species.links,
   idTips: species.idTips,
 })
