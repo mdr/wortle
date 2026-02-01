@@ -30,6 +30,7 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
+  DatePicker,
   Input,
   Label,
   Popover,
@@ -318,7 +319,18 @@ export const PuzzleForm = ({
 
       <div className="space-y-1">
         <Label htmlFor={`${formId}-observationDate`}>Observation Date</Label>
-        <Input id={`${formId}-observationDate`} type="date" {...form.register("observationDate")} />
+        <Controller
+          control={form.control}
+          name="observationDate"
+          render={({ field }) => (
+            <DatePicker
+              id={`${formId}-observationDate`}
+              value={field.value ? new Date(field.value + "T00:00:00") : undefined}
+              onChange={(date) => field.onChange(date?.toISOString().split("T")[0] ?? "")}
+              placeholder="Select observation date"
+            />
+          )}
+        />
         {form.formState.errors.observationDate && (
           <p className="text-destructive text-sm">{form.formState.errors.observationDate.message}</p>
         )}

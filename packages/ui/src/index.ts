@@ -14,6 +14,10 @@ export {
 
 export { Button, buttonVariants } from "./components/Button"
 
+export { Calendar } from "./components/Calendar"
+
+export { DatePicker, type DatePickerProps } from "./components/DatePicker"
+
 export { Input } from "./components/Input"
 
 export { Label } from "./components/Label"
