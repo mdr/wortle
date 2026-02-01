@@ -13,5 +13,5 @@ export const toSpecies = (dbSpecies: DbSpecies): Species => ({
 })
 
 export const toSpeciesData = (dbSpecies: DbSpecies[]): SpeciesData => ({
-  species: dbSpecies.map(toSpecies),
+  species: dbSpecies.map(toSpecies).toSorted((a, b) => a.scientificName.localeCompare(b.scientificName)),
 })

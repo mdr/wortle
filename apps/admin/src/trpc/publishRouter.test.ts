@@ -1,4 +1,10 @@
-import { SPECIES_DATA_BUCKET, SPECIES_DATA_KEY, speciesDataJsonSchema, TestSpeciesIds } from "@wortle/shared"
+import {
+  ScientificName,
+  SPECIES_DATA_BUCKET,
+  SPECIES_DATA_KEY,
+  speciesDataJsonSchema,
+  TestSpeciesIds,
+} from "@wortle/shared"
 import { describe, expect, it } from "vitest"
 
 import { FakeSpeciesRepository } from "@/db/FakeSpeciesRepository.testUtils"
@@ -17,20 +23,29 @@ const createTestCaller = (speciesRepository: FakeSpeciesRepository, bucketStorag
 
 describe("publishRouter", () => {
   describe("all", () => {
-    it("publishes species data to R2", async () => {
+    it("publishes species data to R2 sorted by scientific name", async () => {
       const repo = new FakeSpeciesRepository()
-      await repo.create(makeDbSpecies({ id: TestSpeciesIds.daisy }))
-      await repo.create(makeDbSpecies({ id: TestSpeciesIds.tansy }))
+      await repo.create(
+        makeDbSpecies({ id: TestSpeciesIds.tansy, scientificName: ScientificName("Tanacetum vulgare") }),
+      )
+      await repo.create(makeDbSpecies({ id: TestSpeciesIds.daisy, scientificName: ScientificName("Bellis perennis") }))
+      await repo.create(
+        makeDbSpecies({ id: TestSpeciesIds.herbRobert, scientificName: ScientificName("Geranium robertianum") }),
+      )
       const bucketStorage = new FakeBucketStorage()
       const caller = createTestCaller(repo, bucketStorage)
 
       const result = await caller.publish.all()
 
-      expect(result).toEqual({ success: true, speciesCount: 2 })
+      expect(result).toEqual({ success: true, speciesCount: 3 })
       const storedObject = bucketStorage.get(SPECIES_DATA_BUCKET, SPECIES_DATA_KEY)
       expect(storedObject.contentType).toBe(MediaType.APPLICATION_JSON)
       const uploadedBody = speciesDataJsonSchema.parse(JSON.parse(storedObject.body))
-      expect(uploadedBody.species.map((s) => s.id)).toIncludeSameMembers([TestSpeciesIds.daisy, TestSpeciesIds.tansy])
+      expect(uploadedBody.species.map((s) => s.id)).toEqual([
+        TestSpeciesIds.daisy,
+        TestSpeciesIds.herbRobert,
+        TestSpeciesIds.tansy,
+      ])
     })
 
     it("publishes empty species array when no species exist", async () => {
