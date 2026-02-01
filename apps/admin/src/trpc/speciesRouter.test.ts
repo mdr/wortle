@@ -1,15 +1,19 @@
-import { CommonName, TestSpeciesIds } from "@wortle/shared"
+import { CommonName, TestPuzzleIds, TestSpeciesIds } from "@wortle/shared"
 import { describe, expect, it } from "vitest"
 
+import { FakePuzzleRepository } from "@/db/FakePuzzleRepository.testUtils"
 import { FakeSpeciesRepository } from "@/db/FakeSpeciesRepository.testUtils"
 
 import { TrpcErrorCode } from "./errorCodes"
 import { router } from "./init"
 import { createSpeciesRouter } from "./speciesRouter"
-import { makeApiSpecies, makeDbSpecies, testContext } from "./testFactories.testUtils"
+import { makeApiSpecies, makeDbPuzzle, makeDbSpecies, testContext } from "./testFactories.testUtils"
 
-const createTestCaller = (speciesRepository = new FakeSpeciesRepository()) => {
-  const speciesRouter = createSpeciesRouter(speciesRepository)
+const createTestCaller = (
+  speciesRepository = new FakeSpeciesRepository(),
+  puzzleRepository = new FakePuzzleRepository(),
+) => {
+  const speciesRouter = createSpeciesRouter(speciesRepository, puzzleRepository)
   const testRouter = router({ species: speciesRouter })
   return testRouter.createCaller(testContext)
 }
@@ -104,14 +108,14 @@ describe("speciesRouter", () => {
 
   describe("delete", () => {
     it("deletes species and returns success", async () => {
-      const repo = new FakeSpeciesRepository()
-      await repo.create(makeDbSpecies({ id: TestSpeciesIds.daisy }))
-      const caller = createTestCaller(repo)
+      const speciesRepo = new FakeSpeciesRepository()
+      await speciesRepo.create(makeDbSpecies({ id: TestSpeciesIds.daisy }))
+      const caller = createTestCaller(speciesRepo)
 
       const result = await caller.species.delete(TestSpeciesIds.daisy)
 
       expect(result).toEqual({ success: true })
-      expect(await repo.findById(TestSpeciesIds.daisy)).toBeUndefined()
+      expect(await speciesRepo.findById(TestSpeciesIds.daisy)).toBeUndefined()
     })
 
     it("throws NOT_FOUND when species does not exist", async () => {
@@ -119,6 +123,19 @@ describe("speciesRouter", () => {
 
       await expect(caller.species.delete(TestSpeciesIds.daisy)).rejects.toMatchObject({
         code: TrpcErrorCode.NOT_FOUND,
+      })
+    })
+
+    it("throws UNPROCESSABLE_CONTENT when a puzzle references the species", async () => {
+      const speciesRepo = new FakeSpeciesRepository()
+      const puzzleRepo = new FakePuzzleRepository()
+      await speciesRepo.create(makeDbSpecies({ id: TestSpeciesIds.daisy }))
+      await puzzleRepo.create(makeDbPuzzle({ id: TestPuzzleIds.daisy, speciesId: TestSpeciesIds.daisy }))
+      const caller = createTestCaller(speciesRepo, puzzleRepo)
+
+      await expect(caller.species.delete(TestSpeciesIds.daisy)).rejects.toMatchObject({
+        code: TrpcErrorCode.UNPROCESSABLE_CONTENT,
+        message: "Cannot delete species: 1 puzzle references it",
       })
     })
   })

@@ -12,7 +12,7 @@ import { createSpeciesRouter } from "./speciesRouter"
 const dataBucketName = env.DATA_BUCKET_NAME ?? SPECIES_DATA_BUCKET
 
 export const appRouter = router({
-  species: createSpeciesRouter(speciesRepository),
+  species: createSpeciesRouter(speciesRepository, puzzleRepository),
   puzzles: createPuzzleRouter({ puzzleRepository, speciesRepository }),
   publish: createPublishRouter({ speciesRepository, bucketStorage, dataBucketName }),
 })

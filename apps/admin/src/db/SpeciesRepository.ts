@@ -43,8 +43,8 @@ export class SpeciesRepository implements ISpeciesRepository {
   }
 
   findById = async (id: SpeciesId): Promise<Option<DbSpecies>> => {
-    const rows = await this.db.select().from(species).where(eq(species.id, id))
-    return rows[0] ? parseDbSpecies(rows[0].data) : undefined
+    const row = await this.db.query.species.findFirst({ where: eq(species.id, id) })
+    return row ? parseDbSpecies(row.data) : undefined
   }
 
   create = async (data: DbSpecies): Promise<CreateResult> =>

@@ -1,4 +1,4 @@
-import { Option } from "@wortle/shared"
+import { Option, SpeciesId } from "@wortle/shared"
 
 import { CreateResult, DeleteResult, IPuzzleRepository, UpdateResult } from "./PuzzleRepository"
 import { DbPuzzle, PuzzleId } from "./puzzleTypes"
@@ -9,6 +9,9 @@ export class FakePuzzleRepository implements IPuzzleRepository {
   list = (): Promise<DbPuzzle[]> => Promise.resolve([...this.puzzles.values()])
 
   findById = (id: PuzzleId): Promise<Option<DbPuzzle>> => Promise.resolve(this.puzzles.get(id))
+
+  countBySpeciesId = (speciesId: SpeciesId): Promise<number> =>
+    Promise.resolve([...this.puzzles.values()].filter((p) => p.speciesId === speciesId).length)
 
   create = (data: DbPuzzle): Promise<CreateResult> => {
     if (this.puzzles.has(data.id)) {

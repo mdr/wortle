@@ -1,5 +1,5 @@
-import { Option } from "@wortle/shared"
-import { eq } from "drizzle-orm"
+import { Option, SpeciesId } from "@wortle/shared"
+import { eq, sql } from "drizzle-orm"
 import { PgDatabase } from "drizzle-orm/pg-core"
 
 import * as schema from "./schema"
@@ -29,6 +29,7 @@ const parseDbPuzzle = (data: unknown): DbPuzzle => dbPuzzleSchema.parse(data)
 export interface IPuzzleRepository {
   list: () => Promise<DbPuzzle[]>
   findById: (id: PuzzleId) => Promise<Option<DbPuzzle>>
+  countBySpeciesId: (speciesId: SpeciesId) => Promise<number>
   create: (data: DbPuzzle) => Promise<CreateResult>
   update: (data: DbPuzzle) => Promise<UpdateResult>
   delete: (id: PuzzleId) => Promise<DeleteResult>
@@ -43,8 +44,16 @@ export class PuzzleRepository implements IPuzzleRepository {
   }
 
   findById = async (id: PuzzleId): Promise<Option<DbPuzzle>> => {
-    const rows = await this.db.select().from(puzzles).where(eq(puzzles.id, id))
-    return rows[0] ? parseDbPuzzle(rows[0].data) : undefined
+    const row = await this.db.query.puzzles.findFirst({ where: eq(puzzles.id, id) })
+    return row ? parseDbPuzzle(row.data) : undefined
+  }
+
+  countBySpeciesId = async (speciesId: SpeciesId): Promise<number> => {
+    const [{ count }] = await this.db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(puzzles)
+      .where(sql`${puzzles.data}->>'speciesId' = ${speciesId}`)
+    return count
   }
 
   create = async (data: DbPuzzle): Promise<CreateResult> =>
