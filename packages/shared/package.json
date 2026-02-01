@@ -12,13 +12,13 @@
     "lint": "eslint . --max-warnings=0"
   },
   "dependencies": {
-    "effect": "3.19.14",
-    "zod": "4.3.5"
+    "effect": "catalog:",
+    "zod": "catalog:"
   },
   "devDependencies": {
-    "eslint": "^9.39.2",
-    "mockttp": "4.2.1",
-    "typescript": "^5.9.3",
-    "typescript-eslint": "^8.54.0"
+    "eslint": "catalog:",
+    "mockttp": "catalog:",
+    "typescript": "catalog:",
+    "typescript-eslint": "catalog:"
   }
 }

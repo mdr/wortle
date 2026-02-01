@@ -2,3 +2,35 @@ packages:
   - "apps/*"
   - "packages/*"
   - "infra"
+
+catalog:
+  # React ecosystem
+  react: 19.2.4
+  react-dom: 19.2.4
+  "@types/react": 19.2.10
+  "@types/react-dom": 19.2.3
+
+  # Build tools
+  typescript: 5.9.3
+  eslint: 9.39.2
+  typescript-eslint: 8.54.0
+  vitest: 4.0.16
+
+  # Shared libraries
+  zod: 4.3.5
+  effect: 3.19.14
+  lucide-react: 0.562.0
+  clsx: 2.1.1
+  tailwind-merge: 3.4.0
+  "@tanstack/react-query": 5.90.19
+
+  # Testing
+  mockttp: 4.2.1
+  jest-extended: 7.0.0
+
+  # Formatting
+  prettier: 3.8.1
+  prettier-plugin-tailwindcss: 0.7.2
+
+  # Node types
+  "@types/node": 25.0.5

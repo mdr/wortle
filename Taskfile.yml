@@ -251,6 +251,7 @@ tasks:
   check:
     desc: Run all checks (tsc, lint, format, tests)
     cmds:
+      - task: sherif
       - task: shared:check
       - task: ui:check
       - task: game:check
@@ -276,6 +277,11 @@ tasks:
     desc: Scan for secrets with gitleaks
     cmds:
       - gitleaks detect --source . -v
+
+  sherif:
+    desc: Check monorepo dependency consistency
+    cmds:
+      - pnpm sherif
 
   infra:tsc:
     desc: Type check infrastructure code

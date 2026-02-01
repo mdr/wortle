@@ -52,6 +52,9 @@ jobs:
       - name: Install dependencies
         run: task install
 
+      - name: Check dependency consistency
+        run: task sherif
+
       - name: Type check shared package
         run: task shared:tsc
 

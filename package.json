@@ -15,11 +15,13 @@
     "test:unit": "turbo test:unit",
     "test:iwft": "turbo test:iwft",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "sherif": "sherif"
   },
   "devDependencies": {
-    "prettier": "^3.8.1",
-    "prettier-plugin-tailwindcss": "^0.7.2",
-    "turbo": "^2.8.1"
+    "prettier": "catalog:",
+    "prettier-plugin-tailwindcss": "catalog:",
+    "sherif": "1.10.0",
+    "turbo": "2.8.1"
   }
 }
