@@ -23,7 +23,7 @@ new cloudflare.R2Bucket("originals", {
   name: "wortle-originals",
 })
 
-// R2 bucket for public data (schedule, puzzles JSON)
+// R2 bucket for public data (schedule, puzzles JSON) - production
 const dataBucket = new cloudflare.R2Bucket("data", {
   accountId,
   name: "wortle-data",
@@ -38,7 +38,22 @@ new cloudflare.R2CustomDomain("data-domain", {
   enabled: true,
 })
 
-// CORS headers for data.wortle.app (required for cross-origin fetch from wortle.app)
+// R2 bucket for public data - dev/preview
+const dataDevBucket = new cloudflare.R2Bucket("data-dev", {
+  accountId,
+  name: "wortle-data-dev",
+})
+
+// Public access via data-dev.wortle.app
+new cloudflare.R2CustomDomain("data-dev-domain", {
+  accountId,
+  bucketName: dataDevBucket.name,
+  domain: "data-dev.wortle.app",
+  zoneId: zone.zoneId,
+  enabled: true,
+})
+
+// CORS headers for data.wortle.app and data-dev.wortle.app (required for cross-origin fetch from wortle.app)
 new cloudflare.Ruleset("data-cors", {
   zoneId: zone.zoneId,
   name: "Add CORS headers for data subdomain",
@@ -55,7 +70,7 @@ new cloudflare.Ruleset("data-cors", {
           },
         },
       },
-      expression: '(http.host eq "data.wortle.app")',
+      expression: '(http.host eq "data.wortle.app") or (http.host eq "data-dev.wortle.app")',
       enabled: true,
     },
   ],

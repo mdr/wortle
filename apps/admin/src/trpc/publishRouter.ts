@@ -1,4 +1,4 @@
-import { SPECIES_DATA_BUCKET, SPECIES_DATA_KEY, speciesDataJsonSchema } from "@wortle/shared"
+import { BucketName, SPECIES_DATA_KEY, speciesDataJsonSchema } from "@wortle/shared"
 
 import { ISpeciesRepository } from "@/db/SpeciesRepository"
 import { dbSpeciesToSpeciesData } from "@/db/toSpecies"
@@ -10,9 +10,10 @@ import { protectedProcedure, router } from "./init"
 interface PublishRouterDeps {
   speciesRepository: ISpeciesRepository
   bucketStorage: IBucketStorage
+  dataBucketName: BucketName
 }
 
-export const createPublishRouter = ({ speciesRepository, bucketStorage }: PublishRouterDeps) =>
+export const createPublishRouter = ({ speciesRepository, bucketStorage, dataBucketName }: PublishRouterDeps) =>
   router({
     all: protectedProcedure.mutation(async () => {
       const speciesList = await speciesRepository.list()
@@ -21,13 +22,16 @@ export const createPublishRouter = ({ speciesRepository, bucketStorage }: Publis
       const validated = speciesDataJsonSchema.parse(speciesData)
 
       await bucketStorage.upload({
-        bucket: SPECIES_DATA_BUCKET,
+        bucket: dataBucketName,
         key: SPECIES_DATA_KEY,
         body: JSON.stringify(validated),
         contentType: MediaType.APPLICATION_JSON,
       })
 
-      serverLogger.info("publish.all", `Published all data`, { speciesCount: validated.species.length })
+      serverLogger.info("publish.all", `Published all data`, {
+        speciesCount: validated.species.length,
+        bucket: dataBucketName,
+      })
 
       return { success: true, speciesCount: validated.species.length }
     }),

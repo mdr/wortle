@@ -16,7 +16,7 @@ import { createPublishRouter } from "./publishRouter"
 import { makeDbSpecies, testContext } from "./testFactories.testUtils"
 
 const createTestCaller = (speciesRepository: FakeSpeciesRepository, bucketStorage: FakeBucketStorage) => {
-  const publishRouter = createPublishRouter({ speciesRepository, bucketStorage })
+  const publishRouter = createPublishRouter({ speciesRepository, bucketStorage, dataBucketName: SPECIES_DATA_BUCKET })
   const testRouter = router({ publish: publishRouter })
   return testRouter.createCaller(testContext)
 }

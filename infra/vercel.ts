@@ -58,6 +58,20 @@ new vercel.ProjectEnvironmentVariable("admin-cloudflare-api-token", {
   targets: ["production", "preview"],
 })
 
+new vercel.ProjectEnvironmentVariable("admin-data-bucket-name-prod", {
+  projectId: adminProject.id,
+  key: "DATA_BUCKET_NAME",
+  value: "wortle-data",
+  targets: ["production"],
+})
+
+new vercel.ProjectEnvironmentVariable("admin-data-bucket-name-preview", {
+  projectId: adminProject.id,
+  key: "DATA_BUCKET_NAME",
+  value: "wortle-data-dev",
+  targets: ["preview"],
+})
+
 // Kinde auth environment variables for admin
 const kindeClientSecret = config.requireSecret("kinde-client-secret")
 

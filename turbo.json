@@ -8,6 +8,8 @@
         "DATABASE_URL",
         "CLOUDFLARE_ACCOUNT_ID",
         "CLOUDFLARE_API_TOKEN",
+        "DATA_BUCKET_NAME",
+        "VITE_DATA_URL",
         "KINDE_CLIENT_ID",
         "KINDE_CLIENT_SECRET",
         "KINDE_ISSUER_URL",

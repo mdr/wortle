@@ -3,7 +3,8 @@ import { type ScheduleData, scheduleJsonSchema } from "@/lib/schedule"
 import { SPECIES_DATA_KEY, type SpeciesData, speciesDataJsonSchema } from "@/lib/species/Species"
 import { Url } from "@/utils/brandedTypes"
 
-export const DEFAULT_DATA_URL = Url("https://data.wortle.app")
+// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- import.meta.env is undefined in Playwright CT tests
+export const DEFAULT_DATA_URL = Url(import.meta.env?.VITE_DATA_URL ?? "https://data.wortle.app")
 
 export class DataApi {
   constructor(private readonly baseUrl: Url = DEFAULT_DATA_URL) {}
