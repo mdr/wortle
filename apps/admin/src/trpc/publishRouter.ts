@@ -2,7 +2,7 @@ import { SPECIES_DATA_BUCKET, SPECIES_DATA_KEY, speciesDataJsonSchema } from "@w
 
 import { ISpeciesRepository } from "@/db/SpeciesRepository"
 import { toSpeciesData } from "@/db/toSpecies"
-import { logger } from "@/utils/logger"
+import { serverLogger } from "@/utils/logger"
 import { IBucketStorage, MediaType } from "@/utils/R2BucketStorage"
 
 import { protectedProcedure, router } from "./init"
@@ -27,7 +27,7 @@ export const createPublishRouter = ({ speciesRepository, bucketStorage }: Publis
         contentType: MediaType.APPLICATION_JSON,
       })
 
-      logger.info("publish.all", `Published all data`, { speciesCount: validated.species.length })
+      serverLogger.info("publish.all", `Published all data`, { speciesCount: validated.species.length })
 
       return { success: true, speciesCount: validated.species.length }
     }),

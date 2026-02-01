@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server"
 import { LoginLink, LogoutLink, RegisterLink } from "@kinde-oss/kinde-auth-nextjs/components"
-import { Button } from "@wortle/ui"
+import { Button, Toaster } from "@wortle/ui"
 
 import { TRPCProvider } from "@/trpc/provider"
 
@@ -50,6 +50,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <TRPCProvider>
           <main className="px-6 py-8">{children}</main>
         </TRPCProvider>
+        <Toaster />
       </body>
     </html>
   )

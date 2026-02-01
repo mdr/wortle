@@ -74,3 +74,6 @@ export {
   TableHeader,
   TableRow,
 } from "./components/Table"
+
+export { Toaster } from "./components/sonner"
+export { toast } from "sonner"

@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { useState } from "react"
 import { Leaf, Upload } from "lucide-react"
-import { Card, CardDescription, CardHeader, CardTitle } from "@wortle/ui"
+import { Card, CardDescription, CardHeader, CardTitle, toast } from "@wortle/ui"
 
 import { ConfirmPublishDialog } from "@/components/ConfirmPublishDialog"
 import { trpc } from "@/trpc/client"
@@ -15,8 +15,17 @@ export default function Home() {
   const publishMutation = trpc.publish.all.useMutation({
     onSuccess: () => {
       setPublishDialogOpen(false)
+      toast.success("Published successfully")
+    },
+    onError: () => {
+      toast.error("Publish failed. Please try again.")
     },
   })
+
+  const openPublishDialog = () => {
+    publishMutation.reset()
+    setPublishDialogOpen(true)
+  }
 
   return (
     <>
@@ -37,7 +46,7 @@ export default function Home() {
           </Card>
         </Link>
 
-        <button onClick={() => setPublishDialogOpen(true)} className="text-left">
+        <button onClick={openPublishDialog} className="text-left">
           <Card className="hover:bg-muted/50 transition-colors">
             <CardHeader>
               <div className="flex items-center gap-3">
@@ -60,7 +69,7 @@ export default function Home() {
         onOpenChange={setPublishDialogOpen}
         onConfirm={() => publishMutation.mutate()}
         isPublishing={publishMutation.isPending}
-        error={publishMutation.error?.message}
+        error={publishMutation.error ? "Publish failed. Please try again." : undefined}
       />
     </>
   )

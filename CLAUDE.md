@@ -53,6 +53,10 @@ This project uses two testing styles:
 - `task infra:preview`: preview infrastructure changes.
 - `task infra:up`: apply infrastructure changes.
 
+## Infrastructure Caveats
+
+**Pulumi/Vercel env var replacement bug**: When updating a Vercel `ProjectEnvironmentVariable` secret value, `pulumi up` may fail with `ENV_CONFLICT`. The provider attempts create-before-delete, which fails because the variable already exists. Workaround: manually delete the env var in Vercel UI before running `pulumi up`.
+
 ## R2 Bucket Operations
 
 Use wrangler with 1Password credentials and `--remote` flag (wrangler defaults to local simulation otherwise):

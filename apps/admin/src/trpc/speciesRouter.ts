@@ -4,7 +4,7 @@ import { TRPCError } from "@trpc/server"
 import { toApiSpecies, toDbSpecies } from "@/api/speciesConversions"
 import { apiSpeciesSchema } from "@/api/types"
 import { CreateResult, DeleteResult, ISpeciesRepository, UpdateResult } from "@/db/SpeciesRepository"
-import { logger } from "@/utils/logger"
+import { serverLogger } from "@/utils/logger"
 
 import { TrpcErrorCode } from "./errorCodes"
 import { protectedProcedure, router } from "./init"
@@ -32,7 +32,7 @@ export const createSpeciesRouter = (speciesRepository: ISpeciesRepository) =>
           message: `Species with ID "${apiSpecies.id}" already exists`,
         })
       }
-      logger.info("species.created", `Created species "${apiSpecies.commonName}"`, { speciesId: apiSpecies.id })
+      serverLogger.info("species.created", `Created species "${apiSpecies.commonName}"`, { speciesId: apiSpecies.id })
       return apiSpecies
     }),
 
@@ -41,7 +41,7 @@ export const createSpeciesRouter = (speciesRepository: ISpeciesRepository) =>
       if (result === UpdateResult.NOT_FOUND) {
         throw new TRPCError({ code: TrpcErrorCode.NOT_FOUND })
       }
-      logger.info("species.updated", `Updated species "${apiSpecies.commonName}"`, { speciesId: apiSpecies.id })
+      serverLogger.info("species.updated", `Updated species "${apiSpecies.commonName}"`, { speciesId: apiSpecies.id })
       return apiSpecies
     }),
 
@@ -50,7 +50,7 @@ export const createSpeciesRouter = (speciesRepository: ISpeciesRepository) =>
       if (result === DeleteResult.NOT_FOUND) {
         throw new TRPCError({ code: TrpcErrorCode.NOT_FOUND })
       }
-      logger.info("species.deleted", `Deleted species ${speciesId}`, { speciesId })
+      serverLogger.info("species.deleted", `Deleted species ${speciesId}`, { speciesId })
       return { success: true }
     }),
   })
