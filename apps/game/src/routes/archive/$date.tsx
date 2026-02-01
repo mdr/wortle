@@ -4,7 +4,7 @@ import { ErrorPage } from "@/components/pages/error/ErrorPage"
 import { NotFoundPage } from "@/components/pages/notFound/NotFoundPage"
 import { PuzzleMode, PuzzlePage } from "@/components/pages/puzzle/PuzzlePage"
 import { Puzzle } from "@/lib/Puzzle"
-import { Iso8601Date } from "@/utils/brandedTypes"
+import { isIso8601Date, Iso8601Date } from "@/utils/brandedTypes"
 
 interface ArchivePuzzleData {
   scheduledDate: Iso8601Date
@@ -13,7 +13,7 @@ interface ArchivePuzzleData {
 
 export const Route = createFileRoute("/archive/$date")({
   loader: ({ params, context }): ArchivePuzzleData => {
-    if (!Iso8601Date.is(params.date)) {
+    if (!isIso8601Date(params.date)) {
       // eslint-disable-next-line @typescript-eslint/only-throw-error -- TanStack Router pattern
       throw redirect({ to: "/history" })
     }

@@ -31,6 +31,22 @@ export {
 
 export type { Species, SpeciesData, SpeciesLink } from "./species"
 
+export {
+  Degrees,
+  degreesSchema,
+  ImageKey,
+  imageKeySchema,
+  isIso8601Date,
+  Iso8601Date,
+  iso8601DateSchema,
+  PuzzleId,
+  puzzleIdSchema,
+  puzzlesDataJsonSchema,
+  puzzleSchema,
+} from "./puzzle"
+
+export type { Coordinates, Location, PhotoAttribution, Puzzle, PuzzleImage, PuzzlesData } from "./puzzle"
+
 export { getOnlyElement } from "./getOnlyElement.testUtils"
 
-export { TestSpeciesIds } from "./testConstants.testUtils"
+export { TestPuzzleIds, TestSpeciesIds } from "./testConstants.testUtils"
