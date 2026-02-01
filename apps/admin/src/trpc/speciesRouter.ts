@@ -1,7 +1,7 @@
 import { speciesIdSchema } from "@wortle/shared"
 import { TRPCError } from "@trpc/server"
 
-import { toApiSpecies, toDbSpecies } from "@/api/speciesConversions"
+import { apiSpeciesToDbSpecies, dbSpeciesToApiSpecies } from "@/api/speciesConversions"
 import { apiSpeciesSchema } from "@/api/types"
 import { CreateResult, DeleteResult, ISpeciesRepository, UpdateResult } from "@/db/SpeciesRepository"
 import { serverLogger } from "@/utils/logger"
@@ -13,7 +13,7 @@ export const createSpeciesRouter = (speciesRepository: ISpeciesRepository) =>
   router({
     list: protectedProcedure.query(async () => {
       const dbSpecies = await speciesRepository.list()
-      return dbSpecies.map(toApiSpecies)
+      return dbSpecies.map(dbSpeciesToApiSpecies)
     }),
 
     get: protectedProcedure.input(speciesIdSchema).query(async ({ input: speciesId }) => {
@@ -21,11 +21,11 @@ export const createSpeciesRouter = (speciesRepository: ISpeciesRepository) =>
       if (dbSpecies === undefined) {
         throw new TRPCError({ code: TrpcErrorCode.NOT_FOUND })
       }
-      return toApiSpecies(dbSpecies)
+      return dbSpeciesToApiSpecies(dbSpecies)
     }),
 
     create: protectedProcedure.input(apiSpeciesSchema).mutation(async ({ input: apiSpecies }) => {
-      const result = await speciesRepository.create(toDbSpecies(apiSpecies))
+      const result = await speciesRepository.create(apiSpeciesToDbSpecies(apiSpecies))
       if (result === CreateResult.ALREADY_EXISTS) {
         throw new TRPCError({
           code: TrpcErrorCode.CONFLICT,
@@ -37,7 +37,7 @@ export const createSpeciesRouter = (speciesRepository: ISpeciesRepository) =>
     }),
 
     update: protectedProcedure.input(apiSpeciesSchema).mutation(async ({ input: apiSpecies }) => {
-      const result = await speciesRepository.update(toDbSpecies(apiSpecies))
+      const result = await speciesRepository.update(apiSpeciesToDbSpecies(apiSpecies))
       if (result === UpdateResult.NOT_FOUND) {
         throw new TRPCError({ code: TrpcErrorCode.NOT_FOUND })
       }

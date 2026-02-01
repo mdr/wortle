@@ -2,7 +2,7 @@ import { DbSpecies } from "@/db/types"
 
 import { ApiSpecies } from "./types"
 
-export const toApiSpecies = (species: DbSpecies): ApiSpecies => ({
+export const dbSpeciesToApiSpecies = (species: DbSpecies): ApiSpecies => ({
   id: species.id,
   scientificName: species.scientificName,
   family: species.family,
@@ -13,7 +13,7 @@ export const toApiSpecies = (species: DbSpecies): ApiSpecies => ({
   idTips: species.idTips,
 })
 
-export const toDbSpecies = (species: ApiSpecies): DbSpecies => ({
+export const apiSpeciesToDbSpecies = (species: ApiSpecies): DbSpecies => ({
   id: species.id,
   scientificName: species.scientificName,
   family: species.family,

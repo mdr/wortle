@@ -1,7 +1,7 @@
 import { SPECIES_DATA_BUCKET, SPECIES_DATA_KEY, speciesDataJsonSchema } from "@wortle/shared"
 
 import { ISpeciesRepository } from "@/db/SpeciesRepository"
-import { toSpeciesData } from "@/db/toSpecies"
+import { dbSpeciesToSpeciesData } from "@/db/toSpecies"
 import { serverLogger } from "@/utils/logger"
 import { IBucketStorage, MediaType } from "@/utils/R2BucketStorage"
 
@@ -16,7 +16,7 @@ export const createPublishRouter = ({ speciesRepository, bucketStorage }: Publis
   router({
     all: protectedProcedure.mutation(async () => {
       const speciesList = await speciesRepository.list()
-      const speciesData = toSpeciesData(speciesList)
+      const speciesData = dbSpeciesToSpeciesData(speciesList)
 
       const validated = speciesDataJsonSchema.parse(speciesData)
 
