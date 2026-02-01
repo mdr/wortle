@@ -43,6 +43,7 @@ import {
   SelectValue,
 } from "@wortle/ui"
 import { Check, ChevronsUpDown, Plus, Trash2 } from "lucide-react"
+import dynamic from "next/dynamic"
 import { useEffect, useId, useRef, useState } from "react"
 import { Controller, useFieldArray, useForm } from "react-hook-form"
 import { z } from "zod"
@@ -52,10 +53,12 @@ import { trpc } from "@/trpc/client"
 
 import { SortableItem } from "./SortableItem"
 
+const LocationPicker = dynamic(() => import("./LocationPicker").then((mod) => mod.LocationPicker), { ssr: false })
+
 const formSchema = z.object({
   id: z.number().int().positive("ID must be a positive integer"),
   speciesId: z.string().min(1, "Species is required"),
-  observationDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Must be in format YYYY-MM-DD"),
+  observationDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Required"),
   location: z.object({
     description: z.string().min(1, "Location description is required"),
     latitude: z.number().min(-90).max(90, "Latitude must be between -90 and 90"),
@@ -346,6 +349,14 @@ export const PuzzleForm = ({
               <p className="text-destructive text-sm">{form.formState.errors.location.description.message}</p>
             )}
           </div>
+          <LocationPicker
+            latitude={form.watch("location.latitude")}
+            longitude={form.watch("location.longitude")}
+            onChange={(coords) => {
+              form.setValue("location.latitude", coords.latitude, { shouldDirty: true })
+              form.setValue("location.longitude", coords.longitude, { shouldDirty: true })
+            }}
+          />
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1">
               <Label htmlFor={`${formId}-location-latitude`}>Latitude</Label>
