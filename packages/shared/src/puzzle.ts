@@ -37,9 +37,51 @@ export interface PuzzleImage {
   caption: string
 }
 
+export enum License {
+  CC_BY_4 = "CC_BY_4",
+  CC_BY_SA_4 = "CC_BY_SA_4",
+}
+
+const LICENSE_DISPLAY_NAMES: Record<License, string> = {
+  [License.CC_BY_4]: "CC BY 4.0",
+  [License.CC_BY_SA_4]: "CC BY-SA 4.0",
+}
+
+const LICENSE_URLS: Record<License, string> = {
+  [License.CC_BY_4]: "https://creativecommons.org/licenses/by/4.0/",
+  [License.CC_BY_SA_4]: "https://creativecommons.org/licenses/by-sa/4.0/",
+}
+
+export const getLicenseDisplayName = (license: License): string => LICENSE_DISPLAY_NAMES[license]
+
+export const getLicenseUrl = (license: License): string => LICENSE_URLS[license]
+
+export const isShareAlikeLicense = (license: License): boolean => license === License.CC_BY_SA_4
+
+// Map license strings to enum values (includes legacy "CC-BY 4.0" format from existing data)
+const LICENSE_MAP = new Map<string, License>([
+  ["CC-BY 4.0", License.CC_BY_4],
+  [License.CC_BY_4, License.CC_BY_4],
+  [License.CC_BY_SA_4, License.CC_BY_SA_4],
+])
+
+const licenseSchema = z.string().transform((val, ctx) => {
+  const license = LICENSE_MAP.get(val)
+  if (license === undefined) {
+    ctx.addIssue({
+      code: "custom",
+      message: `Invalid license: expected one of ${Object.values(License)
+        .map((l) => `"${l}"`)
+        .join(", ")}`,
+    })
+    return z.NEVER
+  }
+  return license
+})
+
 export interface PhotoAttribution {
   photographer: string
-  license: string
+  license: License
 }
 
 export interface Puzzle {
@@ -69,7 +111,7 @@ const puzzleImageSchema = z.object({
 
 const photoAttributionSchema = z.object({
   photographer: z.string(),
-  license: z.string(),
+  license: licenseSchema,
 })
 
 export const puzzleSchema = z.object({

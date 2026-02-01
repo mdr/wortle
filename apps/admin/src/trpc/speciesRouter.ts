@@ -28,7 +28,7 @@ export const createSpeciesRouter = (speciesRepository: ISpeciesRepository) =>
       const result = await speciesRepository.create(apiSpeciesToDbSpecies(apiSpecies))
       if (result === CreateResult.ALREADY_EXISTS) {
         throw new TRPCError({
-          code: TrpcErrorCode.CONFLICT,
+          code: TrpcErrorCode.UNPROCESSABLE_CONTENT,
           message: `Species with ID "${apiSpecies.id}" already exists`,
         })
       }

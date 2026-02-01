@@ -4,6 +4,7 @@ import {
   Family,
   ImageKey,
   Iso8601Date,
+  License,
   ScientificName,
   TestPuzzleIds,
   TestSpeciesIds,
@@ -50,7 +51,7 @@ export const makeDbPuzzle = (overrides: Partial<DbPuzzle> = {}): DbPuzzle => ({
   },
   habitat: "Road verge",
   images: [{ imageKey: ImageKey("whole-plant"), caption: "Whole plant" }],
-  photoAttribution: { photographer: "Test User", license: "CC-BY 4.0" },
+  photoAttribution: { photographer: "Test User", license: License.CC_BY_4 },
   ...overrides,
 })
 
@@ -64,7 +65,7 @@ export const makeApiPuzzle = (overrides: Partial<ApiPuzzle> = {}): ApiPuzzle => 
   },
   habitat: "Road verge",
   images: [{ imageKey: ImageKey("whole-plant"), caption: "Whole plant" }],
-  photoAttribution: { photographer: "Test User", license: "CC-BY 4.0" },
+  photoAttribution: { photographer: "Test User", license: License.CC_BY_4 },
   ...overrides,
 })
 

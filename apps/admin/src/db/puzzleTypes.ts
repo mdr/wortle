@@ -1,4 +1,11 @@
-import { degreesSchema, imageKeySchema, iso8601DateSchema, puzzleIdSchema, speciesIdSchema } from "@wortle/shared"
+import {
+  degreesSchema,
+  imageKeySchema,
+  iso8601DateSchema,
+  License,
+  puzzleIdSchema,
+  speciesIdSchema,
+} from "@wortle/shared"
 import { z } from "zod"
 
 export { PuzzleId } from "@wortle/shared"
@@ -21,7 +28,7 @@ const dbPuzzleImageSchema = z.object({
 
 const dbPhotoAttributionSchema = z.object({
   photographer: z.string(),
-  license: z.string(),
+  license: z.enum(License),
 })
 
 export const dbPuzzleSchema = z.object({

@@ -1,4 +1,4 @@
-import { Degrees, ImageKey, Iso8601Date, type Puzzle, PuzzleId, SpeciesId } from "@wortle/shared"
+import { Degrees, ImageKey, Iso8601Date, License, type Puzzle, PuzzleId, SpeciesId } from "@wortle/shared"
 import { assert } from "tsafe"
 
 import { Option } from "@/utils/types/Option"
@@ -40,7 +40,7 @@ const defaultPuzzleData: Puzzle[] = [
     ],
     photoAttribution: {
       photographer: "Matt Russell",
-      license: "CC-BY 4.0",
+      license: License.CC_BY_4,
     },
   },
   {
@@ -58,7 +58,7 @@ const defaultPuzzleData: Puzzle[] = [
     ],
     photoAttribution: {
       photographer: "Matt Russell",
-      license: "CC-BY 4.0",
+      license: License.CC_BY_4,
     },
   },
   {
@@ -77,7 +77,7 @@ const defaultPuzzleData: Puzzle[] = [
     ],
     photoAttribution: {
       photographer: "Matt Russell",
-      license: "CC-BY 4.0",
+      license: License.CC_BY_4,
     },
   },
   {
@@ -97,7 +97,7 @@ const defaultPuzzleData: Puzzle[] = [
     ],
     photoAttribution: {
       photographer: "Matt Russell",
-      license: "CC-BY 4.0",
+      license: License.CC_BY_4,
     },
   },
   {
@@ -116,7 +116,7 @@ const defaultPuzzleData: Puzzle[] = [
     ],
     photoAttribution: {
       photographer: "Matt Russell",
-      license: "CC-BY 4.0",
+      license: License.CC_BY_4,
     },
   },
 ]

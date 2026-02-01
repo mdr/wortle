@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { useState } from "react"
-import { Leaf, Upload } from "lucide-react"
+import { Leaf, Puzzle, Upload } from "lucide-react"
 import { Card, CardDescription, CardHeader, CardTitle, toast } from "@wortle/ui"
 
 import { ConfirmPublishDialog } from "@/components/ConfirmPublishDialog"
@@ -11,6 +11,7 @@ import { trpc } from "@/trpc/client"
 export default function Home() {
   const [publishDialogOpen, setPublishDialogOpen] = useState(false)
   const { data: species } = trpc.species.list.useQuery()
+  const { data: puzzles } = trpc.puzzles.list.useQuery()
 
   const publishMutation = trpc.publish.all.useMutation({
     onSuccess: () => {
@@ -40,6 +41,22 @@ export default function Home() {
                 <div>
                   <CardTitle className="text-base">Species</CardTitle>
                   <CardDescription>{species?.length ?? 0} entries</CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+          </Card>
+        </Link>
+
+        <Link href="/puzzles">
+          <Card className="hover:bg-muted/50 transition-colors">
+            <CardHeader>
+              <div className="flex items-center gap-3">
+                <div className="rounded-md bg-amber-100 p-2">
+                  <Puzzle className="h-5 w-5 text-amber-700" />
+                </div>
+                <div>
+                  <CardTitle className="text-base">Puzzles</CardTitle>
+                  <CardDescription>{puzzles?.length ?? 0} entries</CardDescription>
                 </div>
               </div>
             </CardHeader>

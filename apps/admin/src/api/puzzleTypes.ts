@@ -1,4 +1,11 @@
-import { degreesSchema, imageKeySchema, iso8601DateSchema, puzzleIdSchema, speciesIdSchema } from "@wortle/shared"
+import {
+  degreesSchema,
+  imageKeySchema,
+  iso8601DateSchema,
+  License,
+  puzzleIdSchema,
+  speciesIdSchema,
+} from "@wortle/shared"
 import { z } from "zod"
 
 const apiCoordinatesSchema = z.object({
@@ -18,7 +25,7 @@ const apiPuzzleImageSchema = z.object({
 
 const apiPhotoAttributionSchema = z.object({
   photographer: z.string(),
-  license: z.string(),
+  license: z.enum(License),
 })
 
 export const apiPuzzleSchema = z.object({

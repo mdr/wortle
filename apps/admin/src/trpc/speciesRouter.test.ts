@@ -68,13 +68,13 @@ describe("speciesRouter", () => {
       expect(await repo.findById(TestSpeciesIds.daisy)).toBeDefined()
     })
 
-    it("throws CONFLICT when species already exists", async () => {
+    it("throws UNPROCESSABLE_CONTENT when species already exists", async () => {
       const repo = new FakeSpeciesRepository()
       await repo.create(makeDbSpecies({ id: TestSpeciesIds.daisy }))
       const caller = createTestCaller(repo)
 
       await expect(caller.species.create(makeApiSpecies({ id: TestSpeciesIds.daisy }))).rejects.toMatchObject({
-        code: TrpcErrorCode.CONFLICT,
+        code: TrpcErrorCode.UNPROCESSABLE_CONTENT,
       })
     })
   })

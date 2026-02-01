@@ -61,3 +61,17 @@ export const speciesDataJsonSchema = z.object({
 export interface SpeciesData {
   species: Species[]
 }
+
+const matchesSpeciesQuery = (species: Species, query: string): boolean => {
+  const lowerQuery = query.toLowerCase()
+  const allNames = [
+    species.commonName,
+    ...species.alternativeCommonNames,
+    species.scientificName,
+    ...species.alternativeScientificNames,
+  ]
+  return allNames.some((name) => name.toLowerCase().includes(lowerQuery))
+}
+
+export const filterSpeciesByQuery = (species: Species[], query: string, excludedIds: SpeciesId[] = []): Species[] =>
+  species.filter((s) => !excludedIds.includes(s.id) && matchesSpeciesQuery(s, query))

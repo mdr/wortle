@@ -1,3 +1,4 @@
+import { getLicenseDisplayName, getLicenseUrl, isShareAlikeLicense } from "@wortle/shared"
 import { Button, Popover, PopoverContent, PopoverTrigger } from "@wortle/ui"
 import { ChevronLeft, ChevronRight, Copyright, Maximize2 } from "lucide-react"
 import { useId } from "react"
@@ -98,12 +99,12 @@ export const ImageGallery = () => {
               <p className="flex flex-wrap items-center gap-x-1">
                 <span>© 2025 by {photoAttribution.photographer}, licensed under</span>
                 <a
-                  href="https://creativecommons.org/licenses/by/4.0/"
+                  href={getLicenseUrl(photoAttribution.license)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center hover:underline"
                 >
-                  {photoAttribution.license}
+                  {getLicenseDisplayName(photoAttribution.license)}
                   <img
                     src="https://mirrors.creativecommons.org/presskit/icons/cc.svg"
                     alt=""
@@ -114,6 +115,13 @@ export const ImageGallery = () => {
                     alt=""
                     className="ml-0.5 inline-block h-4 w-4"
                   />
+                  {isShareAlikeLicense(photoAttribution.license) && (
+                    <img
+                      src="https://mirrors.creativecommons.org/presskit/icons/sa.svg"
+                      alt=""
+                      className="ml-0.5 inline-block h-4 w-4"
+                    />
+                  )}
                 </a>
               </p>
             </PopoverContent>

@@ -1,21 +1,9 @@
-import { Genus, type Option, ScientificName, type Species, type SpeciesId } from "@wortle/shared"
+import { filterSpeciesByQuery, Genus, type Option, ScientificName, type Species, type SpeciesId } from "@wortle/shared"
 import { assert } from "tsafe"
 
 export const getGenus = (scientificName: ScientificName): Genus => Genus(scientificName.split(" ")[0])
 
-const matchesQuery = (species: Species, query: string): boolean => {
-  const lowerQuery = query.toLowerCase()
-  const allNames = [
-    species.commonName,
-    ...species.alternativeCommonNames,
-    species.scientificName,
-    ...species.alternativeScientificNames,
-  ]
-  return allNames.some((name) => name.toLowerCase().includes(lowerQuery))
-}
-
-export const filterSpecies = (species: Species[], query: string, excludedIds: SpeciesId[] = []): Species[] =>
-  species.filter((s) => !excludedIds.includes(s.id) && matchesQuery(s, query))
+export const filterSpecies = filterSpeciesByQuery
 
 export interface SpeciesRepository {
   findSpecies: (id: SpeciesId) => Option<Species>

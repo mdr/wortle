@@ -1,15 +1,31 @@
-import { puzzleIdSchema } from "@wortle/shared"
+import { puzzleIdSchema, SpeciesId } from "@wortle/shared"
 import { TRPCError } from "@trpc/server"
 
 import { apiPuzzleToDbPuzzle, dbPuzzleToApiPuzzle } from "@/api/puzzleConversions"
 import { apiPuzzleSchema } from "@/api/puzzleTypes"
 import { CreateResult, DeleteResult, IPuzzleRepository, UpdateResult } from "@/db/PuzzleRepository"
+import { ISpeciesRepository } from "@/db/SpeciesRepository"
 import { serverLogger } from "@/utils/logger"
 
 import { TrpcErrorCode } from "./errorCodes"
 import { protectedProcedure, router } from "./init"
 
-export const createPuzzleRouter = (puzzleRepository: IPuzzleRepository) =>
+type PuzzleRouterDeps = {
+  puzzleRepository: IPuzzleRepository
+  speciesRepository: ISpeciesRepository
+}
+
+const validateSpeciesExists = async (speciesRepository: ISpeciesRepository, speciesId: SpeciesId): Promise<void> => {
+  const species = await speciesRepository.findById(speciesId)
+  if (species === undefined) {
+    throw new TRPCError({
+      code: TrpcErrorCode.UNPROCESSABLE_CONTENT,
+      message: `Species "${speciesId}" does not exist`,
+    })
+  }
+}
+
+export const createPuzzleRouter = ({ puzzleRepository, speciesRepository }: PuzzleRouterDeps) =>
   router({
     list: protectedProcedure.query(async () => {
       const dbPuzzles = await puzzleRepository.list()
@@ -25,10 +41,11 @@ export const createPuzzleRouter = (puzzleRepository: IPuzzleRepository) =>
     }),
 
     create: protectedProcedure.input(apiPuzzleSchema).mutation(async ({ input: apiPuzzle }) => {
+      await validateSpeciesExists(speciesRepository, apiPuzzle.speciesId)
       const result = await puzzleRepository.create(apiPuzzleToDbPuzzle(apiPuzzle))
       if (result === CreateResult.ALREADY_EXISTS) {
         throw new TRPCError({
-          code: TrpcErrorCode.CONFLICT,
+          code: TrpcErrorCode.UNPROCESSABLE_CONTENT,
           message: `Puzzle with ID "${apiPuzzle.id}" already exists`,
         })
       }
@@ -37,6 +54,7 @@ export const createPuzzleRouter = (puzzleRepository: IPuzzleRepository) =>
     }),
 
     update: protectedProcedure.input(apiPuzzleSchema).mutation(async ({ input: apiPuzzle }) => {
+      await validateSpeciesExists(speciesRepository, apiPuzzle.speciesId)
       const result = await puzzleRepository.update(apiPuzzleToDbPuzzle(apiPuzzle))
       if (result === UpdateResult.NOT_FOUND) {
         throw new TRPCError({ code: TrpcErrorCode.NOT_FOUND })
