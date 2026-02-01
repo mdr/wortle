@@ -49,7 +49,7 @@ const speciesSchema = z.object({
   family: familySchema,
   commonName: commonNameSchema,
   alternativeCommonNames: z.array(commonNameSchema),
-  alternativeScientificNames: z.array(scientificNameSchema).default([]),
+  alternativeScientificNames: z.array(scientificNameSchema),
   links: z.array(speciesLinkSchema),
   idTips: z.array(z.string()),
 })
