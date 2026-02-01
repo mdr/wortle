@@ -1,14 +1,6 @@
-import { Url } from "@/utils/brandedTypes"
+import { CommonName, Family, ScientificName, type Species, SpeciesId, Url } from "@wortle/shared"
 
-import {
-  CommonName,
-  DefaultSpeciesRepository,
-  Family,
-  ScientificName,
-  type Species,
-  SpeciesId,
-  type SpeciesRepository,
-} from "./Species"
+import { DefaultSpeciesRepository, type SpeciesRepository } from "./Species"
 
 export const testSpecies: Species[] = [
   {

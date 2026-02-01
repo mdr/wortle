@@ -1,6 +1,6 @@
+import { type Iso8601Date } from "@wortle/shared"
 import { ReactNode, useEffect } from "react"
 
-import { type Iso8601Date } from "@/utils/brandedTypes"
 import { type Clock } from "@/utils/Clock"
 
 import { useGlobalDependencies } from "./GlobalDependenciesProvider"

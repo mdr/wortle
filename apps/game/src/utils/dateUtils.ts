@@ -1,4 +1,4 @@
-import { Iso8601Date } from "@/utils/brandedTypes"
+import { Iso8601Date } from "@wortle/shared"
 
 type DateStyle = "full" | "long" | "medium" | "short"
 

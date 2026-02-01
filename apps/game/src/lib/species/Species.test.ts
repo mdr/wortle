@@ -1,6 +1,7 @@
+import { ScientificName, SpeciesId } from "@wortle/shared"
 import { describe, expect, it } from "vitest"
 
-import { filterSpecies, ScientificName, SpeciesId } from "./Species"
+import { filterSpecies } from "./Species"
 import { createTestSpecies } from "./Species.testUtils"
 import { testSpecies } from "./testSpecies.testUtils"
 

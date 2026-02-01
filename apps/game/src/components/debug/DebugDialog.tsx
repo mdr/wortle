@@ -1,8 +1,8 @@
+import { Iso8601Date } from "@wortle/shared"
 import { Button, Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@wortle/ui"
 import { useCallback, useEffect, useId, useState } from "react"
 
 import { useClock, useHistoryStore } from "@/components/app/GlobalDependenciesProvider"
-import { Iso8601Date } from "@/utils/brandedTypes"
 
 declare global {
   interface Window {

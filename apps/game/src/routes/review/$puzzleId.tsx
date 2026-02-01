@@ -1,9 +1,9 @@
 import { createFileRoute, notFound } from "@tanstack/react-router"
+import { PuzzleId } from "@wortle/shared"
 
 import { ErrorPage } from "@/components/pages/error/ErrorPage"
 import { NotFoundPage } from "@/components/pages/notFound/NotFoundPage"
 import { PuzzleMode, PuzzlePage } from "@/components/pages/puzzle/PuzzlePage"
-import { PuzzleId } from "@/lib/Puzzle"
 
 export const Route = createFileRoute("/review/$puzzleId")({
   loader: ({ params, context }) => {

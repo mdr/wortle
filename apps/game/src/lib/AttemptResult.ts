@@ -1,4 +1,6 @@
-import { getGenus, Species, SpeciesId } from "./species/Species"
+import { type Species, type SpeciesId } from "@wortle/shared"
+
+import { getGenus } from "./species/Species"
 
 export interface AttemptResult {
   speciesId: SpeciesId

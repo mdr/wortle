@@ -1,7 +1,7 @@
+import { Iso8601Date } from "@wortle/shared"
 import { describe, expect, it } from "vitest"
 
 import { PuzzleOutcome } from "@/services/puzzle/PuzzleService"
-import { Iso8601Date } from "@/utils/brandedTypes"
 
 import { generateShareText } from "./ShareResultButton"
 

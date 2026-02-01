@@ -1,10 +1,9 @@
 import { createFileRoute, notFound, redirect } from "@tanstack/react-router"
+import { isIso8601Date, Iso8601Date, type Puzzle } from "@wortle/shared"
 
 import { ErrorPage } from "@/components/pages/error/ErrorPage"
 import { NotFoundPage } from "@/components/pages/notFound/NotFoundPage"
 import { PuzzleMode, PuzzlePage } from "@/components/pages/puzzle/PuzzlePage"
-import { Puzzle } from "@/lib/Puzzle"
-import { isIso8601Date, Iso8601Date } from "@/utils/brandedTypes"
 
 interface ArchivePuzzleData {
   scheduledDate: Iso8601Date

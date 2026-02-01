@@ -1,10 +1,8 @@
+import { Iso8601Date, PuzzleId } from "@wortle/shared"
 import { assert, Equals } from "tsafe"
 import { z } from "zod"
 
-import { Iso8601Date } from "@/utils/brandedTypes"
 import { Option } from "@/utils/types/Option"
-
-import { PuzzleId } from "./Puzzle"
 
 export interface ScheduleEntry {
   date: Iso8601Date

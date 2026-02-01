@@ -1,8 +1,8 @@
+import { type Coordinates } from "@wortle/shared"
 import { cn } from "@wortle/ui"
 import { Feature } from "geojson"
 import { ComposableMap, Geographies, Geography, Marker, ZoomableGroup } from "react-simple-maps"
 
-import { Coordinates } from "@/lib/Puzzle"
 import { ClassNameList } from "@/utils/brandedTypes"
 
 // Using Natural Earth 50m resolution - more detailed for country-level view

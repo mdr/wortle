@@ -1,10 +1,10 @@
 import { Link } from "@tanstack/react-router"
+import { Iso8601Date } from "@wortle/shared"
 import { Button, Card, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@wortle/ui"
 import { useState } from "react"
 
 import { useClock, usePuzzles, useSchedule } from "@/components/app/GlobalDependenciesProvider"
 import { HeaderNav } from "@/components/shared/HeaderNav"
-import { Iso8601Date } from "@/utils/brandedTypes"
 import { formatDate } from "@/utils/dateUtils"
 import { assetUrl } from "@/utils/utils"
 

@@ -1,3 +1,4 @@
+import { Iso8601Date, type Puzzle } from "@wortle/shared"
 import { Card } from "@wortle/ui"
 import { useEffect, useMemo, useRef } from "react"
 
@@ -10,11 +11,9 @@ import { WhereAndWhenCard } from "@/components/pages/puzzle/location/WhereAndWhe
 import { PuzzleHeader } from "@/components/pages/puzzle/PuzzleHeader"
 import { StatsPanel } from "@/components/pages/puzzle/stats/StatsPanel"
 import { useCorrectAnswerConfetti } from "@/components/pages/puzzle/useCorrectAnswerConfetti"
-import { Puzzle } from "@/lib/Puzzle"
 import { selectIsCorrect, selectIsResolved, selectShowAttemptHistory } from "@/services/puzzle/puzzleSelectors"
 import { PuzzleMode, PuzzleService } from "@/services/puzzle/PuzzleService"
 import { PuzzleServiceContext, usePuzzleState } from "@/services/puzzle/puzzleServiceHooks"
-import { Iso8601Date } from "@/utils/brandedTypes"
 
 import { PuzzleTestIds } from "./PuzzleTestIds"
 

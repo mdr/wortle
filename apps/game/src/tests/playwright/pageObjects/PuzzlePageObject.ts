@@ -1,3 +1,5 @@
+import { SpeciesId } from "@wortle/shared"
+
 import {
   AnswerTestIds,
   AttemptHistoryTestIds,
@@ -5,7 +7,6 @@ import {
   ShareResultTestIds,
 } from "@/components/pages/puzzle/PuzzleTestIds"
 import { SharedTestIds } from "@/components/shared/SharedTestIds"
-import { SpeciesId } from "@/lib/species/Species"
 import { testSpeciesRepository } from "@/lib/species/testSpecies.testUtils"
 
 import { expect } from "../fixtures"

@@ -1,12 +1,10 @@
+import { Iso8601Date, PuzzleId, SpeciesId } from "@wortle/shared"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 
-import { PuzzleId } from "@/lib/Puzzle"
 import { DefaultPuzzles, defaultPuzzles } from "@/lib/puzzles"
 import { DefaultSchedule, defaultSchedule } from "@/lib/schedule"
-import { SpeciesId } from "@/lib/species/Species"
 import { testSpeciesRepository } from "@/lib/species/testSpecies.testUtils"
 import { TestPuzzles } from "@/lib/testConstants.testUtils"
-import { Iso8601Date } from "@/utils/brandedTypes"
 import { logger } from "@/utils/Logger"
 
 import { validateDataReferences } from "./validateDataReferences"

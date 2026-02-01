@@ -1,7 +1,7 @@
+import { type Puzzle } from "@wortle/shared"
 import { Card } from "@wortle/ui"
 
 import { UkLocationMap } from "@/components/pages/puzzle/location/UkLocationMap"
-import { Puzzle } from "@/lib/Puzzle"
 import { ClassNameList } from "@/utils/brandedTypes"
 import { formatDate } from "@/utils/dateUtils"
 

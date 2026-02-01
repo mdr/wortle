@@ -1,4 +1,5 @@
-import { Iso8601Date } from "@/utils/brandedTypes"
+import { Iso8601Date } from "@wortle/shared"
+
 import { toDateFromIso8601Date, toIso8601Date } from "@/utils/dateUtils"
 
 export interface Clock {

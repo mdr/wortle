@@ -1,21 +1,6 @@
 import { Genus, type Option, ScientificName, type Species, type SpeciesId } from "@wortle/shared"
 import { assert } from "tsafe"
 
-export {
-  CommonName,
-  Family,
-  Genus,
-  type Option,
-  ScientificName,
-  type Species,
-  SPECIES_DATA_KEY,
-  type SpeciesData,
-  speciesDataJsonSchema,
-  SpeciesId,
-  type SpeciesLink,
-  Url,
-} from "@wortle/shared"
-
 export const getGenus = (scientificName: ScientificName): Genus => Genus(scientificName.split(" ")[0])
 
 const matchesQuery = (species: Species, query: string): boolean => {

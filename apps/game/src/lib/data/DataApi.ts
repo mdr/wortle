@@ -1,7 +1,13 @@
-import { type PuzzlesData, puzzlesJsonSchema } from "@/lib/Puzzle"
+import {
+  type PuzzlesData,
+  puzzlesDataJsonSchema,
+  SPECIES_DATA_KEY,
+  type SpeciesData,
+  speciesDataJsonSchema,
+  Url,
+} from "@wortle/shared"
+
 import { type ScheduleData, scheduleJsonSchema } from "@/lib/schedule"
-import { SPECIES_DATA_KEY, type SpeciesData, speciesDataJsonSchema } from "@/lib/species/Species"
-import { Url } from "@/utils/brandedTypes"
 
 // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- import.meta.env is undefined in Playwright CT tests
 export const DEFAULT_DATA_URL = Url(import.meta.env?.VITE_DATA_URL ?? "https://data.wortle.app")
@@ -24,7 +30,7 @@ export class DataApi {
       throw new Error(`Failed to fetch puzzles: ${response.status} ${response.statusText}`)
     }
     const json: unknown = await response.json()
-    return puzzlesJsonSchema.parse(json)
+    return puzzlesDataJsonSchema.parse(json)
   }
 
   fetchSpecies = async (): Promise<SpeciesData> => {

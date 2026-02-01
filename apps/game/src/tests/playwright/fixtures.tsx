@@ -1,9 +1,9 @@
 import type { MountResult } from "@playwright/experimental-ct-react"
 import { expect, test as ctBase } from "@playwright/experimental-ct-react"
+import { Iso8601Date } from "@wortle/shared"
 import { addCoverageReport } from "monocart-reporter"
 
 import { TestPuzzles } from "@/lib/testConstants.testUtils"
-import { Iso8601Date } from "@/utils/brandedTypes"
 
 import { NetworkSimulator } from "./network/NetworkSimulator.testUtils"
 import { ErrorPageObject } from "./pageObjects/ErrorPageObject"

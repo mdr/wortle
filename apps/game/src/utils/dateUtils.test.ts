@@ -1,6 +1,5 @@
+import { Iso8601Date } from "@wortle/shared"
 import { describe, expect, it } from "vitest"
-
-import { Iso8601Date } from "@/utils/brandedTypes"
 
 import { formatDate, formatDuration, getNextDay, toDateFromIso8601Date, toIso8601Date } from "./dateUtils"
 

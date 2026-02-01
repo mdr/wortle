@@ -1,6 +1,6 @@
-import type { ImageKey, PuzzleId } from "@/lib/Puzzle"
+import { type ImageKey, type PuzzleId, Url } from "@wortle/shared"
 
-import { Pixels, Url } from "./brandedTypes"
+import { Pixels } from "./brandedTypes"
 
 const R2_BASE_URL: Url = Url("https://images.wortle.app/puzzles")
 const WIDTHS = [Pixels(200), Pixels(400), Pixels(800), Pixels(1200), Pixels(1600), Pixels(2400)] as const

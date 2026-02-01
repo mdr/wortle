@@ -1,9 +1,8 @@
-import { PuzzleId } from "@/lib/Puzzle"
+import { Iso8601Date, PuzzleId, SpeciesId } from "@wortle/shared"
+
 import { defaultPuzzles } from "@/lib/puzzles"
 import { defaultSchedule } from "@/lib/schedule"
-import { SpeciesId } from "@/lib/species/Species"
 import { testSpeciesRepository } from "@/lib/species/testSpecies.testUtils"
-import { Iso8601Date } from "@/utils/brandedTypes"
 import { Option } from "@/utils/types/Option"
 
 export interface TestPuzzle {

@@ -1,10 +1,7 @@
+import { Degrees, ImageKey, Iso8601Date, type Puzzle, PuzzleId, SpeciesId } from "@wortle/shared"
 import { assert } from "tsafe"
 
-import { Degrees, Iso8601Date } from "@/utils/brandedTypes"
 import { Option } from "@/utils/types/Option"
-
-import { ImageKey, type Puzzle, PuzzleId } from "./Puzzle"
-import { SpeciesId } from "./species/Species"
 
 export interface Puzzles {
   findPuzzle: (id: PuzzleId) => Option<Puzzle>

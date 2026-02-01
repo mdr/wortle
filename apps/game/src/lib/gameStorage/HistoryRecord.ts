@@ -1,8 +1,6 @@
+import { Iso8601Date, SpeciesId } from "@wortle/shared"
 import { assert, Equals } from "tsafe"
 import { z } from "zod"
-
-import { SpeciesId } from "@/lib/species/Species"
-import { Iso8601Date } from "@/utils/brandedTypes"
 
 export enum PassOrFail {
   PASS = "PASS",

@@ -1,4 +1,5 @@
-import { Iso8601Date } from "@/utils/brandedTypes"
+import { Iso8601Date } from "@wortle/shared"
+
 import { Option } from "@/utils/types/Option"
 
 import { PassOrFail, PuzzleHistoryEntry } from "./HistoryRecord"

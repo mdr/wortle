@@ -1,7 +1,5 @@
 import { Brand } from "effect"
 
-export { Degrees, isIso8601Date, Iso8601Date, Url } from "@wortle/shared"
-
 export type ClassNameList = string & Brand.Brand<"ClassNameList">
 export const ClassNameList = Brand.nominal<ClassNameList>()
 

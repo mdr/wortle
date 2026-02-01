@@ -1,7 +1,5 @@
-import { TestSpeciesIds } from "@wortle/shared"
+import { Iso8601Date, TestSpeciesIds } from "@wortle/shared"
 import { describe, expect, it } from "vitest"
-
-import { Iso8601Date } from "@/utils/brandedTypes"
 
 import { PassOrFail } from "./HistoryRecord"
 import { HistoryStore } from "./HistoryStore"

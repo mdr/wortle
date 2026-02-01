@@ -1,9 +1,6 @@
+import { Degrees, Iso8601Date, PuzzleId, SpeciesId } from "@wortle/shared"
 import * as mockttp from "mockttp"
 import { describe, expect, it } from "vitest"
-
-import { PuzzleId } from "@/lib/Puzzle"
-import { SpeciesId } from "@/lib/species/Species"
-import { Degrees, Iso8601Date } from "@/utils/brandedTypes"
 
 import { DataApi } from "./DataApi"
 import { withMockServer } from "./withMockServer.testUtils"
