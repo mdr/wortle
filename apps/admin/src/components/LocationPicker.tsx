@@ -1,6 +1,6 @@
 "use client"
 
-import type { LatLngExpression, LeafletMouseEvent } from "leaflet"
+import type { DragEndEvent, LatLngExpression, LeafletMouseEvent } from "leaflet"
 import L from "leaflet"
 import { useEffect, useMemo } from "react"
 import { MapContainer, Marker, TileLayer, useMap, useMapEvents } from "react-leaflet"
@@ -44,7 +44,7 @@ const LocationMarker = ({ position, onChange }: LocationMarkerProps) => {
       icon={markerIcon}
       draggable
       eventHandlers={{
-        dragend: (e) => {
+        dragend: (e: DragEndEvent) => {
           const marker = e.target as L.Marker
           const latlng = marker.getLatLng()
           onChange({ latitude: latlng.lat, longitude: latlng.lng })
@@ -80,7 +80,7 @@ export const LocationPicker = ({ latitude, longitude, onChange }: LocationPicker
   const initialCenter = useMemo(() => center, [])
 
   return (
-    <MapContainer center={initialCenter} zoom={DEFAULT_ZOOM} className="h-64 w-full rounded-md border">
+    <MapContainer center={initialCenter} zoom={DEFAULT_ZOOM} className="z-0 h-64 w-full rounded-md border">
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
