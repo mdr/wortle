@@ -26,6 +26,7 @@
             trivy
             gitleaks
             gh
+            delta
             rclone
             jq
             _1password-cli

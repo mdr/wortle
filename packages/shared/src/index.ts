@@ -13,7 +13,13 @@ export {
   urlSchema,
 } from "./brandedTypes"
 
-export { SPECIES_DATA_BUCKET, SPECIES_DATA_KEY } from "./bucketConstants"
+export {
+  IMAGES_BUCKET,
+  ORIGINALS_BUCKET,
+  SPECIES_DATA_BUCKET,
+  SPECIES_DATA_KEY,
+  STAGING_PREFIX,
+} from "./bucketConstants"
 
 export {
   CommonName,

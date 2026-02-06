@@ -3,7 +3,7 @@ import { BucketName, SPECIES_DATA_KEY, speciesDataJsonSchema } from "@wortle/sha
 import { ISpeciesRepository } from "@/db/SpeciesRepository"
 import { dbSpeciesToSpeciesData } from "@/db/toSpecies"
 import { serverLogger } from "@/utils/logger"
-import { IBucketStorage, MediaType } from "@/utils/R2BucketStorage"
+import { IBucketStorage } from "@/utils/R2BucketStorage"
 
 import { protectedProcedure, router } from "./init"
 
@@ -21,11 +21,10 @@ export const createPublishRouter = ({ speciesRepository, bucketStorage, dataBuck
 
       const validated = speciesDataJsonSchema.parse(speciesData)
 
-      await bucketStorage.upload({
+      await bucketStorage.uploadJson({
         bucket: dataBucketName,
         key: SPECIES_DATA_KEY,
-        body: JSON.stringify(validated),
-        contentType: MediaType.APPLICATION_JSON,
+        body: validated,
       })
 
       serverLogger.info("publish.all", `Published all data`, {

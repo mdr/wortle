@@ -9,7 +9,6 @@ import { describe, expect, it } from "vitest"
 
 import { FakeSpeciesRepository } from "@/db/FakeSpeciesRepository.testUtils"
 import { FakeBucketStorage } from "@/utils/FakeBucketStorage.testUtils"
-import { MediaType } from "@/utils/R2BucketStorage"
 
 import { router } from "./init"
 import { createPublishRouter } from "./publishRouter"
@@ -38,9 +37,7 @@ describe("publishRouter", () => {
       const result = await caller.publish.all()
 
       expect(result).toEqual({ success: true, speciesCount: 3 })
-      const storedObject = bucketStorage.get(SPECIES_DATA_BUCKET, SPECIES_DATA_KEY)
-      expect(storedObject.contentType).toBe(MediaType.APPLICATION_JSON)
-      const uploadedBody = speciesDataJsonSchema.parse(JSON.parse(storedObject.body))
+      const uploadedBody = speciesDataJsonSchema.parse(bucketStorage.getJson(SPECIES_DATA_BUCKET, SPECIES_DATA_KEY))
       expect(uploadedBody.species.map((s) => s.id)).toEqual([
         TestSpeciesIds.daisy,
         TestSpeciesIds.herbRobert,
@@ -56,8 +53,7 @@ describe("publishRouter", () => {
       const result = await caller.publish.all()
 
       expect(result).toEqual({ success: true, speciesCount: 0 })
-      const storedObject = bucketStorage.get(SPECIES_DATA_BUCKET, SPECIES_DATA_KEY)
-      const uploadedBody = speciesDataJsonSchema.parse(JSON.parse(storedObject.body))
+      const uploadedBody = speciesDataJsonSchema.parse(bucketStorage.getJson(SPECIES_DATA_BUCKET, SPECIES_DATA_KEY))
       expect(uploadedBody.species).toEqual([])
     })
   })
