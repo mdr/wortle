@@ -19,6 +19,7 @@ import {
   ImageKey,
   Iso8601Date,
   License,
+  ObjectKey,
   PuzzleId,
   SpeciesId,
 } from "@wortle/shared"
@@ -48,7 +49,7 @@ import { useEffect, useId, useRef, useState } from "react"
 import { Controller, useFieldArray, useForm } from "react-hook-form"
 import { z } from "zod"
 
-import { type ApiPuzzle } from "@/api/puzzleTypes"
+import { type ApiPuzzle, type CreatePuzzleRequest, type EditPuzzleRequest } from "@/api/puzzleTypes"
 import { trpc } from "@/trpc/client"
 
 import { SortableItem } from "./SortableItem"
@@ -74,6 +75,7 @@ const formSchema = z.object({
       z.object({
         imageKey: z.string().min(1, "Image key is required"),
         caption: z.string(),
+        stagingKey: z.string().optional(),
       }),
     )
     .min(1, "At least one image is required"),
@@ -81,7 +83,7 @@ const formSchema = z.object({
 
 export type PuzzleFormData = z.infer<typeof formSchema>
 
-const formDataToApiPuzzle = (data: PuzzleFormData): ApiPuzzle => ({
+const formDataToCreatePuzzleRequest = (data: PuzzleFormData): CreatePuzzleRequest => ({
   id: PuzzleId(data.id),
   speciesId: SpeciesId(data.speciesId),
   observationDate: Iso8601Date(data.observationDate),
@@ -100,8 +102,11 @@ const formDataToApiPuzzle = (data: PuzzleFormData): ApiPuzzle => ({
   images: data.images.map((img) => ({
     imageKey: ImageKey(img.imageKey),
     caption: img.caption,
+    stagingKey: img.stagingKey ? ObjectKey(img.stagingKey) : undefined,
   })),
 })
+
+const formDataToEditPuzzleRequest: (data: PuzzleFormData) => EditPuzzleRequest = formDataToCreatePuzzleRequest
 
 export const apiPuzzleToFormData = (puzzle: ApiPuzzle): PuzzleFormData => ({
   id: puzzle.id,
@@ -148,7 +153,7 @@ export enum FormMode {
 type PuzzleFormProps = {
   mode: FormMode
   initialValues?: PuzzleFormData
-  onSubmit: (data: ApiPuzzle) => void
+  onSubmit: (data: CreatePuzzleRequest) => void
   onCancel: () => void
   isPending: boolean
   error?: { message: string } | null
@@ -284,7 +289,8 @@ export const PuzzleForm = ({
       }
     }
 
-  const handleFormSubmit = (data: PuzzleFormData) => onSubmit(formDataToApiPuzzle(data))
+  const toRequest = mode === FormMode.NEW ? formDataToCreatePuzzleRequest : formDataToEditPuzzleRequest
+  const handleFormSubmit = (data: PuzzleFormData) => onSubmit(toRequest(data))
 
   const isEditMode = mode === FormMode.EDIT
 

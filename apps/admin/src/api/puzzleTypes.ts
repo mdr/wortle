@@ -2,6 +2,7 @@ import {
   degreesSchema,
   imageKeySchema,
   iso8601DateSchema,
+  objectKeySchema,
   License,
   puzzleIdSchema,
   speciesIdSchema,
@@ -43,3 +44,15 @@ export type ApiLocation = z.infer<typeof apiLocationSchema>
 export type ApiPuzzleImage = z.infer<typeof apiPuzzleImageSchema>
 export type ApiPhotoAttribution = z.infer<typeof apiPhotoAttributionSchema>
 export type ApiPuzzle = z.infer<typeof apiPuzzleSchema>
+
+const puzzleRequestImageSchema = apiPuzzleImageSchema.extend({
+  stagingKey: objectKeySchema.optional(),
+})
+
+export const createPuzzleRequestSchema = apiPuzzleSchema.extend({
+  images: z.array(puzzleRequestImageSchema),
+})
+export type CreatePuzzleRequest = z.infer<typeof createPuzzleRequestSchema>
+
+export const editPuzzleRequestSchema = createPuzzleRequestSchema
+export type EditPuzzleRequest = z.infer<typeof editPuzzleRequestSchema>

@@ -1,4 +1,4 @@
-import { SpeciesId, TestPuzzleIds, TestSpeciesIds } from "@wortle/shared"
+import { ImageKey, ObjectKey, SpeciesId, TestPuzzleIds, TestSpeciesIds } from "@wortle/shared"
 import { describe, expect, it } from "vitest"
 
 import { FakePuzzleRepository } from "@/db/FakePuzzleRepository.testUtils"
@@ -7,7 +7,14 @@ import { FakeSpeciesRepository } from "@/db/FakeSpeciesRepository.testUtils"
 import { TrpcErrorCode } from "./errorCodes"
 import { router } from "./init"
 import { createPuzzleRouter } from "./puzzleRouter"
-import { makeApiPuzzle, makeDbPuzzle, makeDbSpecies, testContext } from "./testFactories.testUtils"
+import {
+  makeApiPuzzle,
+  makeDbPuzzle,
+  makeDbSpecies,
+  makeCreatePuzzleRequest,
+  makeEditPuzzleRequest,
+  testContext,
+} from "./testFactories.testUtils"
 
 const createTestCaller = (
   puzzleRepository = new FakePuzzleRepository(),
@@ -71,12 +78,28 @@ describe("puzzleRouter", () => {
       const puzzleRepo = new FakePuzzleRepository()
       const speciesRepo = await createSpeciesRepo()
       const caller = createTestCaller(puzzleRepo, speciesRepo)
-      const puzzle = makeApiPuzzle({ id: TestPuzzleIds.daisy })
+      const request = makeCreatePuzzleRequest({ id: TestPuzzleIds.daisy })
 
-      const result = await caller.puzzles.create(puzzle)
+      const result = await caller.puzzles.create(request)
 
-      expect(result).toEqual(puzzle)
+      expect(result).toEqual(makeApiPuzzle({ id: TestPuzzleIds.daisy }))
       expect(await puzzleRepo.findById(TestPuzzleIds.daisy)).toBeDefined()
+    })
+
+    it("strips stagingKey from images before storing", async () => {
+      const puzzleRepo = new FakePuzzleRepository()
+      const speciesRepo = await createSpeciesRepo()
+      const caller = createTestCaller(puzzleRepo, speciesRepo)
+      const request = makeCreatePuzzleRequest({
+        id: TestPuzzleIds.daisy,
+        images: [
+          { imageKey: ImageKey("whole-plant"), caption: "Whole plant", stagingKey: ObjectKey("staging/abc.jpg") },
+        ],
+      })
+
+      const result = await caller.puzzles.create(request)
+
+      expect(result.images).toEqual([{ imageKey: ImageKey("whole-plant"), caption: "Whole plant" }])
     })
 
     it("throws UNPROCESSABLE_CONTENT when puzzle already exists", async () => {
@@ -85,16 +108,16 @@ describe("puzzleRouter", () => {
       await puzzleRepo.create(makeDbPuzzle({ id: TestPuzzleIds.daisy }))
       const caller = createTestCaller(puzzleRepo, speciesRepo)
 
-      await expect(caller.puzzles.create(makeApiPuzzle({ id: TestPuzzleIds.daisy }))).rejects.toMatchObject({
+      await expect(caller.puzzles.create(makeCreatePuzzleRequest({ id: TestPuzzleIds.daisy }))).rejects.toMatchObject({
         code: TrpcErrorCode.UNPROCESSABLE_CONTENT,
       })
     })
 
     it("throws UNPROCESSABLE_CONTENT when species does not exist", async () => {
       const caller = createTestCaller()
-      const puzzle = makeApiPuzzle({ id: TestPuzzleIds.daisy, speciesId: SpeciesId("nonexistent") })
+      const request = makeCreatePuzzleRequest({ id: TestPuzzleIds.daisy, speciesId: SpeciesId("nonexistent") })
 
-      await expect(caller.puzzles.create(puzzle)).rejects.toMatchObject({
+      await expect(caller.puzzles.create(request)).rejects.toMatchObject({
         code: TrpcErrorCode.UNPROCESSABLE_CONTENT,
         message: 'Species "nonexistent" does not exist',
       })
@@ -107,11 +130,11 @@ describe("puzzleRouter", () => {
       const speciesRepo = await createSpeciesRepo()
       await puzzleRepo.create(makeDbPuzzle({ id: TestPuzzleIds.daisy }))
       const caller = createTestCaller(puzzleRepo, speciesRepo)
-      const updated = makeApiPuzzle({ id: TestPuzzleIds.daisy, habitat: "Meadow" })
+      const request = makeEditPuzzleRequest({ id: TestPuzzleIds.daisy, habitat: "Meadow" })
 
-      const result = await caller.puzzles.update(updated)
+      const result = await caller.puzzles.update(request)
 
-      expect(result).toEqual(updated)
+      expect(result).toEqual(makeApiPuzzle({ id: TestPuzzleIds.daisy, habitat: "Meadow" }))
       const stored = await puzzleRepo.findById(TestPuzzleIds.daisy)
       expect(stored?.habitat).toBe("Meadow")
     })
@@ -120,7 +143,7 @@ describe("puzzleRouter", () => {
       const speciesRepo = await createSpeciesRepo()
       const caller = createTestCaller(new FakePuzzleRepository(), speciesRepo)
 
-      await expect(caller.puzzles.update(makeApiPuzzle({ id: TestPuzzleIds.daisy }))).rejects.toMatchObject({
+      await expect(caller.puzzles.update(makeEditPuzzleRequest({ id: TestPuzzleIds.daisy }))).rejects.toMatchObject({
         code: TrpcErrorCode.NOT_FOUND,
       })
     })
@@ -129,9 +152,9 @@ describe("puzzleRouter", () => {
       const puzzleRepo = new FakePuzzleRepository()
       await puzzleRepo.create(makeDbPuzzle({ id: TestPuzzleIds.daisy }))
       const caller = createTestCaller(puzzleRepo)
-      const updated = makeApiPuzzle({ id: TestPuzzleIds.daisy, speciesId: SpeciesId("nonexistent") })
+      const request = makeEditPuzzleRequest({ id: TestPuzzleIds.daisy, speciesId: SpeciesId("nonexistent") })
 
-      await expect(caller.puzzles.update(updated)).rejects.toMatchObject({
+      await expect(caller.puzzles.update(request)).rejects.toMatchObject({
         code: TrpcErrorCode.UNPROCESSABLE_CONTENT,
         message: 'Species "nonexistent" does not exist',
       })

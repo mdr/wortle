@@ -10,7 +10,7 @@ import {
   TestSpeciesIds,
 } from "@wortle/shared"
 
-import { ApiPuzzle } from "@/api/puzzleTypes"
+import { ApiPuzzle, CreatePuzzleRequest, EditPuzzleRequest } from "@/api/puzzleTypes"
 import { ApiSpecies } from "@/api/types"
 import { DbPuzzle } from "@/db/puzzleTypes"
 import { DbSpecies } from "@/db/types"
@@ -68,6 +68,23 @@ export const makeApiPuzzle = (overrides: Partial<ApiPuzzle> = {}): ApiPuzzle => 
   photoAttribution: { photographer: "Test User", license: License.CC_BY_4 },
   ...overrides,
 })
+
+export const makeCreatePuzzleRequest = (overrides: Partial<CreatePuzzleRequest> = {}): CreatePuzzleRequest => ({
+  id: TestPuzzleIds.daisy,
+  speciesId: TestSpeciesIds.daisy,
+  observationDate: Iso8601Date("2025-01-15"),
+  location: {
+    description: "North Yorkshire, England",
+    coordinates: { latitude: Degrees(54.0), longitude: Degrees(-1.5) },
+  },
+  habitat: "Road verge",
+  images: [{ imageKey: ImageKey("whole-plant"), caption: "Whole plant" }],
+  photoAttribution: { photographer: "Test User", license: License.CC_BY_4 },
+  ...overrides,
+})
+
+export const makeEditPuzzleRequest: (overrides?: Partial<EditPuzzleRequest>) => EditPuzzleRequest =
+  makeCreatePuzzleRequest
 
 export const testContext: Context = {
   user: {
