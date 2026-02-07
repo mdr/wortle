@@ -6,7 +6,9 @@ import { HttpStatus } from "@/utils/httpStatus"
 import { MediaType } from "@/utils/R2BucketStorage"
 import { FIXED_TIME, fixedClock, JPEG_HEADER } from "@/utils/testConstants.testUtils"
 
-import { createUploadHandler, uploadResponseSchema } from "./uploadHandler"
+import { uploadResponseSchema } from "@/api/uploadTypes"
+
+import { createUploadHandler } from "./uploadHandler"
 
 const uploadRequest = (file: File) => {
   const formData = new FormData()

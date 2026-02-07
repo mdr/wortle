@@ -43,14 +43,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@wortle/ui"
-import { Check, ChevronsUpDown, Plus, Trash2 } from "lucide-react"
+import { Check, ChevronsUpDown, Upload, Trash2 } from "lucide-react"
 import dynamic from "next/dynamic"
-import { useEffect, useId, useRef, useState } from "react"
+import { useCallback, useEffect, useId, useRef, useState } from "react"
+import { useDropzone } from "react-dropzone"
 import { Controller, useFieldArray, useForm } from "react-hook-form"
 import { z } from "zod"
 
 import { type ApiPuzzle, type CreatePuzzleRequest, type EditPuzzleRequest } from "@/api/puzzleTypes"
 import { trpc } from "@/trpc/client"
+import { filenameToImageKey, uploadImage } from "@/utils/uploadImage"
 
 import { SortableItem } from "./SortableItem"
 
@@ -256,8 +258,47 @@ export const PuzzleForm = ({
   })
 
   const images = useFieldArray({ control: form.control, name: "images" })
+  const [uploadError, setUploadError] = useState<string | null>(null)
 
-  const pendingFocusRef = useRef<"images" | null>(null)
+  const handleFiles = useCallback(
+    async (files: File[]) => {
+      setUploadError(null)
+      for (const file of files) {
+        try {
+          const { stagingKey } = await uploadImage(file)
+          images.append({
+            imageKey: filenameToImageKey(file.name),
+            caption: "",
+            stagingKey,
+          })
+        } catch (err) {
+          setUploadError(err instanceof Error ? err.message : "Upload failed")
+        }
+      }
+    },
+    [images],
+  )
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop: (files) => void handleFiles(files),
+    accept: { "image/jpeg": [".jpg", ".jpeg"], "image/heic": [".heic"] },
+    noClick: false,
+    noKeyboard: true,
+  })
+
+  const handlePaste = useCallback(
+    (event: React.ClipboardEvent) => {
+      const imageFiles = Array.from(event.clipboardData.files).filter(
+        (f) => f.type === "image/jpeg" || f.type === "image/heic",
+      )
+      if (imageFiles.length > 0) {
+        event.preventDefault()
+        void handleFiles(imageFiles)
+      }
+    },
+    [handleFiles],
+  )
+
   const prevIsPendingRef = useRef(isPending)
 
   useEffect(() => {
@@ -266,13 +307,6 @@ export const PuzzleForm = ({
     }
     prevIsPendingRef.current = isPending
   }, [isPending, error, form])
-
-  useEffect(() => {
-    if (pendingFocusRef.current === "images" && images.fields.length > 0) {
-      form.setFocus(`images.${images.fields.length - 1}.imageKey`)
-      pendingFocusRef.current = null
-    }
-  }, [images.fields.length, form])
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -491,18 +525,18 @@ export const PuzzleForm = ({
           {form.formState.errors.images?.message && (
             <p className="text-destructive text-sm">{form.formState.errors.images.message}</p>
           )}
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={() => {
-              pendingFocusRef.current = "images"
-              images.append({ imageKey: "", caption: "" })
-            }}
+          {uploadError && <p className="text-destructive text-sm">{uploadError}</p>}
+          <div
+            {...getRootProps()}
+            onPaste={handlePaste}
+            className={`flex cursor-pointer flex-col items-center gap-1 rounded-md border-2 border-dashed p-4 text-center text-sm transition-colors ${isDragActive ? "border-primary bg-primary/5" : "border-muted-foreground/25 hover:border-muted-foreground/50"}`}
           >
-            <Plus className="h-4 w-4" />
-            Add Image
-          </Button>
+            <input {...getInputProps()} />
+            <Upload className="text-muted-foreground h-5 w-5" />
+            <span className="text-muted-foreground">
+              {isDragActive ? "Drop images here" : "Drop, click, or paste images (JPEG/HEIC)"}
+            </span>
+          </div>
         </div>
       </div>
 

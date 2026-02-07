@@ -1,16 +1,10 @@
-import { objectKeySchema, ObjectKey, ORIGINALS_BUCKET, STAGING_PREFIX } from "@wortle/shared"
+import { ObjectKey, ORIGINALS_BUCKET, STAGING_PREFIX } from "@wortle/shared"
 import { NextResponse } from "next/server"
-import { z } from "zod"
 
+import { type UploadResponse } from "@/api/uploadTypes"
 import { HttpStatus } from "@/utils/httpStatus"
 import { serverLogger } from "@/utils/logger"
 import { IBucketStorage, MediaType } from "@/utils/R2BucketStorage"
-
-export const uploadResponseSchema = z.object({
-  stagingKey: objectKeySchema,
-})
-
-export type UploadResponse = z.infer<typeof uploadResponseSchema>
 
 const ACCEPTED_TYPES = new Set<MediaType>([MediaType.IMAGE_JPEG, MediaType.IMAGE_HEIC])
 
