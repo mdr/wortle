@@ -7,6 +7,16 @@ tasks:
       - pnpm install
 
   # Game app tasks
+  game:format:
+    desc: Format game files with Prettier
+    cmds:
+      - pnpm prettier --write apps/game
+
+  game:format:check:
+    desc: Check formatting of game files
+    cmds:
+      - pnpm prettier --check apps/game
+
   game:dev:
     desc: Start game development server
     dir: apps/game
@@ -112,14 +122,25 @@ tasks:
       - ngrok http 5173
 
   game:check:
-    desc: Run all checks for game (tsc, lint, tests)
+    desc: Run all checks for game (tsc, lint, format, tests)
     cmds:
       - task: game:tsc
       - task: game:lint
+      - task: game:format:check
       - task: game:test:unit
       - task: game:test:iwft
 
   # Shared package tasks
+  shared:format:
+    desc: Format shared package files with Prettier
+    cmds:
+      - pnpm prettier --write packages/shared
+
+  shared:format:check:
+    desc: Check formatting of shared package files
+    cmds:
+      - pnpm prettier --check packages/shared
+
   shared:tsc:
     desc: Type check shared package
     dir: packages/shared
@@ -133,12 +154,23 @@ tasks:
       - pnpm lint {{.CLI_ARGS}}
 
   shared:check:
-    desc: Run all checks for shared package (tsc, lint)
+    desc: Run all checks for shared package (tsc, lint, format)
     cmds:
       - task: shared:tsc
       - task: shared:lint
+      - task: shared:format:check
 
   # UI package tasks
+  ui:format:
+    desc: Format UI package files with Prettier
+    cmds:
+      - pnpm prettier --write packages/ui
+
+  ui:format:check:
+    desc: Check formatting of UI package files
+    cmds:
+      - pnpm prettier --check packages/ui
+
   ui:tsc:
     desc: Type check UI package
     dir: packages/ui
@@ -152,12 +184,23 @@ tasks:
       - pnpm lint {{.CLI_ARGS}}
 
   ui:check:
-    desc: Run all checks for UI package (tsc, lint)
+    desc: Run all checks for UI package (tsc, lint, format)
     cmds:
       - task: ui:tsc
       - task: ui:lint
+      - task: ui:format:check
 
   # Admin app tasks
+  admin:format:
+    desc: Format admin files with Prettier
+    cmds:
+      - pnpm prettier --write apps/admin
+
+  admin:format:check:
+    desc: Check formatting of admin files
+    cmds:
+      - pnpm prettier --check apps/admin
+
   admin:dev:
     desc: Start admin development server
     dir: apps/admin
@@ -189,10 +232,11 @@ tasks:
       - pnpm test {{.CLI_ARGS}}
 
   admin:check:
-    desc: Run all checks for admin (tsc, lint, test)
+    desc: Run all checks for admin (tsc, lint, format, test)
     cmds:
       - task: admin:tsc
       - task: admin:lint
+      - task: admin:format:check
       - task: admin:test
 
   admin:db:generate:
@@ -283,6 +327,16 @@ tasks:
     cmds:
       - pnpm sherif
 
+  infra:format:
+    desc: Format infra files with Prettier
+    cmds:
+      - pnpm prettier --write infra
+
+  infra:format:check:
+    desc: Check formatting of infra files
+    cmds:
+      - pnpm prettier --check infra
+
   infra:tsc:
     desc: Type check infrastructure code
     dir: infra
@@ -296,10 +350,11 @@ tasks:
       - pnpm lint {{.CLI_ARGS}}
 
   infra:check:
-    desc: Run all checks for infra (tsc, lint)
+    desc: Run all checks for infra (tsc, lint, format)
     cmds:
       - task: infra:tsc
       - task: infra:lint
+      - task: infra:format:check
 
   infra:preview:
     desc: Preview infrastructure changes
