@@ -43,7 +43,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@wortle/ui"
-import { Check, ChevronsUpDown, Upload, Trash2 } from "lucide-react"
+import { Check, ChevronsUpDown, Loader2, Upload, Trash2 } from "lucide-react"
 import dynamic from "next/dynamic"
 import { useCallback, useEffect, useId, useRef, useState } from "react"
 import { useDropzone } from "react-dropzone"
@@ -52,6 +52,7 @@ import { z } from "zod"
 
 import { type ApiPuzzle, type CreatePuzzleRequest, type EditPuzzleRequest } from "@/api/puzzleTypes"
 import { trpc } from "@/trpc/client"
+import { toPreviewBlob } from "@/utils/heicPreview"
 import { filenameToImageKey, uploadImage } from "@/utils/uploadImage"
 
 import { SortableItem } from "./SortableItem"
@@ -260,6 +261,7 @@ export const PuzzleForm = ({
   const isEditMode = mode === FormMode.EDIT
   const images = useFieldArray({ control: form.control, name: "images" })
   const [uploadError, setUploadError] = useState<string | null>(null)
+  const [uploading, setUploading] = useState(0)
   const [previewUrls, setPreviewUrls] = useState<Map<string, string>>(new Map())
   const previewUrlsRef = useRef(previewUrls)
   previewUrlsRef.current = previewUrls
@@ -279,7 +281,9 @@ export const PuzzleForm = ({
       setUploadError(null)
       for (const file of files) {
         try {
-          const blobUrl = URL.createObjectURL(file)
+          setUploading((n) => n + 1)
+          const previewBlob = await toPreviewBlob(file)
+          const blobUrl = URL.createObjectURL(previewBlob)
           const { stagingKey } = await uploadImage(file)
           setPreviewUrls((prev) => new Map(prev).set(stagingKey, blobUrl))
           images.append({
@@ -289,6 +293,8 @@ export const PuzzleForm = ({
           })
         } catch (err) {
           setUploadError(err instanceof Error ? err.message : "Upload failed")
+        } finally {
+          setUploading((n) => n - 1)
         }
       }
     },
@@ -501,7 +507,7 @@ export const PuzzleForm = ({
                 const previewUrl = getPreviewUrl(field)
                 return (
                   <SortableItem key={field.id} id={field.id} showHandle={images.fields.length > 1}>
-                    <div className="flex gap-2">
+                    <div className="flex items-center gap-2">
                       {previewUrl && (
                         <img
                           src={previewUrl}
@@ -550,17 +556,26 @@ export const PuzzleForm = ({
             <p className="text-destructive text-sm">{form.formState.errors.images.message}</p>
           )}
           {uploadError && <p className="text-destructive text-sm">{uploadError}</p>}
-          <div
-            {...getRootProps()}
-            onPaste={handlePaste}
-            className={`flex cursor-pointer flex-col items-center gap-1 rounded-md border-2 border-dashed p-4 text-center text-sm transition-colors ${isDragActive ? "border-primary bg-primary/5" : "border-muted-foreground/25 hover:border-muted-foreground/50"}`}
-          >
-            <input {...getInputProps()} />
-            <Upload className="text-muted-foreground h-5 w-5" />
-            <span className="text-muted-foreground">
-              {isDragActive ? "Drop images here" : "Drop, click, or paste images (JPEG/HEIC)"}
-            </span>
-          </div>
+          {uploading > 0 ? (
+            <div className="border-muted-foreground/25 flex flex-col items-center gap-1 rounded-md border-2 border-dashed p-4 text-center text-sm">
+              <Loader2 className="text-muted-foreground h-5 w-5 animate-spin" />
+              <span className="text-muted-foreground">
+                Uploading {uploading === 1 ? "image" : `${uploading} images`}…
+              </span>
+            </div>
+          ) : (
+            <div
+              {...getRootProps()}
+              onPaste={handlePaste}
+              className={`flex cursor-pointer flex-col items-center gap-1 rounded-md border-2 border-dashed p-4 text-center text-sm transition-colors ${isDragActive ? "border-primary bg-primary/5" : "border-muted-foreground/25 hover:border-muted-foreground/50"}`}
+            >
+              <input {...getInputProps()} />
+              <Upload className="text-muted-foreground h-5 w-5" />
+              <span className="text-muted-foreground">
+                {isDragActive ? "Drop images here" : "Drop, click, or paste images (JPEG/HEIC)"}
+              </span>
+            </div>
+          )}
         </div>
       </div>
 

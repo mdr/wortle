@@ -29,6 +29,7 @@
     "@wortle/ui": "workspace:*",
     "drizzle-orm": "0.45.1",
     "effect": "catalog:",
+    "heic2any": "0.0.4",
     "leaflet": "1.9.4",
     "lucide-react": "catalog:",
     "next": "16.1.6",
