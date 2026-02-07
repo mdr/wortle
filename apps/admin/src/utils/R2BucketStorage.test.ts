@@ -3,18 +3,14 @@ import { withMockServer } from "@wortle/shared/src/withMockServer.testUtils"
 import * as mockttp from "mockttp"
 import { describe, expect, it } from "vitest"
 
+import { HttpStatus } from "./httpStatus"
 import { MediaType, R2BucketStorage } from "./R2BucketStorage"
+import { JPEG_HEADER } from "./testConstants.testUtils"
 
 const TEST_ACCOUNT_ID = CloudflareAccountId("test-account-id")
 const TEST_API_TOKEN = CloudflareApiToken("test-api-token")
 const TEST_BUCKET = BucketName("my-bucket")
 const TEST_JSON_KEY = ObjectKey("my-key.json")
-const JPEG_HEADER = new Uint8Array([0xff, 0xd8, 0xff, 0xe0]).buffer
-
-const HTTP_OK = 200
-const HTTP_FORBIDDEN = 403
-const HTTP_NOT_FOUND = 404
-const HTTP_INTERNAL_SERVER_ERROR = 500
 
 const withBucketStorage = async (
   callback: (storage: R2BucketStorage, server: mockttp.Mockttp) => Promise<void>,
@@ -34,7 +30,7 @@ describe("R2BucketStorage", () => {
   describe("uploadJson", () => {
     it("stringifies body and sets content type to application/json", () =>
       withBucketStorage(async (storage, server) => {
-        const endpoint = await server.forPut(objectPath(TEST_JSON_KEY)).thenReply(HTTP_OK, "")
+        const endpoint = await server.forPut(objectPath(TEST_JSON_KEY)).thenReply(HttpStatus.OK, "")
 
         await storage.uploadJson({
           bucket: TEST_BUCKET,
@@ -50,7 +46,7 @@ describe("R2BucketStorage", () => {
 
     it("throws on HTTP error", () =>
       withBucketStorage(async (storage, server) => {
-        await server.forPut(objectPath(TEST_JSON_KEY)).thenReply(HTTP_FORBIDDEN, "Forbidden")
+        await server.forPut(objectPath(TEST_JSON_KEY)).thenReply(HttpStatus.FORBIDDEN, "Forbidden")
 
         await expect(
           storage.uploadJson({
@@ -65,7 +61,7 @@ describe("R2BucketStorage", () => {
   describe("uploadBinary", () => {
     it("uploads binary data with specified content type", () =>
       withBucketStorage(async (storage, server) => {
-        const endpoint = await server.forPut(objectPath("photo.jpg")).thenReply(HTTP_OK, "")
+        const endpoint = await server.forPut(objectPath("photo.jpg")).thenReply(HttpStatus.OK, "")
 
         await storage.uploadBinary({
           bucket: TEST_BUCKET,
@@ -81,7 +77,9 @@ describe("R2BucketStorage", () => {
 
     it("throws on HTTP error", () =>
       withBucketStorage(async (storage, server) => {
-        await server.forPut(objectPath("photo.jpg")).thenReply(HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error")
+        await server
+          .forPut(objectPath("photo.jpg"))
+          .thenReply(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error")
 
         await expect(
           storage.uploadBinary({
@@ -97,7 +95,7 @@ describe("R2BucketStorage", () => {
   describe("deleteObject", () => {
     it("sends DELETE request with auth header", () =>
       withBucketStorage(async (storage, server) => {
-        const endpoint = await server.forDelete(objectPath("old-file.jpg")).thenReply(HTTP_OK, "")
+        const endpoint = await server.forDelete(objectPath("old-file.jpg")).thenReply(HttpStatus.OK, "")
 
         await storage.deleteObject(TEST_BUCKET, ObjectKey("old-file.jpg"))
 
@@ -107,7 +105,7 @@ describe("R2BucketStorage", () => {
 
     it("throws on HTTP error", () =>
       withBucketStorage(async (storage, server) => {
-        await server.forDelete(objectPath("old-file.jpg")).thenReply(HTTP_NOT_FOUND, "Not Found")
+        await server.forDelete(objectPath("old-file.jpg")).thenReply(HttpStatus.NOT_FOUND, "Not Found")
 
         await expect(storage.deleteObject(TEST_BUCKET, ObjectKey("old-file.jpg"))).rejects.toThrow(
           "R2 delete failed: 404 Not Found",
@@ -121,7 +119,7 @@ describe("R2BucketStorage", () => {
         await server
           .forGet(`/accounts/${TEST_ACCOUNT_ID}/r2/buckets/${TEST_BUCKET}/objects`)
           .withQuery({ prefix: "staging/" })
-          .thenJson(HTTP_OK, {
+          .thenJson(HttpStatus.OK, {
             result: [
               { key: "staging/abc.jpg", uploaded: "2025-01-15T10:00:00Z" },
               { key: "staging/def.jpg", uploaded: "2025-01-15T11:00:00Z" },
@@ -141,7 +139,7 @@ describe("R2BucketStorage", () => {
         await server
           .forGet(`/accounts/${TEST_ACCOUNT_ID}/r2/buckets/${TEST_BUCKET}/objects`)
           .withQuery({ prefix: "staging/" })
-          .thenReply(HTTP_FORBIDDEN, "Forbidden")
+          .thenReply(HttpStatus.FORBIDDEN, "Forbidden")
 
         await expect(storage.listObjects(TEST_BUCKET, "staging/")).rejects.toThrow("R2 list failed: 403 Forbidden")
       }))
@@ -150,7 +148,7 @@ describe("R2BucketStorage", () => {
   describe("getObject", () => {
     it("returns response body as ArrayBuffer", () =>
       withBucketStorage(async (storage, server) => {
-        await server.forGet(objectPath("photo.jpg")).thenReply(HTTP_OK, Buffer.from(JPEG_HEADER))
+        await server.forGet(objectPath("photo.jpg")).thenReply(HttpStatus.OK, Buffer.from(JPEG_HEADER))
 
         const result = await storage.getObject(TEST_BUCKET, ObjectKey("photo.jpg"))
 
@@ -159,7 +157,7 @@ describe("R2BucketStorage", () => {
 
     it("throws on HTTP error", () =>
       withBucketStorage(async (storage, server) => {
-        await server.forGet(objectPath("photo.jpg")).thenReply(HTTP_NOT_FOUND, "Not Found")
+        await server.forGet(objectPath("photo.jpg")).thenReply(HttpStatus.NOT_FOUND, "Not Found")
 
         await expect(storage.getObject(TEST_BUCKET, ObjectKey("photo.jpg"))).rejects.toThrow(
           "R2 get failed: 404 Not Found",

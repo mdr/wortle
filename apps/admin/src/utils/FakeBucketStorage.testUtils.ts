@@ -1,27 +1,33 @@
 import { BucketName, ObjectKey } from "@wortle/shared"
 
+import { Clock, realClock } from "./clock"
 import { IBucketStorage, MediaType, R2Object, UploadBinaryParams, UploadJsonParams } from "./R2BucketStorage"
 
-interface StoredObject {
+export interface StoredObject {
   body: string | ArrayBuffer
   contentType: MediaType
   uploaded: Date
 }
 
 export class FakeBucketStorage implements IBucketStorage {
+  private readonly clock: Clock
   readonly objects = new Map<`${BucketName}/${ObjectKey}`, StoredObject>()
+
+  constructor(clock: Clock = realClock) {
+    this.clock = clock
+  }
 
   uploadJson = ({ bucket, key, body }: UploadJsonParams): Promise<void> => {
     this.objects.set(`${bucket}/${key}`, {
       body: JSON.stringify(body),
       contentType: MediaType.APPLICATION_JSON,
-      uploaded: new Date(),
+      uploaded: this.clock.now(),
     })
     return Promise.resolve()
   }
 
   uploadBinary = ({ bucket, key, body, contentType }: UploadBinaryParams): Promise<void> => {
-    this.objects.set(`${bucket}/${key}`, { body, contentType, uploaded: new Date() })
+    this.objects.set(`${bucket}/${key}`, { body, contentType, uploaded: this.clock.now() })
     return Promise.resolve()
   }
 
@@ -35,7 +41,7 @@ export class FakeBucketStorage implements IBucketStorage {
     if (src === undefined) {
       return Promise.reject(new Error(`Object not found: ${srcBucket}/${srcKey}`))
     }
-    this.objects.set(`${destBucket}/${destKey}`, { ...src, uploaded: new Date() })
+    this.objects.set(`${destBucket}/${destKey}`, { ...src, uploaded: this.clock.now() })
     return Promise.resolve()
   }
 
@@ -54,6 +60,14 @@ export class FakeBucketStorage implements IBucketStorage {
       }
     }
     return Promise.resolve(results)
+  }
+
+  getStoredObject = (bucket: BucketName, key: ObjectKey): StoredObject => {
+    const obj = this.objects.get(`${bucket}/${key}`)
+    if (obj === undefined) {
+      throw new Error(`Object not found: ${bucket}/${key}`)
+    }
+    return obj
   }
 
   getObject = (bucket: BucketName, key: ObjectKey): Promise<ArrayBuffer> => {
