@@ -9,14 +9,12 @@ import { trpc } from "@/trpc/client"
 export default function PublishPage() {
   const [publishDialogOpen, setPublishDialogOpen] = useState(false)
   const { data: species } = trpc.species.list.useQuery()
+  const { data: puzzles } = trpc.puzzles.list.useQuery()
 
   const publishMutation = trpc.publish.all.useMutation({
     onSuccess: () => {
       setPublishDialogOpen(false)
       toast.success("Published successfully")
-    },
-    onError: () => {
-      toast.error("Publish failed. Please try again.")
     },
   })
 
@@ -30,13 +28,13 @@ export default function PublishPage() {
       <Card>
         <CardHeader>
           <CardTitle>Publish</CardTitle>
-          <CardDescription>Deploy species data to production</CardDescription>
+          <CardDescription>Deploy game data to production</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
             <p className="text-muted-foreground text-sm">
-              This will upload {species?.length ?? 0} species to the live data bucket. The changes will be visible to
-              all users.
+              This will upload {species?.length ?? 0} species and {puzzles?.length ?? 0} puzzles to the live data
+              bucket. The changes will be visible to all users.
             </p>
             <Button onClick={openPublishDialog}>Publish to Production</Button>
           </div>
@@ -45,6 +43,7 @@ export default function PublishPage() {
 
       <ConfirmPublishDialog
         speciesCount={species?.length ?? 0}
+        puzzleCount={puzzles?.length ?? 0}
         open={publishDialogOpen}
         onOpenChange={setPublishDialogOpen}
         onConfirm={() => publishMutation.mutate()}

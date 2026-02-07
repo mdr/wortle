@@ -72,6 +72,34 @@ new vercel.ProjectEnvironmentVariable("admin-data-bucket-name-preview", {
   targets: ["preview"],
 })
 
+new vercel.ProjectEnvironmentVariable("admin-originals-bucket-name-prod", {
+  projectId: adminProject.id,
+  key: "ORIGINALS_BUCKET_NAME",
+  value: "wortle-originals",
+  targets: ["production"],
+})
+
+new vercel.ProjectEnvironmentVariable("admin-originals-bucket-name-preview", {
+  projectId: adminProject.id,
+  key: "ORIGINALS_BUCKET_NAME",
+  value: "wortle-originals-dev",
+  targets: ["preview"],
+})
+
+new vercel.ProjectEnvironmentVariable("admin-images-bucket-name-prod", {
+  projectId: adminProject.id,
+  key: "IMAGES_BUCKET_NAME",
+  value: "wortle-images",
+  targets: ["production"],
+})
+
+new vercel.ProjectEnvironmentVariable("admin-images-bucket-name-preview", {
+  projectId: adminProject.id,
+  key: "IMAGES_BUCKET_NAME",
+  value: "wortle-images-dev",
+  targets: ["preview"],
+})
+
 // Kinde auth environment variables for admin
 const kindeClientSecret = config.requireSecret("kinde-client-secret")
 

@@ -24,7 +24,7 @@ describe("originals route", () => {
       body: JPEG_HEADER,
       contentType: MediaType.IMAGE_JPEG,
     })
-    const handler = createOriginalsHandler(storage)
+    const handler = createOriginalsHandler(storage, ORIGINALS_BUCKET)
     const { request, params } = originalsRequest("40", "whole-plant.jpg")
 
     const response = await handler(request, { params })
@@ -44,7 +44,7 @@ describe("originals route", () => {
       body: new Uint8Array(pngData).buffer,
       contentType: MediaType.IMAGE_HEIC,
     })
-    const handler = createOriginalsHandler(storage)
+    const handler = createOriginalsHandler(storage, ORIGINALS_BUCKET)
     const { request, params } = originalsRequest("40", "close-up.heic")
 
     const response = await handler(request, { params })
@@ -58,7 +58,7 @@ describe("originals route", () => {
 
   it("returns 400 for unsupported extension", async () => {
     const storage = new FakeBucketStorage()
-    const handler = createOriginalsHandler(storage)
+    const handler = createOriginalsHandler(storage, ORIGINALS_BUCKET)
     const { request, params } = originalsRequest("40", "whole-plant.png")
 
     const response = await handler(request, { params })
@@ -69,7 +69,7 @@ describe("originals route", () => {
 
   it("returns 404 when image does not exist", async () => {
     const storage = new FakeBucketStorage()
-    const handler = createOriginalsHandler(storage)
+    const handler = createOriginalsHandler(storage, ORIGINALS_BUCKET)
     const { request, params } = originalsRequest("99", "missing.jpg")
 
     const response = await handler(request, { params })

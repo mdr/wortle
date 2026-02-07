@@ -1,5 +1,10 @@
+import { BucketName } from "./brandedTypes"
 import { PuzzleId } from "./puzzle"
 import { SpeciesId } from "./species"
+
+export const SPECIES_DATA_BUCKET = BucketName("wortle-data")
+export const ORIGINALS_BUCKET = BucketName("wortle-originals")
+export const IMAGES_BUCKET = BucketName("wortle-images")
 
 export const TestSpeciesIds = {
   alexanders: SpeciesId("2cd4p9h.21r"),

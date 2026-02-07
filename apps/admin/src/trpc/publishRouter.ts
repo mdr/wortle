@@ -21,6 +21,8 @@ interface PublishRouterDeps {
   puzzleRepository: IPuzzleRepository
   bucketStorage: IBucketStorage
   dataBucketName: BucketName
+  originalsBucketName: BucketName
+  imagesBucketName: BucketName
 }
 
 export const createPublishRouter = ({
@@ -28,6 +30,8 @@ export const createPublishRouter = ({
   puzzleRepository,
   bucketStorage,
   dataBucketName,
+  originalsBucketName,
+  imagesBucketName,
 }: PublishRouterDeps) =>
   router({
     all: protectedProcedure.mutation(async () => {
@@ -35,7 +39,7 @@ export const createPublishRouter = ({
       const allPuzzles = puzzlesWithStatus.map((p) => p.puzzle)
       const dirtyPuzzles = puzzlesWithStatus.filter((p) => !p.imagesSynced).map((p) => p.puzzle)
 
-      await syncDirtyImages({ dirtyPuzzles, bucketStorage })
+      await syncDirtyImages({ dirtyPuzzles, bucketStorage, originalsBucketName, imagesBucketName })
       await puzzleRepository.markImagesSynced(dirtyPuzzles.map((p) => p.id))
 
       const puzzlesData = dbPuzzlesToPuzzlesData(allPuzzles)
@@ -63,7 +67,7 @@ export const createPublishRouter = ({
         bucket: dataBucketName,
       })
 
-      await cleanupOrphanImages({ allPuzzles, bucketStorage })
+      await cleanupOrphanImages({ allPuzzles, bucketStorage, imagesBucketName })
 
       serverLogger.info("publish.all", `Published all data`, {
         speciesCount: validatedSpecies.species.length,

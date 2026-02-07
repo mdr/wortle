@@ -18,7 +18,7 @@ const uploadRequest = (file: File) => {
 describe("upload route", () => {
   it("uploads JPEG to staging and returns staging key", async () => {
     const storage = new FakeBucketStorage(fixedClock)
-    const handler = createUploadHandler(storage)
+    const handler = createUploadHandler(storage, ORIGINALS_BUCKET)
 
     const response = await handler(uploadRequest(new File([JPEG_HEADER], "photo.jpg", { type: MediaType.IMAGE_JPEG })))
 
@@ -35,7 +35,7 @@ describe("upload route", () => {
 
   it("uploads HEIC to staging", async () => {
     const storage = new FakeBucketStorage()
-    const handler = createUploadHandler(storage)
+    const handler = createUploadHandler(storage, ORIGINALS_BUCKET)
 
     const response = await handler(uploadRequest(new File([JPEG_HEADER], "photo.heic", { type: MediaType.IMAGE_HEIC })))
 
@@ -48,7 +48,7 @@ describe("upload route", () => {
 
   it("rejects unsupported file types", async () => {
     const storage = new FakeBucketStorage()
-    const handler = createUploadHandler(storage)
+    const handler = createUploadHandler(storage, ORIGINALS_BUCKET)
 
     const response = await handler(uploadRequest(new File(["data"], "doc.pdf", { type: "application/pdf" })))
 
@@ -61,7 +61,7 @@ describe("upload route", () => {
 
   it("rejects request with no file", async () => {
     const storage = new FakeBucketStorage()
-    const handler = createUploadHandler(storage)
+    const handler = createUploadHandler(storage, ORIGINALS_BUCKET)
 
     const formData = new FormData()
     const response = await handler(new Request("http://localhost/api/upload", { method: "POST", body: formData }))

@@ -1,4 +1,4 @@
-import { MediaType, ObjectKey, ORIGINALS_BUCKET } from "@wortle/shared"
+import { BucketName, MediaType, ObjectKey } from "@wortle/shared"
 import { NextResponse } from "next/server"
 import sharp from "sharp"
 
@@ -21,7 +21,7 @@ const convertToJpeg = async (data: ArrayBuffer): Promise<ArrayBuffer> => {
 }
 
 export const createOriginalsHandler =
-  (storage: IBucketStorage) =>
+  (storage: IBucketStorage, originalsBucketName: BucketName) =>
   async (_request: Request, { params }: { params: Promise<Params> }) => {
     const { puzzleId, imageKey } = await params
     const ext = imageKey.match(/\.[^.]+$/)?.[0]
@@ -35,7 +35,7 @@ export const createOriginalsHandler =
     const key = ObjectKey(`${puzzleId}/${imageKey}`)
 
     try {
-      const data = await storage.getObject(ORIGINALS_BUCKET, key)
+      const data = await storage.getObject(originalsBucketName, key)
       const body = mediaType === MediaType.IMAGE_HEIC ? await convertToJpeg(data) : data
       const contentType = imageMediaTypeContentType(mediaType)
       return new NextResponse(body, {

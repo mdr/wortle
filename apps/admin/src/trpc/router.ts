@@ -1,7 +1,5 @@
-import { SPECIES_DATA_BUCKET } from "@wortle/shared"
-
 import { puzzleRepository, speciesRepository } from "@/db"
-import { env } from "@/env"
+import { dataBucketName, imagesBucketName, originalsBucketName } from "@/utils/bucketNames"
 import { bucketStorage } from "@/utils/bucketStorage"
 
 import { router } from "./init"
@@ -9,12 +7,17 @@ import { createPublishRouter } from "./publishRouter"
 import { createPuzzleRouter } from "./puzzleRouter"
 import { createSpeciesRouter } from "./speciesRouter"
 
-const dataBucketName = env.DATA_BUCKET_NAME ?? SPECIES_DATA_BUCKET
-
 export const appRouter = router({
   species: createSpeciesRouter(speciesRepository, puzzleRepository),
-  puzzles: createPuzzleRouter({ puzzleRepository, speciesRepository, bucketStorage }),
-  publish: createPublishRouter({ speciesRepository, puzzleRepository, bucketStorage, dataBucketName }),
+  puzzles: createPuzzleRouter({ puzzleRepository, speciesRepository, bucketStorage, originalsBucketName }),
+  publish: createPublishRouter({
+    speciesRepository,
+    puzzleRepository,
+    bucketStorage,
+    dataBucketName,
+    originalsBucketName,
+    imagesBucketName,
+  }),
 })
 
 export type AppRouter = typeof appRouter

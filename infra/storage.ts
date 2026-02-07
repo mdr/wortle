@@ -38,6 +38,18 @@ new cloudflare.R2CustomDomain("data-domain", {
   enabled: true,
 })
 
+// R2 bucket for private originals - dev/preview (S3 API access only)
+new cloudflare.R2Bucket("originals-dev", {
+  accountId,
+  name: "wortle-originals-dev",
+})
+
+// R2 bucket for images - dev/preview (S3 API access only)
+new cloudflare.R2Bucket("images-dev", {
+  accountId,
+  name: "wortle-images-dev",
+})
+
 // R2 bucket for public data - dev/preview
 const dataDevBucket = new cloudflare.R2Bucket("data-dev", {
   accountId,

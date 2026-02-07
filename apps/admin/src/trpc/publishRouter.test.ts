@@ -3,6 +3,7 @@ import {
   IMAGES_BUCKET,
   MediaType,
   ObjectKey,
+  ORIGINALS_BUCKET,
   PUZZLES_DATA_KEY,
   ScientificName,
   SPECIES_DATA_BUCKET,
@@ -33,6 +34,8 @@ const createTestCaller = (
     puzzleRepository,
     bucketStorage,
     dataBucketName: SPECIES_DATA_BUCKET,
+    originalsBucketName: ORIGINALS_BUCKET,
+    imagesBucketName: IMAGES_BUCKET,
   })
   const testRouter = router({ publish: publishRouter })
   return testRouter.createCaller(testContext)

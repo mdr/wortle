@@ -23,7 +23,12 @@ const createTestCaller = (
   speciesRepository = new FakeSpeciesRepository(),
   bucketStorage = new FakeBucketStorage(),
 ) => {
-  const puzzleRouter = createPuzzleRouter({ puzzleRepository, speciesRepository, bucketStorage })
+  const puzzleRouter = createPuzzleRouter({
+    puzzleRepository,
+    speciesRepository,
+    bucketStorage,
+    originalsBucketName: ORIGINALS_BUCKET,
+  })
   const testRouter = router({ puzzles: puzzleRouter })
   return testRouter.createCaller(testContext)
 }

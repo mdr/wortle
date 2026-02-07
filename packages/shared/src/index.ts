@@ -13,14 +13,9 @@ export {
   urlSchema,
 } from "./brandedTypes"
 
-export {
-  IMAGES_BUCKET,
-  ORIGINALS_BUCKET,
-  PUZZLES_DATA_KEY,
-  SPECIES_DATA_BUCKET,
-  SPECIES_DATA_KEY,
-  STAGING_PREFIX,
-} from "./bucketConstants"
+export { PUZZLES_DATA_KEY, SPECIES_DATA_KEY, STAGING_PREFIX } from "./bucketConstants"
+
+export { IMAGES_BUCKET, ORIGINALS_BUCKET, SPECIES_DATA_BUCKET } from "./testConstants.testUtils"
 
 export {
   CommonName,

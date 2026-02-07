@@ -1,4 +1,4 @@
-import { IMAGES_BUCKET, MediaType, ObjectKey, ORIGINALS_BUCKET } from "@wortle/shared"
+import { BucketName, MediaType, ObjectKey } from "@wortle/shared"
 
 import type { DbPuzzle } from "@/db/puzzleTypes"
 import { imageMediaTypeExtension } from "@/utils/imageMediaType"
@@ -14,20 +14,27 @@ const webpKey = (puzzleId: number, imageKey: string, width: number): ObjectKey =
 interface SyncDirtyImagesParams {
   dirtyPuzzles: DbPuzzle[]
   bucketStorage: IBucketStorage
+  originalsBucketName: BucketName
+  imagesBucketName: BucketName
 }
 
-export const syncDirtyImages = async ({ dirtyPuzzles, bucketStorage }: SyncDirtyImagesParams): Promise<void> => {
+export const syncDirtyImages = async ({
+  dirtyPuzzles,
+  bucketStorage,
+  originalsBucketName,
+  imagesBucketName,
+}: SyncDirtyImagesParams): Promise<void> => {
   for (const puzzle of dirtyPuzzles) {
     for (const image of puzzle.images) {
       const ext = imageMediaTypeExtension(image.mediaType)
       const originalKey = ObjectKey(`${puzzle.id}/${image.imageKey}${ext}`)
-      const sourceBuffer = await bucketStorage.getObject(ORIGINALS_BUCKET, originalKey)
+      const sourceBuffer = await bucketStorage.getObject(originalsBucketName, originalKey)
 
       for (const width of IMAGE_WIDTHS) {
         const webp = await processImage(sourceBuffer, width)
         const key = webpKey(puzzle.id, image.imageKey, width)
         await bucketStorage.uploadBinary({
-          bucket: IMAGES_BUCKET,
+          bucket: imagesBucketName,
           key,
           body: webp,
           contentType: MediaType.IMAGE_WEBP,
@@ -46,9 +53,14 @@ export const syncDirtyImages = async ({ dirtyPuzzles, bucketStorage }: SyncDirty
 interface CleanupOrphanImagesParams {
   allPuzzles: DbPuzzle[]
   bucketStorage: IBucketStorage
+  imagesBucketName: BucketName
 }
 
-export const cleanupOrphanImages = async ({ allPuzzles, bucketStorage }: CleanupOrphanImagesParams): Promise<void> => {
+export const cleanupOrphanImages = async ({
+  allPuzzles,
+  bucketStorage,
+  imagesBucketName,
+}: CleanupOrphanImagesParams): Promise<void> => {
   const expectedKeys = new Set<string>()
   for (const puzzle of allPuzzles) {
     for (const image of puzzle.images) {
@@ -58,11 +70,11 @@ export const cleanupOrphanImages = async ({ allPuzzles, bucketStorage }: Cleanup
     }
   }
 
-  const existingObjects = await bucketStorage.listObjects(IMAGES_BUCKET, PUZZLES_PREFIX)
+  const existingObjects = await bucketStorage.listObjects(imagesBucketName, PUZZLES_PREFIX)
   const orphanKeys = existingObjects.filter((obj) => !expectedKeys.has(obj.key)).map((obj) => obj.key)
 
   for (const key of orphanKeys) {
-    await bucketStorage.deleteObject(IMAGES_BUCKET, key)
+    await bucketStorage.deleteObject(imagesBucketName, key)
     serverLogger.info("publishImages.cleanup", `Deleted orphan ${key}`, { key })
   }
 }

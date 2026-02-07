@@ -7,7 +7,9 @@ export const env = createEnv({
     DATABASE_URL: z.url(),
     CLOUDFLARE_ACCOUNT_ID: cloudflareAccountIdSchema.optional(),
     CLOUDFLARE_API_TOKEN: cloudflareApiTokenSchema.optional(),
-    DATA_BUCKET_NAME: bucketNameSchema.optional(),
+    DATA_BUCKET_NAME: bucketNameSchema,
+    ORIGINALS_BUCKET_NAME: bucketNameSchema,
+    IMAGES_BUCKET_NAME: bucketNameSchema,
   },
   experimental__runtimeEnv: process.env,
 })

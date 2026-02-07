@@ -263,7 +263,7 @@ tasks:
     cmds:
       - pnpm drizzle-kit migrate
 
-  admin:db:seed:dev:
+  admin:db:seed-species:dev:
     desc: Seed species data to dev database from data.wortle.app
     dir: apps/admin
     env:
@@ -272,7 +272,7 @@ tasks:
     cmds:
       - pnpm exec tsx scripts/seed-species.ts {{.CLI_ARGS}}
 
-  admin:db:seed:prod:
+  admin:db:seed-species:prod:
     desc: Seed species data to prod database from data.wortle.app
     dir: apps/admin
     env:
@@ -280,6 +280,47 @@ tasks:
         sh: cd ../../infra && pulumi stack output prodDatabaseUrl --show-secrets --stack prod
     cmds:
       - pnpm exec tsx scripts/seed-species.ts {{.CLI_ARGS}}
+
+  admin:copy-originals:
+    desc: Copy originals from prod to dev R2 bucket
+    dir: apps/admin
+    env:
+      CLOUDFLARE_ACCOUNT_ID:
+        sh: cd ../../infra && pulumi config get wortle-infra:cloudflareAccountId --stack prod
+      CLOUDFLARE_API_TOKEN:
+        sh: cd ../../infra && pulumi config get wortle-infra:admin-r2-api-token --stack prod
+      SRC_BUCKET: wortle-originals
+      DEST_BUCKET: wortle-originals-dev
+    cmds:
+      - pnpm exec tsx scripts/copy-originals.ts
+
+  admin:db:seed-puzzles:dev:
+    desc: Seed puzzle data to dev database from data.wortle.app (verifies originals in R2)
+    dir: apps/admin
+    env:
+      DATABASE_URL:
+        sh: cd ../../infra && pulumi stack output devDatabaseUrl --show-secrets --stack prod
+      CLOUDFLARE_ACCOUNT_ID:
+        sh: cd ../../infra && pulumi config get wortle-infra:cloudflareAccountId --stack prod
+      CLOUDFLARE_API_TOKEN:
+        sh: cd ../../infra && pulumi config get wortle-infra:admin-r2-api-token --stack prod
+      ORIGINALS_BUCKET_NAME: wortle-originals-dev
+    cmds:
+      - pnpm exec tsx scripts/seed-puzzles.ts {{.CLI_ARGS}}
+
+  admin:db:seed-puzzles:prod:
+    desc: Seed puzzle data to prod database from data.wortle.app (verifies originals in R2)
+    dir: apps/admin
+    env:
+      DATABASE_URL:
+        sh: cd ../../infra && pulumi stack output prodDatabaseUrl --show-secrets --stack prod
+      CLOUDFLARE_ACCOUNT_ID:
+        sh: cd ../../infra && pulumi config get wortle-infra:cloudflareAccountId --stack prod
+      CLOUDFLARE_API_TOKEN:
+        sh: cd ../../infra && pulumi config get wortle-infra:admin-r2-api-token --stack prod
+      ORIGINALS_BUCKET_NAME: wortle-originals
+    cmds:
+      - pnpm exec tsx scripts/seed-puzzles.ts {{.CLI_ARGS}}
 
   # Shared tasks
   format:

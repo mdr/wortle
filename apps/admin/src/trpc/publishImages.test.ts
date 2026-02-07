@@ -1,4 +1,4 @@
-import { IMAGES_BUCKET, ImageKey, MediaType, ObjectKey } from "@wortle/shared"
+import { IMAGES_BUCKET, ImageKey, MediaType, ObjectKey, ORIGINALS_BUCKET } from "@wortle/shared"
 import sharp from "sharp"
 import { describe, expect, it } from "vitest"
 
@@ -15,7 +15,12 @@ describe("syncDirtyImages", () => {
     const puzzle = makeDbPuzzle()
     await storage.seedOriginalJpeg(puzzle.id, puzzle.images[0].imageKey)
 
-    await syncDirtyImages({ dirtyPuzzles: [puzzle], bucketStorage: storage })
+    await syncDirtyImages({
+      dirtyPuzzles: [puzzle],
+      bucketStorage: storage,
+      originalsBucketName: ORIGINALS_BUCKET,
+      imagesBucketName: IMAGES_BUCKET,
+    })
 
     for (const width of IMAGE_WIDTHS) {
       const key = ObjectKey(`puzzles/${puzzle.id}/whole-plant-${width}.webp`)
@@ -38,7 +43,12 @@ describe("syncDirtyImages", () => {
     await storage.seedOriginalJpeg(puzzle.id, ImageKey("whole-plant"))
     await storage.seedOriginalJpeg(puzzle.id, ImageKey("close-up"))
 
-    await syncDirtyImages({ dirtyPuzzles: [puzzle], bucketStorage: storage })
+    await syncDirtyImages({
+      dirtyPuzzles: [puzzle],
+      bucketStorage: storage,
+      originalsBucketName: ORIGINALS_BUCKET,
+      imagesBucketName: IMAGES_BUCKET,
+    })
 
     const imagesObjects = await storage.listObjects(IMAGES_BUCKET, "puzzles/")
     expect(imagesObjects).toHaveLength(IMAGE_WIDTHS.length * 2)
@@ -47,7 +57,12 @@ describe("syncDirtyImages", () => {
   it("skips processing when no dirty puzzles", async () => {
     const storage = new FakeBucketStorage()
 
-    await syncDirtyImages({ dirtyPuzzles: [], bucketStorage: storage })
+    await syncDirtyImages({
+      dirtyPuzzles: [],
+      bucketStorage: storage,
+      originalsBucketName: ORIGINALS_BUCKET,
+      imagesBucketName: IMAGES_BUCKET,
+    })
 
     const imagesObjects = await storage.listObjects(IMAGES_BUCKET, "puzzles/")
     expect(imagesObjects).toHaveLength(0)
@@ -65,7 +80,7 @@ describe("cleanupOrphanImages", () => {
       contentType: MediaType.IMAGE_WEBP,
     })
 
-    await cleanupOrphanImages({ allPuzzles: [], bucketStorage: storage })
+    await cleanupOrphanImages({ allPuzzles: [], bucketStorage: storage, imagesBucketName: IMAGES_BUCKET })
 
     const remaining = await storage.listObjects(IMAGES_BUCKET, "puzzles/")
     expect(remaining).toHaveLength(0)
@@ -83,7 +98,7 @@ describe("cleanupOrphanImages", () => {
       })
     }
 
-    await cleanupOrphanImages({ allPuzzles: [puzzle], bucketStorage: storage })
+    await cleanupOrphanImages({ allPuzzles: [puzzle], bucketStorage: storage, imagesBucketName: IMAGES_BUCKET })
 
     const remaining = await storage.listObjects(IMAGES_BUCKET, "puzzles/")
     expect(remaining).toHaveLength(IMAGE_WIDTHS.length)
@@ -107,7 +122,7 @@ describe("cleanupOrphanImages", () => {
       contentType: MediaType.IMAGE_WEBP,
     })
 
-    await cleanupOrphanImages({ allPuzzles: [puzzle], bucketStorage: storage })
+    await cleanupOrphanImages({ allPuzzles: [puzzle], bucketStorage: storage, imagesBucketName: IMAGES_BUCKET })
 
     const remaining = await storage.listObjects(IMAGES_BUCKET, "puzzles/")
     expect(remaining).toHaveLength(1)
