@@ -58,6 +58,8 @@ export {
 
 export type { Coordinates, Location, PhotoAttribution, Puzzle, PuzzleImage, PuzzlesData } from "./puzzle"
 
+export { ImageMediaType, imageMediaTypeExtension } from "./imageMediaType"
+
 export { getOnlyElement } from "./getOnlyElement.testUtils"
 
 export { TestPuzzleIds, TestSpeciesIds } from "./testConstants.testUtils"

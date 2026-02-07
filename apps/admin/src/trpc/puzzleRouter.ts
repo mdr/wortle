@@ -1,4 +1,11 @@
-import { puzzleIdSchema, SpeciesId } from "@wortle/shared"
+import {
+  imageMediaTypeExtension,
+  ObjectKey,
+  ORIGINALS_BUCKET,
+  puzzleIdSchema,
+  PuzzleId,
+  SpeciesId,
+} from "@wortle/shared"
 import { TRPCError } from "@trpc/server"
 
 import {
@@ -6,10 +13,11 @@ import {
   dbPuzzleToApiPuzzle,
   editPuzzleRequestToDbPuzzle,
 } from "@/api/puzzleConversions"
-import { createPuzzleRequestSchema, editPuzzleRequestSchema } from "@/api/puzzleTypes"
+import { createPuzzleRequestSchema, editPuzzleRequestSchema, PuzzleRequestImage } from "@/api/puzzleTypes"
 import { CreateResult, DeleteResult, IPuzzleRepository, UpdateResult } from "@/db/PuzzleRepository"
 import { ISpeciesRepository } from "@/db/SpeciesRepository"
 import { serverLogger } from "@/utils/logger"
+import { IBucketStorage } from "@/utils/R2BucketStorage"
 
 import { TrpcErrorCode } from "./errorCodes"
 import { protectedProcedure, router } from "./init"
@@ -17,6 +25,40 @@ import { protectedProcedure, router } from "./init"
 type PuzzleRouterDeps = {
   puzzleRepository: IPuzzleRepository
   speciesRepository: ISpeciesRepository
+  bucketStorage: IBucketStorage
+}
+
+const validateStagedImagesExist = async (
+  bucketStorage: IBucketStorage,
+  images: PuzzleRequestImage[],
+): Promise<void> => {
+  for (const image of images) {
+    if (image.stagingKey) {
+      try {
+        await bucketStorage.getObject(ORIGINALS_BUCKET, image.stagingKey)
+      } catch {
+        throw new TRPCError({
+          code: TrpcErrorCode.UNPROCESSABLE_CONTENT,
+          message: `Staged image not found: ${image.stagingKey}`,
+        })
+      }
+    }
+  }
+}
+
+const promoteStagedImages = async (
+  bucketStorage: IBucketStorage,
+  puzzleId: PuzzleId,
+  images: PuzzleRequestImage[],
+): Promise<void> => {
+  for (const image of images) {
+    if (image.stagingKey) {
+      const ext = imageMediaTypeExtension(image.mediaType)
+      const dest = ObjectKey(`${puzzleId}/${image.imageKey}${ext}`)
+      await bucketStorage.copyObject(ORIGINALS_BUCKET, image.stagingKey, ORIGINALS_BUCKET, dest)
+      await bucketStorage.deleteObject(ORIGINALS_BUCKET, image.stagingKey)
+    }
+  }
 }
 
 const validateSpeciesExists = async (speciesRepository: ISpeciesRepository, speciesId: SpeciesId): Promise<void> => {
@@ -29,7 +71,7 @@ const validateSpeciesExists = async (speciesRepository: ISpeciesRepository, spec
   }
 }
 
-export const createPuzzleRouter = ({ puzzleRepository, speciesRepository }: PuzzleRouterDeps) =>
+export const createPuzzleRouter = ({ puzzleRepository, speciesRepository, bucketStorage }: PuzzleRouterDeps) =>
   router({
     list: protectedProcedure.query(async () => {
       const dbPuzzles = await puzzleRepository.list()
@@ -46,6 +88,7 @@ export const createPuzzleRouter = ({ puzzleRepository, speciesRepository }: Puzz
 
     create: protectedProcedure.input(createPuzzleRequestSchema).mutation(async ({ input: request }) => {
       await validateSpeciesExists(speciesRepository, request.speciesId)
+      await validateStagedImagesExist(bucketStorage, request.images)
       const dbPuzzle = createPuzzleRequestToDbPuzzle(request)
       const result = await puzzleRepository.create(dbPuzzle)
       if (result === CreateResult.ALREADY_EXISTS) {
@@ -54,17 +97,20 @@ export const createPuzzleRouter = ({ puzzleRepository, speciesRepository }: Puzz
           message: `Puzzle with ID "${request.id}" already exists`,
         })
       }
+      await promoteStagedImages(bucketStorage, request.id, request.images)
       serverLogger.info("puzzle.created", `Created puzzle ${request.id}`, { puzzleId: request.id })
       return dbPuzzleToApiPuzzle(dbPuzzle)
     }),
 
     update: protectedProcedure.input(editPuzzleRequestSchema).mutation(async ({ input: request }) => {
       await validateSpeciesExists(speciesRepository, request.speciesId)
+      await validateStagedImagesExist(bucketStorage, request.images)
       const dbPuzzle = editPuzzleRequestToDbPuzzle(request)
       const result = await puzzleRepository.update(dbPuzzle)
       if (result === UpdateResult.NOT_FOUND) {
         throw new TRPCError({ code: TrpcErrorCode.NOT_FOUND })
       }
+      await promoteStagedImages(bucketStorage, request.id, request.images)
       serverLogger.info("puzzle.updated", `Updated puzzle ${request.id}`, { puzzleId: request.id })
       return dbPuzzleToApiPuzzle(dbPuzzle)
     }),

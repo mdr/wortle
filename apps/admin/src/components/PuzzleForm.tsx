@@ -17,6 +17,8 @@ import {
   filterSpeciesByQuery,
   getLicenseDisplayName,
   ImageKey,
+  ImageMediaType,
+  imageMediaTypeExtension,
   Iso8601Date,
   License,
   ObjectKey,
@@ -78,6 +80,7 @@ const formSchema = z.object({
       z.object({
         imageKey: z.string().min(1, "Image key is required"),
         caption: z.string(),
+        mediaType: z.enum(ImageMediaType),
         stagingKey: z.string().optional(),
       }),
     )
@@ -105,6 +108,7 @@ const formDataToCreatePuzzleRequest = (data: PuzzleFormData): CreatePuzzleReques
   images: data.images.map((img) => ({
     imageKey: ImageKey(img.imageKey),
     caption: img.caption,
+    mediaType: img.mediaType,
     stagingKey: img.stagingKey ? ObjectKey(img.stagingKey) : undefined,
   })),
 })
@@ -128,6 +132,7 @@ export const apiPuzzleToFormData = (puzzle: ApiPuzzle): PuzzleFormData => ({
   images: puzzle.images.map((img) => ({
     imageKey: img.imageKey,
     caption: img.caption,
+    mediaType: img.mediaType,
   })),
 })
 
@@ -270,9 +275,14 @@ export const PuzzleForm = ({
 
   const puzzleId = form.watch("id")
 
-  const getPreviewUrl = (image: { imageKey: string; stagingKey?: string }): string | undefined => {
+  const getPreviewUrl = (image: {
+    imageKey: string
+    mediaType: ImageMediaType
+    stagingKey?: string
+  }): string | undefined => {
     if (image.stagingKey) return previewUrls.get(image.stagingKey)
-    if (isEditMode && image.imageKey) return `https://images.wortle.app/puzzles/${puzzleId}/${image.imageKey}-400.webp`
+    if (isEditMode && image.imageKey)
+      return `/api/originals/${puzzleId}/${image.imageKey}${imageMediaTypeExtension(image.mediaType)}`
     return undefined
   }
 
@@ -284,11 +294,12 @@ export const PuzzleForm = ({
           setUploading((n) => n + 1)
           const previewBlob = await toPreviewBlob(file)
           const blobUrl = URL.createObjectURL(previewBlob)
-          const { stagingKey } = await uploadImage(file)
+          const { stagingKey, mediaType } = await uploadImage(file)
           setPreviewUrls((prev) => new Map(prev).set(stagingKey, blobUrl))
           images.append({
             imageKey: filenameToImageKey(file.name),
             caption: "",
+            mediaType,
             stagingKey,
           })
         } catch (err) {

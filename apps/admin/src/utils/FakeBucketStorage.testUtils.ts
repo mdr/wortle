@@ -1,7 +1,8 @@
-import { BucketName, ObjectKey } from "@wortle/shared"
+import { BucketName, ObjectKey, ORIGINALS_BUCKET } from "@wortle/shared"
 
 import { Clock, realClock } from "./clock"
 import { IBucketStorage, MediaType, R2Object, UploadBinaryParams, UploadJsonParams } from "./R2BucketStorage"
+import { JPEG_HEADER } from "./testConstants.testUtils"
 
 export interface StoredObject {
   body: string | ArrayBuffer
@@ -80,6 +81,9 @@ export class FakeBucketStorage implements IBucketStorage {
     }
     return Promise.resolve(obj.body)
   }
+
+  seedStagingFile = (key: ObjectKey): Promise<void> =>
+    this.uploadBinary({ bucket: ORIGINALS_BUCKET, key, body: JPEG_HEADER, contentType: MediaType.IMAGE_JPEG })
 
   getJson = (bucket: BucketName, key: ObjectKey): unknown => {
     const obj = this.objects.get(`${bucket}/${key}`)

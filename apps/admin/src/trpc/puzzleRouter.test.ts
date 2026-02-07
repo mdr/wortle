@@ -1,8 +1,9 @@
-import { ImageKey, ObjectKey, SpeciesId, TestPuzzleIds, TestSpeciesIds } from "@wortle/shared"
+import { ImageKey, ObjectKey, ORIGINALS_BUCKET, SpeciesId, TestPuzzleIds, TestSpeciesIds } from "@wortle/shared"
 import { describe, expect, it } from "vitest"
 
 import { FakePuzzleRepository } from "@/db/FakePuzzleRepository.testUtils"
 import { FakeSpeciesRepository } from "@/db/FakeSpeciesRepository.testUtils"
+import { FakeBucketStorage } from "@/utils/FakeBucketStorage.testUtils"
 
 import { TrpcErrorCode } from "./errorCodes"
 import { router } from "./init"
@@ -13,14 +14,16 @@ import {
   makeDbSpecies,
   makeCreatePuzzleRequest,
   makeEditPuzzleRequest,
+  makePuzzleRequestImage,
   testContext,
 } from "./testFactories.testUtils"
 
 const createTestCaller = (
   puzzleRepository = new FakePuzzleRepository(),
   speciesRepository = new FakeSpeciesRepository(),
+  bucketStorage = new FakeBucketStorage(),
 ) => {
-  const puzzleRouter = createPuzzleRouter({ puzzleRepository, speciesRepository })
+  const puzzleRouter = createPuzzleRouter({ puzzleRepository, speciesRepository, bucketStorage })
   const testRouter = router({ puzzles: puzzleRouter })
   return testRouter.createCaller(testContext)
 }
@@ -30,6 +33,8 @@ const createSpeciesRepo = async () => {
   await repo.create(makeDbSpecies({ id: TestSpeciesIds.daisy }))
   return repo
 }
+
+const stagingKey = ObjectKey("staging/abc.jpg")
 
 describe("puzzleRouter", () => {
   describe("list", () => {
@@ -56,12 +61,13 @@ describe("puzzleRouter", () => {
   describe("get", () => {
     it("returns puzzle when it exists", async () => {
       const repo = new FakePuzzleRepository()
-      await repo.create(makeDbPuzzle({ id: TestPuzzleIds.daisy }))
+      const puzzle = makeDbPuzzle()
+      await repo.create(puzzle)
       const caller = createTestCaller(repo)
 
-      const result = await caller.puzzles.get(TestPuzzleIds.daisy)
+      const result = await caller.puzzles.get(puzzle.id)
 
-      expect(result).toEqual(makeApiPuzzle({ id: TestPuzzleIds.daisy }))
+      expect(result).toEqual(makeApiPuzzle())
     })
 
     it("throws NOT_FOUND when puzzle does not exist", async () => {
@@ -78,44 +84,75 @@ describe("puzzleRouter", () => {
       const puzzleRepo = new FakePuzzleRepository()
       const speciesRepo = await createSpeciesRepo()
       const caller = createTestCaller(puzzleRepo, speciesRepo)
-      const request = makeCreatePuzzleRequest({ id: TestPuzzleIds.daisy })
+      const request = makeCreatePuzzleRequest()
 
       const result = await caller.puzzles.create(request)
 
-      expect(result).toEqual(makeApiPuzzle({ id: TestPuzzleIds.daisy }))
-      expect(await puzzleRepo.findById(TestPuzzleIds.daisy)).toBeDefined()
+      expect(result).toEqual(makeApiPuzzle())
+      expect(await puzzleRepo.findById(request.id)).toBeDefined()
     })
 
-    it("strips stagingKey from images before storing", async () => {
+    it("promotes staged images to final location on create", async () => {
       const puzzleRepo = new FakePuzzleRepository()
       const speciesRepo = await createSpeciesRepo()
-      const caller = createTestCaller(puzzleRepo, speciesRepo)
+      const storage = new FakeBucketStorage()
+      await storage.seedStagingFile(stagingKey)
+      const caller = createTestCaller(puzzleRepo, speciesRepo, storage)
       const request = makeCreatePuzzleRequest({
-        id: TestPuzzleIds.daisy,
-        images: [
-          { imageKey: ImageKey("whole-plant"), caption: "Whole plant", stagingKey: ObjectKey("staging/abc.jpg") },
-        ],
+        images: [makePuzzleRequestImage({ stagingKey })],
       })
 
-      const result = await caller.puzzles.create(request)
+      await caller.puzzles.create(request)
 
-      expect(result.images).toEqual([{ imageKey: ImageKey("whole-plant"), caption: "Whole plant" }])
+      const finalKey = ObjectKey(`${request.id}/whole-plant.jpg`)
+      expect(storage.objects.has(`${ORIGINALS_BUCKET}/${finalKey}`)).toBe(true)
+      expect(storage.objects.has(`${ORIGINALS_BUCKET}/${stagingKey}`)).toBe(false)
+    })
+
+    it("does not promote images without stagingKey", async () => {
+      const puzzleRepo = new FakePuzzleRepository()
+      const speciesRepo = await createSpeciesRepo()
+      const storage = new FakeBucketStorage()
+      const caller = createTestCaller(puzzleRepo, speciesRepo, storage)
+      const request = makeCreatePuzzleRequest({
+        images: [makePuzzleRequestImage({ stagingKey: undefined })],
+      })
+
+      await caller.puzzles.create(request)
+
+      expect(storage.objects.size).toBe(0)
+    })
+
+    it("rejects when staged image is missing from storage", async () => {
+      const puzzleRepo = new FakePuzzleRepository()
+      const speciesRepo = await createSpeciesRepo()
+      const storage = new FakeBucketStorage()
+      const caller = createTestCaller(puzzleRepo, speciesRepo, storage)
+      const request = makeCreatePuzzleRequest({
+        images: [makePuzzleRequestImage({ stagingKey })],
+      })
+
+      await expect(caller.puzzles.create(request)).rejects.toMatchObject({
+        code: TrpcErrorCode.UNPROCESSABLE_CONTENT,
+        message: `Staged image not found: ${stagingKey}`,
+      })
+      expect(await puzzleRepo.findById(request.id)).toBeUndefined()
     })
 
     it("throws UNPROCESSABLE_CONTENT when puzzle already exists", async () => {
       const puzzleRepo = new FakePuzzleRepository()
       const speciesRepo = await createSpeciesRepo()
-      await puzzleRepo.create(makeDbPuzzle({ id: TestPuzzleIds.daisy }))
+      await puzzleRepo.create(makeDbPuzzle())
       const caller = createTestCaller(puzzleRepo, speciesRepo)
 
-      await expect(caller.puzzles.create(makeCreatePuzzleRequest({ id: TestPuzzleIds.daisy }))).rejects.toMatchObject({
+      await expect(caller.puzzles.create(makeCreatePuzzleRequest())).rejects.toMatchObject({
         code: TrpcErrorCode.UNPROCESSABLE_CONTENT,
       })
     })
 
     it("throws UNPROCESSABLE_CONTENT when species does not exist", async () => {
       const caller = createTestCaller()
-      const request = makeCreatePuzzleRequest({ id: TestPuzzleIds.daisy, speciesId: SpeciesId("nonexistent") })
+      const request = makeCreatePuzzleRequest({ speciesId: SpeciesId("nonexistent") })
 
       await expect(caller.puzzles.create(request)).rejects.toMatchObject({
         code: TrpcErrorCode.UNPROCESSABLE_CONTENT,
@@ -128,31 +165,52 @@ describe("puzzleRouter", () => {
     it("updates puzzle and returns it", async () => {
       const puzzleRepo = new FakePuzzleRepository()
       const speciesRepo = await createSpeciesRepo()
-      await puzzleRepo.create(makeDbPuzzle({ id: TestPuzzleIds.daisy }))
+      const puzzle = makeDbPuzzle()
+      await puzzleRepo.create(puzzle)
       const caller = createTestCaller(puzzleRepo, speciesRepo)
-      const request = makeEditPuzzleRequest({ id: TestPuzzleIds.daisy, habitat: "Meadow" })
+      const request = makeEditPuzzleRequest({ habitat: "Meadow" })
 
       const result = await caller.puzzles.update(request)
 
-      expect(result).toEqual(makeApiPuzzle({ id: TestPuzzleIds.daisy, habitat: "Meadow" }))
-      const stored = await puzzleRepo.findById(TestPuzzleIds.daisy)
+      expect(result).toEqual(makeApiPuzzle({ habitat: "Meadow" }))
+      const stored = await puzzleRepo.findById(puzzle.id)
       expect(stored?.habitat).toBe("Meadow")
+    })
+
+    it("promotes staged images to final location on update", async () => {
+      const puzzleRepo = new FakePuzzleRepository()
+      const speciesRepo = await createSpeciesRepo()
+      const puzzle = makeDbPuzzle()
+      await puzzleRepo.create(puzzle)
+      const storage = new FakeBucketStorage()
+      await storage.seedStagingFile(stagingKey)
+      const caller = createTestCaller(puzzleRepo, speciesRepo, storage)
+      const request = makeEditPuzzleRequest({
+        images: [makePuzzleRequestImage({ imageKey: ImageKey("close-up"), stagingKey })],
+      })
+
+      await caller.puzzles.update(request)
+
+      const finalKey = ObjectKey(`${puzzle.id}/close-up.jpg`)
+      expect(storage.objects.has(`${ORIGINALS_BUCKET}/${finalKey}`)).toBe(true)
+      expect(storage.objects.has(`${ORIGINALS_BUCKET}/${stagingKey}`)).toBe(false)
     })
 
     it("throws NOT_FOUND when puzzle does not exist", async () => {
       const speciesRepo = await createSpeciesRepo()
       const caller = createTestCaller(new FakePuzzleRepository(), speciesRepo)
 
-      await expect(caller.puzzles.update(makeEditPuzzleRequest({ id: TestPuzzleIds.daisy }))).rejects.toMatchObject({
+      await expect(caller.puzzles.update(makeEditPuzzleRequest())).rejects.toMatchObject({
         code: TrpcErrorCode.NOT_FOUND,
       })
     })
 
     it("throws UNPROCESSABLE_CONTENT when species does not exist", async () => {
       const puzzleRepo = new FakePuzzleRepository()
-      await puzzleRepo.create(makeDbPuzzle({ id: TestPuzzleIds.daisy }))
+      const puzzle = makeDbPuzzle()
+      await puzzleRepo.create(puzzle)
       const caller = createTestCaller(puzzleRepo)
-      const request = makeEditPuzzleRequest({ id: TestPuzzleIds.daisy, speciesId: SpeciesId("nonexistent") })
+      const request = makeEditPuzzleRequest({ speciesId: SpeciesId("nonexistent") })
 
       await expect(caller.puzzles.update(request)).rejects.toMatchObject({
         code: TrpcErrorCode.UNPROCESSABLE_CONTENT,
@@ -164,13 +222,14 @@ describe("puzzleRouter", () => {
   describe("delete", () => {
     it("deletes puzzle and returns success", async () => {
       const repo = new FakePuzzleRepository()
-      await repo.create(makeDbPuzzle({ id: TestPuzzleIds.daisy }))
+      const puzzle = makeDbPuzzle()
+      await repo.create(puzzle)
       const caller = createTestCaller(repo)
 
-      const result = await caller.puzzles.delete(TestPuzzleIds.daisy)
+      const result = await caller.puzzles.delete(puzzle.id)
 
       expect(result).toEqual({ success: true })
-      expect(await repo.findById(TestPuzzleIds.daisy)).toBeUndefined()
+      expect(await repo.findById(puzzle.id)).toBeUndefined()
     })
 
     it("throws NOT_FOUND when puzzle does not exist", async () => {

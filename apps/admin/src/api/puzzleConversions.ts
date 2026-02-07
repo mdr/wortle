@@ -18,7 +18,7 @@ export const createPuzzleRequestToDbPuzzle = (puzzle: CreatePuzzleRequest): DbPu
   observationDate: puzzle.observationDate,
   location: puzzle.location,
   habitat: puzzle.habitat,
-  images: puzzle.images.map(({ imageKey, caption }) => ({ imageKey, caption })),
+  images: puzzle.images.map(({ imageKey, caption, mediaType }) => ({ imageKey, caption, mediaType })),
   photoAttribution: puzzle.photoAttribution,
 })
 

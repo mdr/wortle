@@ -1,5 +1,6 @@
 import {
   degreesSchema,
+  ImageMediaType,
   imageKeySchema,
   iso8601DateSchema,
   License,
@@ -24,6 +25,7 @@ const dbLocationSchema = z.object({
 const dbPuzzleImageSchema = z.object({
   imageKey: imageKeySchema,
   caption: z.string(),
+  mediaType: z.enum(ImageMediaType).default(ImageMediaType.JPEG),
 })
 
 const dbPhotoAttributionSchema = z.object({

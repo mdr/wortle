@@ -3,6 +3,7 @@ import {
   Degrees,
   Family,
   ImageKey,
+  ImageMediaType,
   Iso8601Date,
   License,
   ScientificName,
@@ -10,7 +11,7 @@ import {
   TestSpeciesIds,
 } from "@wortle/shared"
 
-import { ApiPuzzle, CreatePuzzleRequest, EditPuzzleRequest } from "@/api/puzzleTypes"
+import { ApiPuzzle, CreatePuzzleRequest, EditPuzzleRequest, PuzzleRequestImage } from "@/api/puzzleTypes"
 import { ApiSpecies } from "@/api/types"
 import { DbPuzzle } from "@/db/puzzleTypes"
 import { DbSpecies } from "@/db/types"
@@ -50,7 +51,7 @@ export const makeDbPuzzle = (overrides: Partial<DbPuzzle> = {}): DbPuzzle => ({
     coordinates: { latitude: Degrees(54.0), longitude: Degrees(-1.5) },
   },
   habitat: "Road verge",
-  images: [{ imageKey: ImageKey("whole-plant"), caption: "Whole plant" }],
+  images: [{ imageKey: ImageKey("whole-plant"), caption: "Whole plant", mediaType: ImageMediaType.JPEG }],
   photoAttribution: { photographer: "Test User", license: License.CC_BY_4 },
   ...overrides,
 })
@@ -64,7 +65,7 @@ export const makeApiPuzzle = (overrides: Partial<ApiPuzzle> = {}): ApiPuzzle => 
     coordinates: { latitude: Degrees(54.0), longitude: Degrees(-1.5) },
   },
   habitat: "Road verge",
-  images: [{ imageKey: ImageKey("whole-plant"), caption: "Whole plant" }],
+  images: [{ imageKey: ImageKey("whole-plant"), caption: "Whole plant", mediaType: ImageMediaType.JPEG }],
   photoAttribution: { photographer: "Test User", license: License.CC_BY_4 },
   ...overrides,
 })
@@ -78,13 +79,20 @@ export const makeCreatePuzzleRequest = (overrides: Partial<CreatePuzzleRequest> 
     coordinates: { latitude: Degrees(54.0), longitude: Degrees(-1.5) },
   },
   habitat: "Road verge",
-  images: [{ imageKey: ImageKey("whole-plant"), caption: "Whole plant" }],
+  images: [{ imageKey: ImageKey("whole-plant"), caption: "Whole plant", mediaType: ImageMediaType.JPEG }],
   photoAttribution: { photographer: "Test User", license: License.CC_BY_4 },
   ...overrides,
 })
 
 export const makeEditPuzzleRequest: (overrides?: Partial<EditPuzzleRequest>) => EditPuzzleRequest =
   makeCreatePuzzleRequest
+
+export const makePuzzleRequestImage = (overrides: Partial<PuzzleRequestImage> = {}): PuzzleRequestImage => ({
+  imageKey: ImageKey("whole-plant"),
+  caption: "Whole plant",
+  mediaType: ImageMediaType.JPEG,
+  ...overrides,
+})
 
 export const testContext: Context = {
   user: {

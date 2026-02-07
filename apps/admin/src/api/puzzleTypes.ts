@@ -1,5 +1,6 @@
 import {
   degreesSchema,
+  ImageMediaType,
   imageKeySchema,
   iso8601DateSchema,
   objectKeySchema,
@@ -22,6 +23,7 @@ const apiLocationSchema = z.object({
 const apiPuzzleImageSchema = z.object({
   imageKey: imageKeySchema,
   caption: z.string(),
+  mediaType: z.enum(ImageMediaType),
 })
 
 const apiPhotoAttributionSchema = z.object({
@@ -48,6 +50,8 @@ export type ApiPuzzle = z.infer<typeof apiPuzzleSchema>
 const puzzleRequestImageSchema = apiPuzzleImageSchema.extend({
   stagingKey: objectKeySchema.optional(),
 })
+
+export type PuzzleRequestImage = z.infer<typeof puzzleRequestImageSchema>
 
 export const createPuzzleRequestSchema = apiPuzzleSchema.extend({
   images: z.array(puzzleRequestImageSchema),

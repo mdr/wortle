@@ -24,8 +24,12 @@ Run `task check` to verify work before finishing (runs tsc, lint, format, and te
 - Name test utility files with a `.testUtils.ts` suffix to flag them as non-production code.
 - In tests, check full objects with `expect(obj).toEqual({...})` rather than individual properties.
 - In tests, only specify values important for that test case; use test factory defaults for everything else.
+- In tests, when a test is about the absence or presence of a field, explicitly set it (e.g., `makeImage({ stagingKey: undefined })`) rather than relying on the factory default.
+- In tests, store factory results and reference their properties (e.g., `const puzzle = makeDbPuzzle(); ... puzzle.id`) rather than using test constants directly. Minimise implicit knowledge required for a test to make sense.
+- In tests, assert only what the test is about. If the test is "strips stagingKey", assert that `stagingKey` is undefined — don't assert the full object shape.
 - When fixing bugs, write a failing test first, then fix the code to make it pass.
 - Use React's `useId` hook for accessibility label associations (e.g., `htmlFor` and `id` pairs).
+- Avoid indexed access types (e.g. `Foo["bar"]`). Export and use explicit named types instead.
 
 ## Testing
 

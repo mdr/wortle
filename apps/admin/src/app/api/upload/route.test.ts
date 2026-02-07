@@ -1,4 +1,4 @@
-import { ORIGINALS_BUCKET, STAGING_PREFIX } from "@wortle/shared"
+import { ImageMediaType, ORIGINALS_BUCKET, STAGING_PREFIX } from "@wortle/shared"
 import { describe, expect, it } from "vitest"
 
 import { FakeBucketStorage } from "@/utils/FakeBucketStorage.testUtils"
@@ -24,8 +24,9 @@ describe("upload route", () => {
     const response = await handler(uploadRequest(new File([JPEG_HEADER], "photo.jpg", { type: MediaType.IMAGE_JPEG })))
 
     expect(response.status).toBe(HttpStatus.OK)
-    const { stagingKey } = uploadResponseSchema.parse(await response.json())
+    const { stagingKey, mediaType } = uploadResponseSchema.parse(await response.json())
     expect(stagingKey).toMatch(new RegExp(`^${STAGING_PREFIX}.+\\.jpg$`))
+    expect(mediaType).toBe(ImageMediaType.JPEG)
     expect(storage.objects.size).toBe(1)
     const stored = storage.getStoredObject(ORIGINALS_BUCKET, stagingKey)
     expect(new Uint8Array(stored.body as ArrayBuffer)).toEqual(new Uint8Array(JPEG_HEADER))
@@ -40,8 +41,9 @@ describe("upload route", () => {
     const response = await handler(uploadRequest(new File([JPEG_HEADER], "photo.heic", { type: MediaType.IMAGE_HEIC })))
 
     expect(response.status).toBe(HttpStatus.OK)
-    const { stagingKey } = uploadResponseSchema.parse(await response.json())
-    expect(stagingKey).toMatch(new RegExp(`^${STAGING_PREFIX}.+\\.jpg$`))
+    const { stagingKey, mediaType } = uploadResponseSchema.parse(await response.json())
+    expect(stagingKey).toMatch(new RegExp(`^${STAGING_PREFIX}.+\\.heic$`))
+    expect(mediaType).toBe(ImageMediaType.HEIC)
     expect(storage.objects.size).toBe(1)
   })
 
