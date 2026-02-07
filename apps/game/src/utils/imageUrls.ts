@@ -2,7 +2,7 @@ import { type ImageKey, type PuzzleId, Url } from "@wortle/shared"
 
 import { Pixels } from "./brandedTypes"
 
-const R2_BASE_URL: Url = Url("https://images.wortle.app/puzzles")
+const R2_BASE_URL: Url = Url(import.meta.env.VITE_IMAGES_URL ?? "https://images.wortle.app/puzzles")
 const WIDTHS = [Pixels(200), Pixels(400), Pixels(800), Pixels(1200), Pixels(1600), Pixels(2400)] as const
 
 export const imageUrl = (puzzleId: PuzzleId, imageKey: ImageKey, width: Pixels): Url =>

@@ -12,6 +12,7 @@
         "ORIGINALS_BUCKET_NAME",
         "IMAGES_BUCKET_NAME",
         "VITE_DATA_URL",
+        "VITE_IMAGES_URL",
         "KINDE_CLIENT_ID",
         "KINDE_CLIENT_SECRET",
         "KINDE_ISSUER_URL",

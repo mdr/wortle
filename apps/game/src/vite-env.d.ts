@@ -2,6 +2,7 @@
 
 interface ImportMetaEnv {
   readonly VITE_DATA_URL?: string
+  readonly VITE_IMAGES_URL?: string
 }
 
 interface ImportMeta {

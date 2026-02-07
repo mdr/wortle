@@ -44,10 +44,19 @@ new cloudflare.R2Bucket("originals-dev", {
   name: "wortle-originals-dev",
 })
 
-// R2 bucket for images - dev/preview (S3 API access only)
-new cloudflare.R2Bucket("images-dev", {
+// R2 bucket for images - dev/preview
+const imagesDevBucket = new cloudflare.R2Bucket("images-dev", {
   accountId,
   name: "wortle-images-dev",
+})
+
+// Public access via images-dev.wortle.app
+new cloudflare.R2CustomDomain("images-dev-domain", {
+  accountId,
+  bucketName: imagesDevBucket.name,
+  domain: "images-dev.wortle.app",
+  zoneId: zone.zoneId,
+  enabled: true,
 })
 
 // R2 bucket for public data - dev/preview
