@@ -7,8 +7,8 @@ import { Card, CardDescription, CardHeader, CardTitle } from "@wortle/ui"
 import { trpc } from "@/trpc/client"
 
 export default function Home() {
-  const { data: species } = trpc.species.list.useQuery()
-  const { data: puzzles } = trpc.puzzles.list.useQuery()
+  const { data: species, isLoading: speciesLoading } = trpc.species.list.useQuery()
+  const { data: puzzles, isLoading: puzzlesLoading } = trpc.puzzles.list.useQuery()
 
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -21,7 +21,9 @@ export default function Home() {
               </div>
               <div>
                 <CardTitle className="text-base">Species</CardTitle>
-                <CardDescription>{species?.length ?? 0} entries</CardDescription>
+                <CardDescription>
+                  {speciesLoading ? "Loading\u2026" : `${species?.length ?? 0} entries`}
+                </CardDescription>
               </div>
             </div>
           </CardHeader>
@@ -37,7 +39,9 @@ export default function Home() {
               </div>
               <div>
                 <CardTitle className="text-base">Puzzles</CardTitle>
-                <CardDescription>{puzzles?.length ?? 0} entries</CardDescription>
+                <CardDescription>
+                  {puzzlesLoading ? "Loading\u2026" : `${puzzles?.length ?? 0} entries`}
+                </CardDescription>
               </div>
             </div>
           </CardHeader>

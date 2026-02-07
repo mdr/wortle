@@ -16,7 +16,7 @@ export default function NewPuzzlePage() {
     onMutate: async (newPuzzle) => {
       await utils.puzzles.list.cancel()
       const previous = utils.puzzles.list.getData()
-      utils.puzzles.list.setData(undefined, (old) => [...(old ?? []), newPuzzle])
+      utils.puzzles.list.setData(undefined, (old) => [...(old ?? []), { ...newPuzzle, imagesSynced: false }])
       return { previous }
     },
     onError: (_err, _newPuzzle, context) => {

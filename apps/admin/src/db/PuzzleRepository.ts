@@ -35,6 +35,7 @@ export interface IPuzzleRepository {
   list: () => Promise<DbPuzzle[]>
   listWithSyncStatus: () => Promise<PuzzleWithSyncStatus[]>
   findById: (id: PuzzleId) => Promise<Option<DbPuzzle>>
+  findByIdWithSyncStatus: (id: PuzzleId) => Promise<Option<PuzzleWithSyncStatus>>
   countBySpeciesId: (speciesId: SpeciesId) => Promise<number>
   create: (data: DbPuzzle) => Promise<CreateResult>
   update: (data: DbPuzzle) => Promise<UpdateResult>
@@ -61,6 +62,11 @@ export class PuzzleRepository implements IPuzzleRepository {
   findById = async (id: PuzzleId): Promise<Option<DbPuzzle>> => {
     const row = await this.db.query.puzzles.findFirst({ where: eq(puzzles.id, id) })
     return row ? parseDbPuzzle(row.data) : undefined
+  }
+
+  findByIdWithSyncStatus = async (id: PuzzleId): Promise<Option<PuzzleWithSyncStatus>> => {
+    const row = await this.db.query.puzzles.findFirst({ where: eq(puzzles.id, id) })
+    return row ? { puzzle: parseDbPuzzle(row.data), imagesSynced: row.imagesSynced } : undefined
   }
 
   countBySpeciesId = async (speciesId: SpeciesId): Promise<number> => {

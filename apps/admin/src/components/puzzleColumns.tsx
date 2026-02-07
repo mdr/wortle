@@ -2,7 +2,7 @@
 
 import { type Column, type ColumnDef } from "@tanstack/react-table"
 import { Button } from "@wortle/ui"
-import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react"
+import { ArrowDown, ArrowUp, ArrowUpDown, Check, TriangleAlert } from "lucide-react"
 
 import { type ApiPuzzle } from "@/api/puzzleTypes"
 
@@ -46,5 +46,15 @@ export const puzzleColumns: ColumnDef<ApiPuzzle>[] = [
     accessorKey: "images",
     header: "Images",
     cell: ({ row }) => <span>{row.original.images.length}</span>,
+  },
+  {
+    accessorKey: "imagesSynced",
+    header: ({ column }) => <SortableHeader column={column} label="Images Synced" />,
+    cell: ({ row }) =>
+      row.original.imagesSynced ? (
+        <Check className="h-4 w-4 text-green-600" />
+      ) : (
+        <TriangleAlert className="h-4 w-4 text-amber-500" />
+      ),
   },
 ]

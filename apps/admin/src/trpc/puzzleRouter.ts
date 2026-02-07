@@ -68,16 +68,16 @@ const validateSpeciesExists = async (speciesRepository: ISpeciesRepository, spec
 export const createPuzzleRouter = ({ puzzleRepository, speciesRepository, bucketStorage }: PuzzleRouterDeps) =>
   router({
     list: protectedProcedure.query(async () => {
-      const dbPuzzles = await puzzleRepository.list()
-      return dbPuzzles.map(dbPuzzleToApiPuzzle)
+      const puzzlesWithStatus = await puzzleRepository.listWithSyncStatus()
+      return puzzlesWithStatus.map(({ puzzle, imagesSynced }) => dbPuzzleToApiPuzzle(puzzle, imagesSynced))
     }),
 
     get: protectedProcedure.input(puzzleIdSchema).query(async ({ input: puzzleId }) => {
-      const dbPuzzle = await puzzleRepository.findById(puzzleId)
-      if (dbPuzzle === undefined) {
+      const result = await puzzleRepository.findByIdWithSyncStatus(puzzleId)
+      if (result === undefined) {
         throw new TRPCError({ code: TrpcErrorCode.NOT_FOUND })
       }
-      return dbPuzzleToApiPuzzle(dbPuzzle)
+      return dbPuzzleToApiPuzzle(result.puzzle, result.imagesSynced)
     }),
 
     create: protectedProcedure.input(createPuzzleRequestSchema).mutation(async ({ input: request }) => {
@@ -93,7 +93,7 @@ export const createPuzzleRouter = ({ puzzleRepository, speciesRepository, bucket
       }
       await promoteStagedImages(bucketStorage, request.id, request.images)
       serverLogger.info("puzzle.created", `Created puzzle ${request.id}`, { puzzleId: request.id })
-      return dbPuzzleToApiPuzzle(dbPuzzle)
+      return dbPuzzleToApiPuzzle(dbPuzzle, false)
     }),
 
     update: protectedProcedure.input(editPuzzleRequestSchema).mutation(async ({ input: request }) => {
@@ -106,7 +106,7 @@ export const createPuzzleRouter = ({ puzzleRepository, speciesRepository, bucket
       }
       await promoteStagedImages(bucketStorage, request.id, request.images)
       serverLogger.info("puzzle.updated", `Updated puzzle ${request.id}`, { puzzleId: request.id })
-      return dbPuzzleToApiPuzzle(dbPuzzle)
+      return dbPuzzleToApiPuzzle(dbPuzzle, false)
     }),
 
     delete: protectedProcedure.input(puzzleIdSchema).mutation(async ({ input: puzzleId }) => {

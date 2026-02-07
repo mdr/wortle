@@ -40,6 +40,7 @@ export const apiPuzzleSchema = z.object({
   habitat: z.string(),
   images: z.array(apiPuzzleImageSchema),
   photoAttribution: apiPhotoAttributionSchema,
+  imagesSynced: z.boolean(),
 })
 
 export type ApiCoordinates = z.infer<typeof apiCoordinatesSchema>
@@ -54,7 +55,9 @@ const puzzleRequestImageSchema = apiPuzzleImageSchema.extend({
 
 export type PuzzleRequestImage = z.infer<typeof puzzleRequestImageSchema>
 
-export const createPuzzleRequestSchema = apiPuzzleSchema.extend({
+const apiPuzzleBaseSchema = apiPuzzleSchema.omit({ imagesSynced: true })
+
+export const createPuzzleRequestSchema = apiPuzzleBaseSchema.extend({
   images: z.array(puzzleRequestImageSchema),
 })
 export type CreatePuzzleRequest = z.infer<typeof createPuzzleRequestSchema>

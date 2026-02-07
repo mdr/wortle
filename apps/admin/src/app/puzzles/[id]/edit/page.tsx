@@ -2,7 +2,7 @@
 
 import { PuzzleId } from "@wortle/shared"
 import { Button, Card, CardContent, CardHeader, CardTitle } from "@wortle/ui"
-import { ArrowLeft } from "lucide-react"
+import { ArrowLeft, Check, TriangleAlert } from "lucide-react"
 import Link from "next/link"
 import { useParams, useRouter } from "next/navigation"
 import { useState } from "react"
@@ -25,8 +25,9 @@ export default function EditPuzzlePage() {
       await utils.puzzles.get.cancel(updatedPuzzle.id)
       const previousList = utils.puzzles.list.getData()
       const previousGet = utils.puzzles.get.getData(updatedPuzzle.id)
-      utils.puzzles.list.setData(undefined, (old) => old?.map((p) => (p.id === updatedPuzzle.id ? updatedPuzzle : p)))
-      utils.puzzles.get.setData(updatedPuzzle.id, updatedPuzzle)
+      const optimistic = { ...updatedPuzzle, imagesSynced: false }
+      utils.puzzles.list.setData(undefined, (old) => old?.map((p) => (p.id === updatedPuzzle.id ? optimistic : p)))
+      utils.puzzles.get.setData(updatedPuzzle.id, optimistic)
       return { previousList, previousGet }
     },
     onError: (_err, updatedPuzzle, context) => {
@@ -75,6 +76,17 @@ export default function EditPuzzlePage() {
               </Link>
             </Button>
             <CardTitle>Edit Puzzle #{puzzle.id}</CardTitle>
+            <span className="ml-auto">
+              {puzzle.imagesSynced ? (
+                <span className="flex items-center gap-1 text-sm font-normal text-green-600">
+                  <Check className="h-4 w-4" /> Images synced
+                </span>
+              ) : (
+                <span className="flex items-center gap-1 text-sm font-normal text-amber-500">
+                  <TriangleAlert className="h-4 w-4" /> Images pending sync
+                </span>
+              )}
+            </span>
           </div>
         </CardHeader>
         <CardContent>

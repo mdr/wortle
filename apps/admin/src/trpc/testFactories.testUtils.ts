@@ -67,6 +67,7 @@ export const makeApiPuzzle = (overrides: Partial<ApiPuzzle> = {}): ApiPuzzle => 
   habitat: "Road verge",
   images: [{ imageKey: ImageKey("whole-plant"), caption: "Whole plant", mediaType: MediaType.IMAGE_JPEG }],
   photoAttribution: { photographer: "Test User", license: License.CC_BY_4 },
+  imagesSynced: false,
   ...overrides,
 })
 

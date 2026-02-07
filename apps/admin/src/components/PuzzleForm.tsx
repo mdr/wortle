@@ -231,9 +231,11 @@ const SpeciesCombobox = ({ value, onChange, id }: SpeciesComboboxProps) => {
                         setSearch("")
                       }}
                     >
-                      <Check className={`mr-2 h-4 w-4 ${value === species.id ? "opacity-100" : "opacity-0"}`} />
+                      <Check
+                        className={`mr-2 h-4 w-4 text-current ${value === species.id ? "opacity-100" : "opacity-0"}`}
+                      />
                       <span>
-                        {species.commonName} <span className="text-muted-foreground">({species.scientificName})</span>
+                        {species.commonName} <span className="italic opacity-70">({species.scientificName})</span>
                       </span>
                     </CommandItem>
                   ))}

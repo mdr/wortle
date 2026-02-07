@@ -19,6 +19,12 @@ export class FakePuzzleRepository implements IPuzzleRepository {
 
   findById = (id: PuzzleId): Promise<Option<DbPuzzle>> => Promise.resolve(this.puzzles.get(id))
 
+  findByIdWithSyncStatus = (id: PuzzleId): Promise<Option<PuzzleWithSyncStatus>> => {
+    const puzzle = this.puzzles.get(id)
+    if (puzzle === undefined) return Promise.resolve(undefined)
+    return Promise.resolve({ puzzle, imagesSynced: this.syncStatus.get(id) ?? false })
+  }
+
   countBySpeciesId = (speciesId: SpeciesId): Promise<number> =>
     Promise.resolve([...this.puzzles.values()].filter((p) => p.speciesId === speciesId).length)
 

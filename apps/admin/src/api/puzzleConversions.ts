@@ -2,7 +2,7 @@ import { DbPuzzle } from "@/db/puzzleTypes"
 
 import { ApiPuzzle, CreatePuzzleRequest, EditPuzzleRequest } from "./puzzleTypes"
 
-export const dbPuzzleToApiPuzzle = (puzzle: DbPuzzle): ApiPuzzle => ({
+export const dbPuzzleToApiPuzzle = (puzzle: DbPuzzle, imagesSynced: boolean): ApiPuzzle => ({
   id: puzzle.id,
   speciesId: puzzle.speciesId,
   observationDate: puzzle.observationDate,
@@ -10,6 +10,7 @@ export const dbPuzzleToApiPuzzle = (puzzle: DbPuzzle): ApiPuzzle => ({
   habitat: puzzle.habitat,
   images: puzzle.images,
   photoAttribution: puzzle.photoAttribution,
+  imagesSynced,
 })
 
 export const createPuzzleRequestToDbPuzzle = (puzzle: CreatePuzzleRequest): DbPuzzle => ({
