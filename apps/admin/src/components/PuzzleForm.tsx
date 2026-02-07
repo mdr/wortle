@@ -257,15 +257,31 @@ export const PuzzleForm = ({
     defaultValues: initialValues ?? emptyFormData,
   })
 
+  const isEditMode = mode === FormMode.EDIT
   const images = useFieldArray({ control: form.control, name: "images" })
   const [uploadError, setUploadError] = useState<string | null>(null)
+  const [previewUrls, setPreviewUrls] = useState<Map<string, string>>(new Map())
+  const previewUrlsRef = useRef(previewUrls)
+  previewUrlsRef.current = previewUrls
+
+  useEffect(() => () => previewUrlsRef.current.forEach((url) => URL.revokeObjectURL(url)), [])
+
+  const puzzleId = form.watch("id")
+
+  const getPreviewUrl = (image: { imageKey: string; stagingKey?: string }): string | undefined => {
+    if (image.stagingKey) return previewUrls.get(image.stagingKey)
+    if (isEditMode && image.imageKey) return `https://images.wortle.app/puzzles/${puzzleId}/${image.imageKey}-400.webp`
+    return undefined
+  }
 
   const handleFiles = useCallback(
     async (files: File[]) => {
       setUploadError(null)
       for (const file of files) {
         try {
+          const blobUrl = URL.createObjectURL(file)
           const { stagingKey } = await uploadImage(file)
+          setPreviewUrls((prev) => new Map(prev).set(stagingKey, blobUrl))
           images.append({
             imageKey: filenameToImageKey(file.name),
             caption: "",
@@ -325,8 +341,6 @@ export const PuzzleForm = ({
 
   const toRequest = mode === FormMode.NEW ? formDataToCreatePuzzleRequest : formDataToEditPuzzleRequest
   const handleFormSubmit = (data: PuzzleFormData) => onSubmit(toRequest(data))
-
-  const isEditMode = mode === FormMode.EDIT
 
   return (
     <form onSubmit={(e) => void form.handleSubmit(handleFormSubmit)(e)} className="space-y-6">
@@ -484,35 +498,45 @@ export const PuzzleForm = ({
               {images.fields.map((field, index) => {
                 const imageKeyError = form.formState.errors.images?.[index]?.imageKey
                 const captionError = form.formState.errors.images?.[index]?.caption
+                const previewUrl = getPreviewUrl(field)
                 return (
                   <SortableItem key={field.id} id={field.id} showHandle={images.fields.length > 1}>
-                    <div className="flex flex-col gap-1">
-                      <div className="flex items-center gap-2">
-                        <Input
-                          {...form.register(`images.${index}.imageKey`)}
-                          placeholder="Image key"
-                          className="flex-1"
-                          aria-invalid={!!imageKeyError}
+                    <div className="flex gap-2">
+                      {previewUrl && (
+                        <img
+                          src={previewUrl}
+                          alt={field.caption || field.imageKey}
+                          className="h-16 w-16 shrink-0 rounded-md object-cover"
                         />
-                        <Input
-                          {...form.register(`images.${index}.caption`)}
-                          placeholder="Caption (optional)"
-                          className="flex-1"
-                          aria-invalid={!!captionError}
-                        />
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon-sm"
-                          onClick={() => images.remove(index)}
-                          aria-label="Remove image"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                      {(imageKeyError || captionError) && (
-                        <p className="text-destructive text-sm">{imageKeyError?.message || captionError?.message}</p>
                       )}
+                      <div className="flex min-w-0 flex-1 flex-col gap-1">
+                        <div className="flex items-center gap-2">
+                          <Input
+                            {...form.register(`images.${index}.imageKey`)}
+                            placeholder="Image key"
+                            className="flex-1"
+                            aria-invalid={!!imageKeyError}
+                          />
+                          <Input
+                            {...form.register(`images.${index}.caption`)}
+                            placeholder="Caption (optional)"
+                            className="flex-1"
+                            aria-invalid={!!captionError}
+                          />
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon-sm"
+                            onClick={() => images.remove(index)}
+                            aria-label="Remove image"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                        {(imageKeyError || captionError) && (
+                          <p className="text-destructive text-sm">{imageKeyError?.message || captionError?.message}</p>
+                        )}
+                      </div>
                     </div>
                   </SortableItem>
                 )

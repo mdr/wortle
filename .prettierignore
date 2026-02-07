@@ -1,3 +1,4 @@
+**/next-env.d.ts
 **/pnpm-lock.yaml
 apps/game/src/routeTree.gen.ts
 dist
