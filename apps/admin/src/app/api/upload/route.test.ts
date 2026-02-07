@@ -1,9 +1,8 @@
-import { ImageMediaType, ORIGINALS_BUCKET, STAGING_PREFIX } from "@wortle/shared"
+import { MediaType, ORIGINALS_BUCKET, STAGING_PREFIX } from "@wortle/shared"
 import { describe, expect, it } from "vitest"
 
 import { FakeBucketStorage } from "@/utils/FakeBucketStorage.testUtils"
 import { HttpStatus } from "@/utils/httpStatus"
-import { MediaType } from "@/utils/R2BucketStorage"
 import { FIXED_TIME, fixedClock, JPEG_HEADER } from "@/utils/testConstants.testUtils"
 
 import { uploadResponseSchema } from "@/api/uploadTypes"
@@ -26,7 +25,7 @@ describe("upload route", () => {
     expect(response.status).toBe(HttpStatus.OK)
     const { stagingKey, mediaType } = uploadResponseSchema.parse(await response.json())
     expect(stagingKey).toMatch(new RegExp(`^${STAGING_PREFIX}.+\\.jpg$`))
-    expect(mediaType).toBe(ImageMediaType.JPEG)
+    expect(mediaType).toBe(MediaType.IMAGE_JPEG)
     expect(storage.objects.size).toBe(1)
     const stored = storage.getStoredObject(ORIGINALS_BUCKET, stagingKey)
     expect(new Uint8Array(stored.body as ArrayBuffer)).toEqual(new Uint8Array(JPEG_HEADER))
@@ -43,7 +42,7 @@ describe("upload route", () => {
     expect(response.status).toBe(HttpStatus.OK)
     const { stagingKey, mediaType } = uploadResponseSchema.parse(await response.json())
     expect(stagingKey).toMatch(new RegExp(`^${STAGING_PREFIX}.+\\.heic$`))
-    expect(mediaType).toBe(ImageMediaType.HEIC)
+    expect(mediaType).toBe(MediaType.IMAGE_HEIC)
     expect(storage.objects.size).toBe(1)
   })
 

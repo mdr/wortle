@@ -58,7 +58,7 @@ export {
 
 export type { Coordinates, Location, PhotoAttribution, Puzzle, PuzzleImage, PuzzlesData } from "./puzzle"
 
-export { ImageMediaType, imageMediaTypeExtension } from "./imageMediaType"
+export { MediaType, mediaTypeSchema } from "./mediaType"
 
 export { getOnlyElement } from "./getOnlyElement.testUtils"
 

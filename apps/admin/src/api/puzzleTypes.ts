@@ -1,6 +1,5 @@
 import {
   degreesSchema,
-  ImageMediaType,
   imageKeySchema,
   iso8601DateSchema,
   objectKeySchema,
@@ -9,6 +8,8 @@ import {
   speciesIdSchema,
 } from "@wortle/shared"
 import { z } from "zod"
+
+import { imageMediaTypeSchema } from "@/utils/imageMediaType"
 
 const apiCoordinatesSchema = z.object({
   latitude: degreesSchema,
@@ -23,7 +24,7 @@ const apiLocationSchema = z.object({
 const apiPuzzleImageSchema = z.object({
   imageKey: imageKeySchema,
   caption: z.string(),
-  mediaType: z.enum(ImageMediaType),
+  mediaType: imageMediaTypeSchema,
 })
 
 const apiPhotoAttributionSchema = z.object({

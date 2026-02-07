@@ -1,4 +1,4 @@
-import { Degrees, ImageKey, ImageMediaType, Iso8601Date, License, TestPuzzleIds, TestSpeciesIds } from "@wortle/shared"
+import { Degrees, ImageKey, Iso8601Date, License, MediaType, TestPuzzleIds, TestSpeciesIds } from "@wortle/shared"
 import { describe, expect, it } from "vitest"
 
 import { CreateResult, DeleteResult, PuzzleRepository, UpdateResult } from "./PuzzleRepository"
@@ -14,7 +14,7 @@ const makeDbPuzzle = (overrides: Partial<DbPuzzle> = {}): DbPuzzle => ({
     coordinates: { latitude: Degrees(54.0), longitude: Degrees(-1.5) },
   },
   habitat: "Road verge",
-  images: [{ imageKey: ImageKey("whole-plant"), caption: "Whole plant", mediaType: ImageMediaType.JPEG }],
+  images: [{ imageKey: ImageKey("whole-plant"), caption: "Whole plant", mediaType: MediaType.IMAGE_JPEG }],
   photoAttribution: { photographer: "Test User", license: License.CC_BY_4 },
   ...overrides,
 })

@@ -1,13 +1,6 @@
-import { BucketName, CloudflareAccountId, CloudflareApiToken, ObjectKey, Url } from "@wortle/shared"
+import { BucketName, CloudflareAccountId, CloudflareApiToken, MediaType, ObjectKey, Url } from "@wortle/shared"
 
 const DEFAULT_BASE_URL = Url("https://api.cloudflare.com/client/v4")
-
-export enum MediaType {
-  APPLICATION_JSON = "application/json",
-  IMAGE_HEIC = "image/heic",
-  IMAGE_JPEG = "image/jpeg",
-  IMAGE_WEBP = "image/webp",
-}
 
 interface R2BucketStorageConfig {
   accountId: CloudflareAccountId

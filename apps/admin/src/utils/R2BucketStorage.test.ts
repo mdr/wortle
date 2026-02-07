@@ -1,10 +1,17 @@
-import { BucketName, CloudflareAccountId, CloudflareApiToken, getOnlyElement, ObjectKey } from "@wortle/shared"
+import {
+  BucketName,
+  CloudflareAccountId,
+  CloudflareApiToken,
+  getOnlyElement,
+  MediaType,
+  ObjectKey,
+} from "@wortle/shared"
 import { withMockServer } from "@wortle/shared/src/withMockServer.testUtils"
 import * as mockttp from "mockttp"
 import { describe, expect, it } from "vitest"
 
 import { HttpStatus } from "./httpStatus"
-import { MediaType, R2BucketStorage } from "./R2BucketStorage"
+import { R2BucketStorage } from "./R2BucketStorage"
 import { JPEG_HEADER } from "./testConstants.testUtils"
 
 const TEST_ACCOUNT_ID = CloudflareAccountId("test-account-id")

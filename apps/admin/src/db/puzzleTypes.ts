@@ -1,13 +1,15 @@
 import {
   degreesSchema,
-  ImageMediaType,
   imageKeySchema,
   iso8601DateSchema,
   License,
+  MediaType,
   puzzleIdSchema,
   speciesIdSchema,
 } from "@wortle/shared"
 import { z } from "zod"
+
+import { imageMediaTypeSchema } from "@/utils/imageMediaType"
 
 export { PuzzleId } from "@wortle/shared"
 export type { Degrees, ImageKey, Iso8601Date, SpeciesId } from "@wortle/shared"
@@ -25,7 +27,7 @@ const dbLocationSchema = z.object({
 const dbPuzzleImageSchema = z.object({
   imageKey: imageKeySchema,
   caption: z.string(),
-  mediaType: z.enum(ImageMediaType).default(ImageMediaType.JPEG),
+  mediaType: imageMediaTypeSchema.default(MediaType.IMAGE_JPEG),
 })
 
 const dbPhotoAttributionSchema = z.object({

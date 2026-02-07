@@ -3,7 +3,7 @@ import {
   Degrees,
   Family,
   ImageKey,
-  ImageMediaType,
+  MediaType,
   Iso8601Date,
   License,
   ScientificName,
@@ -51,7 +51,7 @@ export const makeDbPuzzle = (overrides: Partial<DbPuzzle> = {}): DbPuzzle => ({
     coordinates: { latitude: Degrees(54.0), longitude: Degrees(-1.5) },
   },
   habitat: "Road verge",
-  images: [{ imageKey: ImageKey("whole-plant"), caption: "Whole plant", mediaType: ImageMediaType.JPEG }],
+  images: [{ imageKey: ImageKey("whole-plant"), caption: "Whole plant", mediaType: MediaType.IMAGE_JPEG }],
   photoAttribution: { photographer: "Test User", license: License.CC_BY_4 },
   ...overrides,
 })
@@ -65,7 +65,7 @@ export const makeApiPuzzle = (overrides: Partial<ApiPuzzle> = {}): ApiPuzzle => 
     coordinates: { latitude: Degrees(54.0), longitude: Degrees(-1.5) },
   },
   habitat: "Road verge",
-  images: [{ imageKey: ImageKey("whole-plant"), caption: "Whole plant", mediaType: ImageMediaType.JPEG }],
+  images: [{ imageKey: ImageKey("whole-plant"), caption: "Whole plant", mediaType: MediaType.IMAGE_JPEG }],
   photoAttribution: { photographer: "Test User", license: License.CC_BY_4 },
   ...overrides,
 })
@@ -79,7 +79,7 @@ export const makeCreatePuzzleRequest = (overrides: Partial<CreatePuzzleRequest> 
     coordinates: { latitude: Degrees(54.0), longitude: Degrees(-1.5) },
   },
   habitat: "Road verge",
-  images: [{ imageKey: ImageKey("whole-plant"), caption: "Whole plant", mediaType: ImageMediaType.JPEG }],
+  images: [{ imageKey: ImageKey("whole-plant"), caption: "Whole plant", mediaType: MediaType.IMAGE_JPEG }],
   photoAttribution: { photographer: "Test User", license: License.CC_BY_4 },
   ...overrides,
 })
@@ -90,7 +90,7 @@ export const makeEditPuzzleRequest: (overrides?: Partial<EditPuzzleRequest>) => 
 export const makePuzzleRequestImage = (overrides: Partial<PuzzleRequestImage> = {}): PuzzleRequestImage => ({
   imageKey: ImageKey("whole-plant"),
   caption: "Whole plant",
-  mediaType: ImageMediaType.JPEG,
+  mediaType: MediaType.IMAGE_JPEG,
   ...overrides,
 })
 

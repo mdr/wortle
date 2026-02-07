@@ -1,12 +1,14 @@
-import { ObjectKey, ORIGINALS_BUCKET } from "@wortle/shared"
+import { MediaType, ObjectKey, ORIGINALS_BUCKET } from "@wortle/shared"
+import sharp from "sharp"
 import { describe, expect, it } from "vitest"
 
 import { FakeBucketStorage } from "@/utils/FakeBucketStorage.testUtils"
 import { HttpStatus } from "@/utils/httpStatus"
-import { MediaType } from "@/utils/R2BucketStorage"
 import { JPEG_HEADER } from "@/utils/testConstants.testUtils"
 
 import { createOriginalsHandler } from "./originalsHandler"
+
+const makeTestImage = () => sharp({ create: { width: 1, height: 1, channels: 3, background: "red" } })
 
 const originalsRequest = (puzzleId: string, imageKey: string) => ({
   request: new Request(`http://localhost/api/originals/${puzzleId}/${imageKey}`),
@@ -33,12 +35,13 @@ describe("originals route", () => {
     expect(body).toEqual(new Uint8Array(JPEG_HEADER))
   })
 
-  it("returns HEIC from originals bucket with correct content type", async () => {
+  it("converts HEIC to JPEG", async () => {
     const storage = new FakeBucketStorage()
+    const pngData = await makeTestImage().png().toBuffer()
     await storage.uploadBinary({
       bucket: ORIGINALS_BUCKET,
       key: ObjectKey("40/close-up.heic"),
-      body: JPEG_HEADER,
+      body: new Uint8Array(pngData).buffer,
       contentType: MediaType.IMAGE_HEIC,
     })
     const handler = createOriginalsHandler(storage)
@@ -47,7 +50,21 @@ describe("originals route", () => {
     const response = await handler(request, { params })
 
     expect(response.status).toBe(HttpStatus.OK)
-    expect(response.headers.get("Content-Type")).toBe("image/heic")
+    expect(response.headers.get("Content-Type")).toBe("image/jpeg")
+    const body = Buffer.from(await response.arrayBuffer())
+    const metadata = await sharp(body).metadata()
+    expect(metadata.format).toBe("jpeg")
+  })
+
+  it("returns 400 for unsupported extension", async () => {
+    const storage = new FakeBucketStorage()
+    const handler = createOriginalsHandler(storage)
+    const { request, params } = originalsRequest("40", "whole-plant.png")
+
+    const response = await handler(request, { params })
+
+    expect(response.status).toBe(HttpStatus.BAD_REQUEST)
+    expect(await response.json()).toEqual({ error: "Unsupported image extension: .png" })
   })
 
   it("returns 404 when image does not exist", async () => {

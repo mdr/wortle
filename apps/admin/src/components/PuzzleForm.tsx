@@ -17,10 +17,9 @@ import {
   filterSpeciesByQuery,
   getLicenseDisplayName,
   ImageKey,
-  ImageMediaType,
-  imageMediaTypeExtension,
   Iso8601Date,
   License,
+  MediaType,
   ObjectKey,
   PuzzleId,
   SpeciesId,
@@ -55,6 +54,7 @@ import { z } from "zod"
 import { type ApiPuzzle, type CreatePuzzleRequest, type EditPuzzleRequest } from "@/api/puzzleTypes"
 import { trpc } from "@/trpc/client"
 import { toPreviewBlob } from "@/utils/heicPreview"
+import { imageMediaTypeExtension, imageMediaTypeSchema } from "@/utils/imageMediaType"
 import { filenameToImageKey, uploadImage } from "@/utils/uploadImage"
 
 import { SortableItem } from "./SortableItem"
@@ -80,7 +80,7 @@ const formSchema = z.object({
       z.object({
         imageKey: z.string().min(1, "Image key is required"),
         caption: z.string(),
-        mediaType: z.enum(ImageMediaType),
+        mediaType: imageMediaTypeSchema,
         stagingKey: z.string().optional(),
       }),
     )
@@ -277,7 +277,7 @@ export const PuzzleForm = ({
 
   const getPreviewUrl = (image: {
     imageKey: string
-    mediaType: ImageMediaType
+    mediaType: MediaType
     stagingKey?: string
   }): string | undefined => {
     if (image.stagingKey) return previewUrls.get(image.stagingKey)

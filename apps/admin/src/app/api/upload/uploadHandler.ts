@@ -1,15 +1,13 @@
-import { ImageMediaType, imageMediaTypeExtension, ObjectKey, ORIGINALS_BUCKET, STAGING_PREFIX } from "@wortle/shared"
+import { ObjectKey, ORIGINALS_BUCKET, STAGING_PREFIX } from "@wortle/shared"
 import { NextResponse } from "next/server"
 
 import { type UploadResponse } from "@/api/uploadTypes"
 import { HttpStatus } from "@/utils/httpStatus"
+import { IMAGE_MEDIA_TYPES, imageMediaTypeExtension } from "@/utils/imageMediaType"
 import { serverLogger } from "@/utils/logger"
-import { IBucketStorage, MediaType } from "@/utils/R2BucketStorage"
+import { IBucketStorage } from "@/utils/R2BucketStorage"
 
-const ACCEPTED_TYPES = new Map<string, ImageMediaType>([
-  [MediaType.IMAGE_JPEG, ImageMediaType.JPEG],
-  [MediaType.IMAGE_HEIC, ImageMediaType.HEIC],
-])
+const ACCEPTED_TYPES = new Map(IMAGE_MEDIA_TYPES.map((mediaType) => [mediaType as string, mediaType]))
 
 export const createUploadHandler = (storage: IBucketStorage) => async (request: Request) => {
   const formData = await request.formData()
@@ -33,7 +31,7 @@ export const createUploadHandler = (storage: IBucketStorage) => async (request: 
     bucket: ORIGINALS_BUCKET,
     key: stagingKey,
     body: await file.arrayBuffer(),
-    contentType: file.type as MediaType,
+    contentType: mediaType,
   })
 
   serverLogger.info("upload.image", `Uploaded image to staging`, {

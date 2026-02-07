@@ -1,7 +1,7 @@
-import { BucketName, ObjectKey, ORIGINALS_BUCKET } from "@wortle/shared"
+import { BucketName, MediaType, ObjectKey, ORIGINALS_BUCKET } from "@wortle/shared"
 
 import { Clock, realClock } from "./clock"
-import { IBucketStorage, MediaType, R2Object, UploadBinaryParams, UploadJsonParams } from "./R2BucketStorage"
+import { IBucketStorage, R2Object, UploadBinaryParams, UploadJsonParams } from "./R2BucketStorage"
 import { JPEG_HEADER } from "./testConstants.testUtils"
 
 export interface StoredObject {

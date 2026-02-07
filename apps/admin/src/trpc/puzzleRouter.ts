@@ -1,11 +1,4 @@
-import {
-  imageMediaTypeExtension,
-  ObjectKey,
-  ORIGINALS_BUCKET,
-  puzzleIdSchema,
-  PuzzleId,
-  SpeciesId,
-} from "@wortle/shared"
+import { ObjectKey, ORIGINALS_BUCKET, puzzleIdSchema, PuzzleId, SpeciesId } from "@wortle/shared"
 import { TRPCError } from "@trpc/server"
 
 import {
@@ -16,6 +9,7 @@ import {
 import { createPuzzleRequestSchema, editPuzzleRequestSchema, PuzzleRequestImage } from "@/api/puzzleTypes"
 import { CreateResult, DeleteResult, IPuzzleRepository, UpdateResult } from "@/db/PuzzleRepository"
 import { ISpeciesRepository } from "@/db/SpeciesRepository"
+import { imageMediaTypeExtension } from "@/utils/imageMediaType"
 import { serverLogger } from "@/utils/logger"
 import { IBucketStorage } from "@/utils/R2BucketStorage"
 
