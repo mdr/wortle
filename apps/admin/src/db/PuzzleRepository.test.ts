@@ -89,6 +89,29 @@ describe("PuzzleRepository", () => {
     })
   })
 
+  describe("listWithSyncStatus", () => {
+    it("returns puzzles with imagesSynced false after create", async () => {
+      const repository = await makePuzzleRepository()
+      const puzzle = makeDbPuzzle()
+      await repository.create(puzzle)
+
+      const result = await repository.listWithSyncStatus()
+
+      expect(result).toEqual([{ puzzle, imagesSynced: false }])
+    })
+
+    it("returns imagesSynced true after markImagesSynced", async () => {
+      const repository = await makePuzzleRepository()
+      const puzzle = makeDbPuzzle()
+      await repository.create(puzzle)
+      await repository.markImagesSynced([puzzle.id])
+
+      const result = await repository.listWithSyncStatus()
+
+      expect(result[0].imagesSynced).toBe(true)
+    })
+  })
+
   describe("update", () => {
     it("returns NOT_FOUND when puzzle does not exist", async () => {
       const repository = await makePuzzleRepository()
@@ -109,6 +132,41 @@ describe("PuzzleRepository", () => {
 
       expect(result).toBe(UpdateResult.UPDATED)
       expect(await repository.findById(puzzle.id)).toEqual(updated)
+    })
+
+    it("resets imagesSynced to false on update", async () => {
+      const repository = await makePuzzleRepository()
+      const puzzle = makeDbPuzzle()
+      await repository.create(puzzle)
+      await repository.markImagesSynced([puzzle.id])
+
+      await repository.update({ ...puzzle, habitat: "Meadow" })
+
+      const statuses = await repository.listWithSyncStatus()
+      expect(statuses[0].imagesSynced).toBe(false)
+    })
+  })
+
+  describe("markImagesSynced", () => {
+    it("marks specified puzzles as synced", async () => {
+      const repository = await makePuzzleRepository()
+      const puzzle1 = makeDbPuzzle({ id: TestPuzzleIds.daisy })
+      const puzzle2 = makeDbPuzzle({ id: TestPuzzleIds.herbRobert })
+      await repository.create(puzzle1)
+      await repository.create(puzzle2)
+
+      await repository.markImagesSynced([puzzle1.id])
+
+      const statuses = await repository.listWithSyncStatus()
+      const sorted = statuses.toSorted((a, b) => a.puzzle.id - b.puzzle.id)
+      expect(sorted[0].imagesSynced).toBe(true)
+      expect(sorted[1].imagesSynced).toBe(false)
+    })
+
+    it("does nothing when given empty array", async () => {
+      const repository = await makePuzzleRepository()
+
+      await repository.markImagesSynced([])
     })
   })
 

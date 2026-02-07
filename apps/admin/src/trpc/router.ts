@@ -14,7 +14,7 @@ const dataBucketName = env.DATA_BUCKET_NAME ?? SPECIES_DATA_BUCKET
 export const appRouter = router({
   species: createSpeciesRouter(speciesRepository, puzzleRepository),
   puzzles: createPuzzleRouter({ puzzleRepository, speciesRepository, bucketStorage }),
-  publish: createPublishRouter({ speciesRepository, bucketStorage, dataBucketName }),
+  publish: createPublishRouter({ speciesRepository, puzzleRepository, bucketStorage, dataBucketName }),
 })
 
 export type AppRouter = typeof appRouter

@@ -1,4 +1,5 @@
-import { BucketName, MediaType, ObjectKey, ORIGINALS_BUCKET } from "@wortle/shared"
+import { BucketName, ImageKey, MediaType, ObjectKey, ORIGINALS_BUCKET, PuzzleId } from "@wortle/shared"
+import sharp from "sharp"
 
 import { Clock, realClock } from "./clock"
 import { IBucketStorage, R2Object, UploadBinaryParams, UploadJsonParams } from "./R2BucketStorage"
@@ -84,6 +85,19 @@ export class FakeBucketStorage implements IBucketStorage {
 
   seedStagingFile = (key: ObjectKey): Promise<void> =>
     this.uploadBinary({ bucket: ORIGINALS_BUCKET, key, body: JPEG_HEADER, contentType: MediaType.IMAGE_JPEG })
+
+  seedOriginalJpeg = async (puzzleId: PuzzleId, imageKey: ImageKey): Promise<void> => {
+    const buffer = await sharp({ create: { width: 10, height: 10, channels: 3, background: "red" } })
+      .jpeg()
+      .toBuffer()
+    const body = buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength) as ArrayBuffer
+    await this.uploadBinary({
+      bucket: ORIGINALS_BUCKET,
+      key: ObjectKey(`${puzzleId}/${imageKey}.jpg`),
+      body,
+      contentType: MediaType.IMAGE_JPEG,
+    })
+  }
 
   getJson = (bucket: BucketName, key: ObjectKey): unknown => {
     const obj = this.objects.get(`${bucket}/${key}`)
