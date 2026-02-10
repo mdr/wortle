@@ -30,6 +30,7 @@ Run `task check` to verify work before finishing (runs tsc, lint, format, and te
 - When fixing bugs, write a failing test first, then fix the code to make it pass.
 - Use React's `useId` hook for accessibility label associations (e.g., `htmlFor` and `id` pairs).
 - Avoid indexed access types (e.g. `Foo["bar"]`). Export and use explicit named types instead.
+- Use `camelCase.dotSeparated` log codes in `serverLogger` calls (e.g. `"puzzle.created"`, `"publishImages.sync"`).
 
 ## Testing
 

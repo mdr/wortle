@@ -1,5 +1,9 @@
 import { z } from "zod"
 
+export const millisSchema = z.number().brand<"Millis", "inout">()
+export type Millis = z.output<typeof millisSchema>
+export const Millis = (n: number): Millis => millisSchema.parse(n)
+
 export const urlSchema = z.string().brand<"Url", "inout">()
 export type Url = z.output<typeof urlSchema>
 export const Url = (s: string): Url => urlSchema.parse(s)

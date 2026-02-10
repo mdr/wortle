@@ -128,8 +128,8 @@ describe("R2BucketStorage", () => {
           .withQuery({ prefix: "staging/" })
           .thenJson(HttpStatus.OK, {
             result: [
-              { key: "staging/abc.jpg", uploaded: "2025-01-15T10:00:00Z" },
-              { key: "staging/def.jpg", uploaded: "2025-01-15T11:00:00Z" },
+              { key: "staging/abc.jpg", last_modified: "2025-01-15T10:00:00Z" },
+              { key: "staging/def.jpg", last_modified: "2025-01-15T11:00:00Z" },
             ],
           })
 

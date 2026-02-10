@@ -3,6 +3,8 @@ export type { Option } from "./Option"
 export {
   BucketName,
   bucketNameSchema,
+  Millis,
+  millisSchema,
   CloudflareAccountId,
   cloudflareAccountIdSchema,
   CloudflareApiToken,

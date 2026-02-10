@@ -20,6 +20,6 @@ export default withAuth(function middleware(req: KindeRequest) {
 
 export const config = {
   matcher: [
-    "/((?!api/auth|unauthorized|_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
+    "/((?!api/auth|api/cron|unauthorized|_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
   ],
 }

@@ -1,6 +1,11 @@
 import { BucketName, CloudflareAccountId, CloudflareApiToken, MediaType, ObjectKey, Url } from "@wortle/shared"
+import { z } from "zod"
 
 const DEFAULT_BASE_URL = Url("https://api.cloudflare.com/client/v4")
+
+const r2ListResponseSchema = z.object({
+  result: z.array(z.object({ key: z.string(), last_modified: z.iso.datetime() })),
+})
 
 interface R2BucketStorageConfig {
   accountId: CloudflareAccountId
@@ -124,10 +129,10 @@ export class R2BucketStorage implements IBucketStorage {
       throw new Error(`R2 list failed: ${response.status} ${text}`)
     }
 
-    const data = (await response.json()) as { result: Array<{ key: string; uploaded: string }> }
+    const data = r2ListResponseSchema.parse(await response.json())
     return data.result.map((obj) => ({
       key: ObjectKey(obj.key),
-      uploaded: new Date(obj.uploaded),
+      uploaded: new Date(obj.last_modified),
     }))
   }
 

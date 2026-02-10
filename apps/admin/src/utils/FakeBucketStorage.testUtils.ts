@@ -86,6 +86,14 @@ export class FakeBucketStorage implements IBucketStorage {
   seedStagingFile = (key: ObjectKey): Promise<void> =>
     this.uploadBinary({ bucket: ORIGINALS_BUCKET, key, body: JPEG_HEADER, contentType: MediaType.IMAGE_JPEG })
 
+  seedStagingFileAt = (key: ObjectKey, uploadedAt: Date): void => {
+    this.objects.set(`${ORIGINALS_BUCKET}/${key}`, {
+      body: JPEG_HEADER,
+      contentType: MediaType.IMAGE_JPEG,
+      uploaded: uploadedAt,
+    })
+  }
+
   seedOriginalJpeg = async (puzzleId: PuzzleId, imageKey: ImageKey): Promise<void> => {
     const buffer = await sharp({ create: { width: 10, height: 10, channels: 3, background: "red" } })
       .jpeg()

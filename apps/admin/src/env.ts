@@ -10,6 +10,7 @@ export const env = createEnv({
     DATA_BUCKET_NAME: bucketNameSchema,
     ORIGINALS_BUCKET_NAME: bucketNameSchema,
     IMAGES_BUCKET_NAME: bucketNameSchema,
+    CRON_SECRET: z.string().min(1),
   },
   experimental__runtimeEnv: process.env,
 })
