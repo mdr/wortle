@@ -42,6 +42,13 @@ new vercel.ProjectDomain("admin-domain", {
   domain: "admin.wortle.app",
 })
 
+new vercel.ProjectEnvironmentVariable("admin-turbo-telemetry-disabled", {
+  projectId: adminProject.id,
+  key: "TURBO_TELEMETRY_DISABLED",
+  value: "1",
+  targets: ["production", "preview"],
+})
+
 // Cloudflare credentials for admin app R2 uploads (runtime, not infra provisioning)
 const adminR2ApiToken = config.requireSecret("admin-r2-api-token")
 

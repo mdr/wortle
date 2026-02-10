@@ -416,13 +416,13 @@ importers:
   infra:
     dependencies:
       '@pulumi/cloudflare':
-        specifier: ^6.13.0
+        specifier: 6.13.0
         version: 6.13.0(typescript@5.9.3)
       '@pulumi/neon':
         specifier: file:sdks/neon
         version: file:infra/sdks/neon
       '@pulumi/pulumi':
-        specifier: ^3.218.0
+        specifier: 3.218.0
         version: 3.218.0(typescript@5.9.3)
       '@pulumi/random':
         specifier: 4.19.1
