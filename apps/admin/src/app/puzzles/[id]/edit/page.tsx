@@ -3,16 +3,18 @@
 import { PuzzleId } from "@wortle/shared"
 import { Button, Card, CardContent, CardHeader, CardTitle } from "@wortle/ui"
 import { ArrowLeft, Check, TriangleAlert } from "lucide-react"
-import Link from "next/link"
+
 import { useParams, useRouter } from "next/navigation"
 import { useState } from "react"
 
 import { ConfirmDeletePuzzleDialog } from "@/components/ConfirmDeletePuzzleDialog"
 import { apiPuzzleToFormData, FormMode, PuzzleForm } from "@/components/PuzzleForm"
+import { useGoBack } from "@/hooks/useGoBack"
 import { trpc } from "@/trpc/client"
 
 export default function EditPuzzlePage() {
   const router = useRouter()
+  const goBack = useGoBack("/puzzles")
   const params = useParams<{ id: string }>()
   const puzzleId = PuzzleId(Number(params.id))
   const utils = trpc.useUtils()
@@ -70,10 +72,8 @@ export default function EditPuzzlePage() {
       <Card>
         <CardHeader>
           <div className="flex items-center gap-2">
-            <Button variant="ghost" size="icon-sm" asChild>
-              <Link href="/puzzles" aria-label="Back to puzzles list">
-                <ArrowLeft className="h-4 w-4" />
-              </Link>
+            <Button variant="ghost" size="icon-sm" aria-label="Go back" onClick={goBack}>
+              <ArrowLeft className="h-4 w-4" />
             </Button>
             <CardTitle>Edit Puzzle #{puzzle.id}</CardTitle>
             <span className="ml-auto">
@@ -94,7 +94,7 @@ export default function EditPuzzlePage() {
             mode={FormMode.EDIT}
             initialValues={apiPuzzleToFormData(puzzle)}
             onSubmit={(data) => updateMutation.mutate(data)}
-            onCancel={() => router.push("/puzzles")}
+            onCancel={goBack}
             isPending={updateMutation.isPending}
             error={error}
             onDelete={() => setDeleteDialogOpen(true)}

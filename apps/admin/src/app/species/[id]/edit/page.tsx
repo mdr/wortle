@@ -3,16 +3,18 @@
 import { SpeciesId } from "@wortle/shared"
 import { Button, Card, CardContent, CardHeader, CardTitle } from "@wortle/ui"
 import { ArrowLeft } from "lucide-react"
-import Link from "next/link"
+
 import { useParams, useRouter } from "next/navigation"
 import { useState } from "react"
 
 import { ConfirmDeleteSpeciesDialog } from "@/components/ConfirmDeleteSpeciesDialog"
 import { apiSpeciesToFormData, SpeciesForm } from "@/components/SpeciesForm"
+import { useGoBack } from "@/hooks/useGoBack"
 import { trpc } from "@/trpc/client"
 
 export default function EditSpeciesPage() {
   const router = useRouter()
+  const goBack = useGoBack("/species")
   const params = useParams<{ id: string }>()
   const utils = trpc.useUtils()
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
@@ -68,10 +70,8 @@ export default function EditSpeciesPage() {
       <Card>
         <CardHeader>
           <div className="flex items-center gap-2">
-            <Button variant="ghost" size="icon-sm" asChild>
-              <Link href="/species" aria-label="Back to species list">
-                <ArrowLeft className="h-4 w-4" />
-              </Link>
+            <Button variant="ghost" size="icon-sm" aria-label="Go back" onClick={goBack}>
+              <ArrowLeft className="h-4 w-4" />
             </Button>
             <CardTitle>Edit Species</CardTitle>
           </div>
@@ -81,7 +81,7 @@ export default function EditSpeciesPage() {
             mode="edit"
             initialValues={apiSpeciesToFormData(species)}
             onSubmit={(data) => updateMutation.mutate(data)}
-            onCancel={() => router.push("/species")}
+            onCancel={goBack}
             isPending={updateMutation.isPending}
             error={error}
             onDelete={() => setDeleteDialogOpen(true)}

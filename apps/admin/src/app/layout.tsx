@@ -4,6 +4,7 @@ import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server"
 import { LoginLink, LogoutLink, RegisterLink } from "@kinde-oss/kinde-auth-nextjs/components"
 import { Button, Toaster } from "@wortle/ui"
 
+import { NavLinks } from "@/components/NavLinks"
 import { TRPCProvider } from "@/trpc/provider"
 
 import "./globals.css"
@@ -23,9 +24,12 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <body className="min-h-screen" suppressHydrationWarning>
         <header className="border-b">
           <div className="flex items-center justify-between px-6 py-4">
-            <h1 className="text-lg font-semibold">
-              <Link href="/">Wortle Admin</Link>
-            </h1>
+            <div className="flex items-center gap-6">
+              <h1 className="text-lg font-semibold">
+                <Link href="/">Wortle Admin</Link>
+              </h1>
+              <NavLinks />
+            </div>
             <div className="flex items-center gap-4">
               {isLoggedIn ? (
                 <>

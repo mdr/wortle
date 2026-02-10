@@ -2,14 +2,16 @@
 
 import { Button, Card, CardContent, CardHeader, CardTitle } from "@wortle/ui"
 import { ArrowLeft } from "lucide-react"
-import Link from "next/link"
+
 import { useRouter } from "next/navigation"
 
 import { FormMode, PuzzleForm } from "@/components/PuzzleForm"
+import { useGoBack } from "@/hooks/useGoBack"
 import { trpc } from "@/trpc/client"
 
 export default function NewPuzzlePage() {
   const router = useRouter()
+  const goBack = useGoBack("/puzzles")
   const utils = trpc.useUtils()
 
   const createMutation = trpc.puzzles.create.useMutation({
@@ -32,10 +34,8 @@ export default function NewPuzzlePage() {
       <Card>
         <CardHeader>
           <div className="flex items-center gap-2">
-            <Button variant="ghost" size="icon-sm" asChild>
-              <Link href="/puzzles" aria-label="Back to puzzles list">
-                <ArrowLeft className="h-4 w-4" />
-              </Link>
+            <Button variant="ghost" size="icon-sm" aria-label="Go back" onClick={goBack}>
+              <ArrowLeft className="h-4 w-4" />
             </Button>
             <CardTitle>New Puzzle</CardTitle>
           </div>
@@ -44,7 +44,7 @@ export default function NewPuzzlePage() {
           <PuzzleForm
             mode={FormMode.NEW}
             onSubmit={(data) => createMutation.mutate(data)}
-            onCancel={() => router.push("/puzzles")}
+            onCancel={goBack}
             isPending={createMutation.isPending}
             error={createMutation.error}
           />

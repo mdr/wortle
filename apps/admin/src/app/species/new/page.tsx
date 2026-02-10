@@ -2,14 +2,16 @@
 
 import { Button, Card, CardContent, CardHeader, CardTitle } from "@wortle/ui"
 import { ArrowLeft } from "lucide-react"
-import Link from "next/link"
+
 import { useRouter } from "next/navigation"
 
 import { SpeciesForm } from "@/components/SpeciesForm"
+import { useGoBack } from "@/hooks/useGoBack"
 import { trpc } from "@/trpc/client"
 
 export default function NewSpeciesPage() {
   const router = useRouter()
+  const goBack = useGoBack("/species")
   const utils = trpc.useUtils()
 
   const createMutation = trpc.species.create.useMutation({
@@ -32,10 +34,8 @@ export default function NewSpeciesPage() {
       <Card>
         <CardHeader>
           <div className="flex items-center gap-2">
-            <Button variant="ghost" size="icon-sm" asChild>
-              <Link href="/species" aria-label="Back to species list">
-                <ArrowLeft className="h-4 w-4" />
-              </Link>
+            <Button variant="ghost" size="icon-sm" aria-label="Go back" onClick={goBack}>
+              <ArrowLeft className="h-4 w-4" />
             </Button>
             <CardTitle>New Species</CardTitle>
           </div>
@@ -44,7 +44,7 @@ export default function NewSpeciesPage() {
           <SpeciesForm
             mode="new"
             onSubmit={(data) => createMutation.mutate(data)}
-            onCancel={() => router.push("/species")}
+            onCancel={goBack}
             isPending={createMutation.isPending}
             error={createMutation.error}
           />
