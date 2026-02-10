@@ -16,6 +16,7 @@ import {
 import { describe, expect, it } from "vitest"
 
 import { FakePuzzleRepository } from "@/db/FakePuzzleRepository.testUtils"
+import { FakeScheduleRepository } from "@/db/FakeScheduleRepository.testUtils"
 import { FakeSpeciesRepository } from "@/db/FakeSpeciesRepository.testUtils"
 import { FakeBucketStorage } from "@/utils/FakeBucketStorage.testUtils"
 import { IMAGE_WIDTHS } from "@/utils/imageProcessor"
@@ -28,10 +29,12 @@ const createTestCaller = (
   speciesRepository: FakeSpeciesRepository,
   puzzleRepository: FakePuzzleRepository,
   bucketStorage: FakeBucketStorage,
+  scheduleRepository: FakeScheduleRepository = new FakeScheduleRepository(),
 ) => {
   const publishRouter = createPublishRouter({
     speciesRepository,
     puzzleRepository,
+    scheduleRepository,
     bucketStorage,
     dataBucketName: SPECIES_DATA_BUCKET,
     originalsBucketName: ORIGINALS_BUCKET,
@@ -60,7 +63,7 @@ describe("publishRouter", () => {
 
       const result = await caller.publish.all()
 
-      expect(result).toEqual({ success: true, speciesCount: 3, puzzleCount: 0 })
+      expect(result).toEqual({ success: true, speciesCount: 3, puzzleCount: 0, scheduleEntryCount: 0 })
       const uploadedBody = speciesDataJsonSchema.parse(bucketStorage.getJson(SPECIES_DATA_BUCKET, SPECIES_DATA_KEY))
       expect(uploadedBody.species.map((s) => s.id)).toEqual([
         TestSpeciesIds.daisy,
@@ -77,7 +80,7 @@ describe("publishRouter", () => {
 
       const result = await caller.publish.all()
 
-      expect(result).toEqual({ success: true, speciesCount: 0, puzzleCount: 0 })
+      expect(result).toEqual({ success: true, speciesCount: 0, puzzleCount: 0, scheduleEntryCount: 0 })
       const uploadedBody = speciesDataJsonSchema.parse(bucketStorage.getJson(SPECIES_DATA_BUCKET, SPECIES_DATA_KEY))
       expect(uploadedBody.species).toEqual([])
     })

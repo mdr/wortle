@@ -1,12 +1,15 @@
 import {
   BucketName,
   PUZZLES_DATA_KEY,
+  SCHEDULE_DATA_KEY,
   SPECIES_DATA_KEY,
   puzzlesDataJsonSchema,
+  scheduleJsonSchema,
   speciesDataJsonSchema,
 } from "@wortle/shared"
 
 import { IPuzzleRepository } from "@/db/PuzzleRepository"
+import { IScheduleRepository } from "@/db/ScheduleRepository"
 import { ISpeciesRepository } from "@/db/SpeciesRepository"
 import { dbPuzzlesToPuzzlesData } from "@/db/toPuzzle"
 import { dbSpeciesToSpeciesData } from "@/db/toSpecies"
@@ -19,6 +22,7 @@ import { cleanupOrphanImages, syncDirtyImages } from "./publishImages"
 interface PublishRouterDeps {
   speciesRepository: ISpeciesRepository
   puzzleRepository: IPuzzleRepository
+  scheduleRepository: IScheduleRepository
   bucketStorage: IBucketStorage
   dataBucketName: BucketName
   originalsBucketName: BucketName
@@ -28,6 +32,7 @@ interface PublishRouterDeps {
 export const createPublishRouter = ({
   speciesRepository,
   puzzleRepository,
+  scheduleRepository,
   bucketStorage,
   dataBucketName,
   originalsBucketName,
@@ -67,11 +72,25 @@ export const createPublishRouter = ({
         bucket: dataBucketName,
       })
 
+      const scheduleEntries = await scheduleRepository.list()
+      const scheduleData = { schedule: scheduleEntries }
+      const validatedSchedule = scheduleJsonSchema.parse(scheduleData)
+      await bucketStorage.uploadJson({
+        bucket: dataBucketName,
+        key: SCHEDULE_DATA_KEY,
+        body: validatedSchedule,
+      })
+      serverLogger.info("publish.all", `Uploaded ${SCHEDULE_DATA_KEY}`, {
+        scheduleEntryCount: validatedSchedule.schedule.length,
+        bucket: dataBucketName,
+      })
+
       await cleanupOrphanImages({ allPuzzles, bucketStorage, imagesBucketName })
 
       serverLogger.info("publish.all", `Published all data`, {
         speciesCount: validatedSpecies.species.length,
         puzzleCount: validatedPuzzles.puzzles.length,
+        scheduleEntryCount: validatedSchedule.schedule.length,
         dirtyImageCount: dirtyPuzzles.length,
         bucket: dataBucketName,
       })
@@ -80,6 +99,7 @@ export const createPublishRouter = ({
         success: true,
         speciesCount: validatedSpecies.species.length,
         puzzleCount: validatedPuzzles.puzzles.length,
+        scheduleEntryCount: validatedSchedule.schedule.length,
       }
     }),
   })

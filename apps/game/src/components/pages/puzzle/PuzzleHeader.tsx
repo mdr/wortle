@@ -1,9 +1,8 @@
 import { Link } from "@tanstack/react-router"
-import { Iso8601Date, type Puzzle } from "@wortle/shared"
+import { formatDate, Iso8601Date, type Puzzle } from "@wortle/shared"
 
 import { useSchedule } from "@/components/app/GlobalDependenciesProvider"
 import { HeaderNav } from "@/components/shared/HeaderNav"
-import { formatDate } from "@/utils/dateUtils"
 import { assetUrl } from "@/utils/utils"
 
 import { PuzzleTestIds } from "./PuzzleTestIds"

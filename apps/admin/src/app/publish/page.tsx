@@ -10,6 +10,7 @@ export default function PublishPage() {
   const [publishDialogOpen, setPublishDialogOpen] = useState(false)
   const { data: species } = trpc.species.list.useQuery()
   const { data: puzzles } = trpc.puzzles.list.useQuery()
+  const { data: schedule } = trpc.schedule.list.useQuery()
 
   const publishMutation = trpc.publish.all.useMutation({
     onSuccess: () => {
@@ -33,8 +34,9 @@ export default function PublishPage() {
         <CardContent>
           <div className="space-y-4">
             <p className="text-muted-foreground text-sm">
-              This will upload {species?.length ?? 0} species and {puzzles?.length ?? 0} puzzles to the live data
-              bucket. The changes will be visible to all users.
+              This will upload {species?.length ?? 0} species, {puzzles?.length ?? 0} puzzles, and{" "}
+              {schedule?.length ?? 0} schedule entries to the live data bucket. The changes will be visible to all
+              users.
             </p>
             <Button onClick={openPublishDialog}>Publish to Production</Button>
           </div>
@@ -44,6 +46,7 @@ export default function PublishPage() {
       <ConfirmPublishDialog
         speciesCount={species?.length ?? 0}
         puzzleCount={puzzles?.length ?? 0}
+        scheduleEntryCount={schedule?.length ?? 0}
         open={publishDialogOpen}
         onOpenChange={setPublishDialogOpen}
         onConfirm={() => publishMutation.mutate()}

@@ -446,6 +446,9 @@ importers:
       effect:
         specifier: 'catalog:'
         version: 3.19.14
+      tsafe:
+        specifier: 1.8.12
+        version: 1.8.12
       zod:
         specifier: 'catalog:'
         version: 4.3.5

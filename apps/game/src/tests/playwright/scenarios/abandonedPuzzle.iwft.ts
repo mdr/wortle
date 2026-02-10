@@ -1,8 +1,7 @@
-import { TestSpeciesIds } from "@wortle/shared"
+import { getNextDay, TestSpeciesIds } from "@wortle/shared"
 import { assert } from "tsafe"
 
 import { TestPuzzles } from "@/lib/testConstants.testUtils"
-import { getNextDay } from "@/utils/dateUtils"
 
 import { test } from "../fixtures"
 

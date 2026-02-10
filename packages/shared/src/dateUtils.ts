@@ -1,4 +1,4 @@
-import { Iso8601Date } from "@wortle/shared"
+import { type Iso8601Date, Iso8601Date as parseIso8601Date } from "./puzzle"
 
 type DateStyle = "full" | "long" | "medium" | "short"
 
@@ -21,7 +21,7 @@ export const toIso8601Date = (date: Date): Iso8601Date => {
   const year = date.getFullYear()
   const month = String(date.getMonth() + 1).padStart(2, "0")
   const day = String(date.getDate()).padStart(2, "0")
-  return Iso8601Date(`${year}-${month}-${day}`)
+  return parseIso8601Date(`${year}-${month}-${day}`)
 }
 
 export const toDateFromIso8601Date = (isoDate: Iso8601Date): Date => new Date(`${isoDate}T00:00:00Z`)

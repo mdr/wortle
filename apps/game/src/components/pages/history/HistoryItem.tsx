@@ -1,9 +1,9 @@
 import { Link } from "@tanstack/react-router"
+import { formatDate } from "@wortle/shared"
 
 import { usePuzzles, useSchedule, useSpeciesRepository } from "@/components/app/GlobalDependenciesProvider"
 import { type PuzzleHistoryEntry } from "@/lib/gameStorage/HistoryRecord"
 import { getResultDescription, getResultMedal } from "@/lib/resultMedal"
-import { formatDate } from "@/utils/dateUtils"
 
 import { HistoryTestIds } from "./HistoryTestIds"
 

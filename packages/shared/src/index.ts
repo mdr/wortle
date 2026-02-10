@@ -13,7 +13,9 @@ export {
   urlSchema,
 } from "./brandedTypes"
 
-export { PUZZLES_DATA_KEY, SPECIES_DATA_KEY, STAGING_PREFIX } from "./bucketConstants"
+export { PUZZLES_DATA_KEY, SCHEDULE_DATA_KEY, SPECIES_DATA_KEY, STAGING_PREFIX } from "./bucketConstants"
+
+export { formatDate, formatDuration, getNextDay, toDateFromIso8601Date, toIso8601Date } from "./dateUtils"
 
 export { IMAGES_BUCKET, ORIGINALS_BUCKET, SPECIES_DATA_BUCKET } from "./testConstants.testUtils"
 
@@ -55,6 +57,10 @@ export {
 export type { Coordinates, Location, PhotoAttribution, Puzzle, PuzzleImage, PuzzlesData } from "./puzzle"
 
 export { MediaType, mediaTypeSchema } from "./mediaType"
+
+export { scheduleJsonSchema } from "./schedule"
+
+export type { ScheduleData, ScheduleEntry } from "./schedule"
 
 export { getOnlyElement } from "./getOnlyElement.testUtils"
 

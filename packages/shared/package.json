@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "effect": "catalog:",
+    "tsafe": "1.8.12",
     "zod": "catalog:"
   },
   "devDependencies": {

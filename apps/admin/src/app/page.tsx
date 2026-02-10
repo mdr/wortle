@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { Leaf, Puzzle, Upload } from "lucide-react"
+import { CalendarDays, Leaf, Puzzle, Upload } from "lucide-react"
 import { Card, CardDescription, CardHeader, CardTitle } from "@wortle/ui"
 
 import { trpc } from "@/trpc/client"
@@ -9,6 +9,7 @@ import { trpc } from "@/trpc/client"
 export default function Home() {
   const { data: species, isLoading: speciesLoading } = trpc.species.list.useQuery()
   const { data: puzzles, isLoading: puzzlesLoading } = trpc.puzzles.list.useQuery()
+  const { data: schedule, isLoading: scheduleLoading } = trpc.schedule.list.useQuery()
 
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -41,6 +42,24 @@ export default function Home() {
                 <CardTitle className="text-base">Puzzles</CardTitle>
                 <CardDescription>
                   {puzzlesLoading ? "Loading\u2026" : `${puzzles?.length ?? 0} entries`}
+                </CardDescription>
+              </div>
+            </div>
+          </CardHeader>
+        </Card>
+      </Link>
+
+      <Link href="/schedule">
+        <Card className="hover:bg-muted/50 transition-colors">
+          <CardHeader>
+            <div className="flex items-center gap-3">
+              <div className="rounded-md bg-purple-100 p-2">
+                <CalendarDays className="h-5 w-5 text-purple-700" />
+              </div>
+              <div>
+                <CardTitle className="text-base">Schedule</CardTitle>
+                <CardDescription>
+                  {scheduleLoading ? "Loading\u2026" : `${schedule?.length ?? 0} entries`}
                 </CardDescription>
               </div>
             </div>

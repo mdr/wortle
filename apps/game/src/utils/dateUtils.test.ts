@@ -1,7 +1,12 @@
-import { Iso8601Date } from "@wortle/shared"
+import {
+  formatDate,
+  formatDuration,
+  getNextDay,
+  Iso8601Date,
+  toDateFromIso8601Date,
+  toIso8601Date,
+} from "@wortle/shared"
 import { describe, expect, it } from "vitest"
-
-import { formatDate, formatDuration, getNextDay, toDateFromIso8601Date, toIso8601Date } from "./dateUtils"
 
 describe("formatDate", () => {
   it("formats with long style by default", () => {

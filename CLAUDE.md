@@ -57,6 +57,16 @@ This project uses two testing styles:
 - `task infra:preview`: preview infrastructure changes.
 - `task infra:up`: apply infrastructure changes.
 
+## Database Migrations
+
+Drizzle-kit only runs SQL files listed in `apps/admin/drizzle/meta/_journal.json`. When adding a new migration:
+
+1. Create the SQL file in `apps/admin/drizzle/` (e.g. `0004_add_foo.sql`)
+2. Add a corresponding entry to `_journal.json` with the next `idx` and matching `tag` (filename without `.sql`)
+3. Run `task admin:db:migrate:dev` to apply
+
+If you forget step 2, `drizzle-kit migrate` will silently succeed without running the new file.
+
 ## Infrastructure Caveats
 
 **Pulumi/Vercel env var replacement bug**: When updating a Vercel `ProjectEnvironmentVariable` secret value, `pulumi up` may fail with `ENV_CONFLICT`. The provider attempts create-before-delete, which fails because the variable already exists. Workaround: manually delete the env var in Vercel UI before running `pulumi up`.

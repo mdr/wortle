@@ -1,6 +1,4 @@
-import { Iso8601Date } from "@wortle/shared"
-
-import { toDateFromIso8601Date, toIso8601Date } from "@/utils/dateUtils"
+import { Iso8601Date, toDateFromIso8601Date, toIso8601Date } from "@wortle/shared"
 
 export interface Clock {
   readonly now: () => Date

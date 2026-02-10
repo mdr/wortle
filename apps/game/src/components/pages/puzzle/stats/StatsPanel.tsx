@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router"
+import { formatDuration } from "@wortle/shared"
 import { Button, Card } from "@wortle/ui"
 import { Clock as ClockIcon, History } from "lucide-react"
 
@@ -9,7 +10,6 @@ import { type DailyStatsSummary } from "@/lib/gameStorage/dailyStatsSummary"
 import { isShareableOutcome } from "@/services/puzzle/puzzleSelectors"
 import { usePuzzleState } from "@/services/puzzle/puzzleServiceHooks"
 import { type Clock } from "@/utils/Clock"
-import { formatDuration } from "@/utils/dateUtils"
 
 interface StatsPanelProps {
   summary: DailyStatsSummary

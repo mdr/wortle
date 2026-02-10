@@ -1,29 +1,8 @@
-import { Iso8601Date, PuzzleId } from "@wortle/shared"
-import { assert, Equals } from "tsafe"
-import { z } from "zod"
+import { Iso8601Date, PuzzleId, type ScheduleEntry } from "@wortle/shared"
 
 import { Option } from "@/utils/types/Option"
 
-export interface ScheduleEntry {
-  date: Iso8601Date
-  puzzleId: PuzzleId
-}
-
-const scheduleEntrySchema = z.object({
-  date: z.string().transform(Iso8601Date),
-  puzzleId: z.number().transform(PuzzleId),
-})
-
-export const scheduleJsonSchema = z.object({
-  schedule: z.array(scheduleEntrySchema),
-})
-
-export interface ScheduleData {
-  schedule: ScheduleEntry[]
-}
-
-type InferredScheduleData = z.infer<typeof scheduleJsonSchema>
-assert<Equals<InferredScheduleData, ScheduleData>>()
+export { type ScheduleData, type ScheduleEntry, scheduleJsonSchema } from "@wortle/shared"
 
 export interface Schedule {
   findPuzzleForDate: (date: Iso8601Date) => Option<PuzzleId>

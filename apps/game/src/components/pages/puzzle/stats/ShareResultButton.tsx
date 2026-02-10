@@ -1,4 +1,4 @@
-import { Iso8601Date } from "@wortle/shared"
+import { formatDate, Iso8601Date } from "@wortle/shared"
 import { Button } from "@wortle/ui"
 import { Check, Share2 } from "lucide-react"
 import { useState } from "react"
@@ -7,7 +7,6 @@ import { ShareResultTestIds } from "@/components/pages/puzzle/PuzzleTestIds"
 import { PassOrFail } from "@/lib/gameStorage/HistoryRecord"
 import { getResultMedal } from "@/lib/resultMedal"
 import { PuzzleOutcome } from "@/services/puzzle/PuzzleService"
-import { formatDate } from "@/utils/dateUtils"
 import { getOrdinal } from "@/utils/getOrdinal"
 
 interface GenerateShareTextArgs {
