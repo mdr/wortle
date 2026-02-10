@@ -1,4 +1,5 @@
 import * as pulumi from "@pulumi/pulumi"
+import * as random from "@pulumi/random"
 import * as vercel from "@pulumiverse/vercel"
 
 const config = new pulumi.Config()
@@ -98,6 +99,16 @@ new vercel.ProjectEnvironmentVariable("admin-images-bucket-name-preview", {
   key: "IMAGES_BUCKET_NAME",
   value: "wortle-images-dev",
   targets: ["preview"],
+})
+
+// Cron secret for admin cron jobs
+const cronSecret = new random.RandomPassword("admin-cron-secret", { length: 32 })
+
+new vercel.ProjectEnvironmentVariable("admin-cron-secret", {
+  projectId: adminProject.id,
+  key: "CRON_SECRET",
+  value: cronSecret.result,
+  targets: ["production", "preview"],
 })
 
 // Kinde auth environment variables for admin
