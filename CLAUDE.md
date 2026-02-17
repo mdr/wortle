@@ -41,22 +41,84 @@ This project uses two testing styles:
 
 ## Task Commands
 
+### Top-level
+
+- `task check`: run all checks (tsc, lint, format, tests).
+- `task format`: format code with Prettier.
+- `task format:check`: check code formatting.
 - `task install`: install dependencies.
-- `task dev`: run the dev server.
-- `task tsc`: type check.
-- `task lint`: lint.
-- `task format`: format code.
-- `task format:check`: check formatting.
-- `task test:unit`: run unit tests.
-- `task test:iwft`: run isolated whole frontend tests (IWFTs).
-- `task stryker`: run mutation testing.
-- `task build`: build.
-- `task analyze`: build with bundle analysis.
-- `task knip`: unused code scan.
-- `task check`: run all checks.
+- `task secrets`: scan for secrets with gitleaks.
+- `task security`: run trivy security scan.
+- `task sherif`: check monorepo dependency consistency.
+- `task update-screenshots` (alias `us`): trigger GitHub Actions workflow to update snapshots.
+
+### Game (`apps/game`)
+
+- `task game:dev`: start game development server.
+- `task game:build`: build game.
+- `task game:check`: run all checks for game (tsc, lint, format, tests).
+- `task game:tsc`: type check game.
+- `task game:lint`: run ESLint on game.
+- `task game:format`: format game files.
+- `task game:format:check`: check formatting of game files.
+- `task game:test:unit`: run unit tests.
+- `task game:test:iwft`: run isolated whole frontend tests.
+- `task game:test:iwft:install`: install Playwright browsers.
+- `task game:test:iwft:ui`: run IWFTs with UI.
+- `task game:stryker`: run mutation testing with Stryker.
+- `task game:knip`: find unused code.
+- `task game:knip:prod`: find unused code (production only, ignores test usage).
+- `task game:analyze`: build and analyze bundle size.
+- `task game:ngrok`: expose local dev server via ngrok.
+- `task game:coverage`: run all tests with coverage and merge reports.
+- `task game:coverage:unit`: run unit tests with coverage.
+- `task game:coverage:iwft`: run IWFTs with coverage.
+- `task game:coverage:merge`: merge unit and IWFT coverage reports.
+
+### Admin (`apps/admin`)
+
+- `task admin:dev`: start admin development server.
+- `task admin:build`: build admin.
+- `task admin:check`: run all checks for admin (tsc, lint, format, test).
+- `task admin:tsc`: type check admin.
+- `task admin:lint`: run ESLint on admin.
+- `task admin:format`: format admin files.
+- `task admin:format:check`: check formatting of admin files.
+- `task admin:test`: run admin unit tests.
+- `task admin:copy-originals`: copy originals from prod to dev R2 bucket.
+- `task admin:db:generate`: generate a new migration from schema changes.
+- `task admin:db:migrate:dev`: run migrations on dev database.
+- `task admin:db:migrate:prod`: run migrations on prod database.
+- `task admin:db:seed-puzzles:dev`: seed puzzle data to dev database from data.wortle.app.
+- `task admin:db:seed-puzzles:prod`: seed puzzle data to prod database from data.wortle.app.
+- `task admin:db:seed-species:dev`: seed species data to dev database from data.wortle.app.
+- `task admin:db:seed-species:prod`: seed species data to prod database from data.wortle.app.
+
+### Infrastructure (`infra/`)
+
+- `task infra:check`: run all checks for infra (tsc, lint, format).
 - `task infra:tsc`: type check infrastructure code.
+- `task infra:lint`: run ESLint on infrastructure code.
+- `task infra:format`: format infra files.
+- `task infra:format:check`: check formatting of infra files.
 - `task infra:preview`: preview infrastructure changes.
 - `task infra:up`: apply infrastructure changes.
+
+### Shared (`packages/shared`)
+
+- `task shared:check`: run all checks for shared package (tsc, lint, format).
+- `task shared:tsc`: type check shared package.
+- `task shared:lint`: run ESLint on shared package.
+- `task shared:format`: format shared package files.
+- `task shared:format:check`: check formatting of shared package files.
+
+### UI (`packages/ui`)
+
+- `task ui:check`: run all checks for UI package (tsc, lint, format).
+- `task ui:tsc`: type check UI package.
+- `task ui:lint`: run ESLint on UI package.
+- `task ui:format`: format UI package files.
+- `task ui:format:check`: check formatting of UI package files.
 
 ## Database Migrations
 
@@ -71,6 +133,8 @@ If you forget step 2, `drizzle-kit migrate` will silently succeed without runnin
 ## Infrastructure Caveats
 
 **Pulumi/Vercel env var replacement bug**: When updating a Vercel `ProjectEnvironmentVariable` secret value, `pulumi up` may fail with `ENV_CONFLICT`. The provider attempts create-before-delete, which fails because the variable already exists. Workaround: manually delete the env var in Vercel UI before running `pulumi up`.
+
+**Turbo env passthrough**: Turbo only exposes env vars listed in `turbo.json` `env` array to build tasks. When adding a new server env var to `apps/admin/src/env.ts`, also add it to `turbo.json` — otherwise the Vercel build will fail with `Invalid environment variables` even though the var is set in the Vercel project.
 
 ## R2 Bucket Operations
 
