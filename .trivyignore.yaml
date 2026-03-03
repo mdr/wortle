@@ -4,3 +4,12 @@ vulnerabilities:
       ReDoS in d3-color color parsing - low risk as we don't parse untrusted color strings.
       Transitive dep of react-simple-maps via d3-zoom. Check for updates to react-simple-maps periodically.
       See: https://github.com/zcreativelabs/react-simple-maps/issues/358
+
+  - id: GHSA-67mh-4wv8-2f99
+    expired_at: 2026-05-17
+    statement: |
+      esbuild CORS vulnerability in dev server. Not a risk for us — the vulnerable esbuild 0.18.20
+      is a transitive dep of drizzle-kit via @esbuild-kit/esm-loader, used only as a TypeScript
+      loader at migration-generation time, never as a dev server.
+      Fix in progress: https://github.com/drizzle-team/drizzle-orm/pull/4430
+      Tracking issue: https://github.com/drizzle-team/drizzle-orm/issues/4852
