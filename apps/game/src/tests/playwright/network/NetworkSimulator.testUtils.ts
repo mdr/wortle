@@ -4,15 +4,15 @@ import {
   type Puzzle,
   PuzzleId,
   type PuzzlesData,
-  type Species,
   SPECIES_DATA_KEY,
   type SpeciesData,
+  type Taxon,
 } from "@wortle/shared"
 
 import { DEFAULT_DATA_URL } from "@/lib/data/DataApi"
 import { defaultPuzzles } from "@/lib/puzzles"
 import type { ScheduleData, ScheduleEntry } from "@/lib/schedule"
-import { testSpecies } from "@/lib/species/testSpecies.testUtils"
+import { testTaxa } from "@/lib/taxa/testTaxa.testUtils"
 
 import {
   EndpointBehaviour,
@@ -32,7 +32,7 @@ export const DEFAULT_SCHEDULE_ENTRIES: ScheduleEntry[] = [
 
 export const DEFAULT_PUZZLES: Puzzle[] = defaultPuzzles.getAllPuzzleIds().map((id) => defaultPuzzles.getPuzzle(id))
 
-export const DEFAULT_SPECIES: Species[] = testSpecies
+export const DEFAULT_SPECIES: Taxon[] = testTaxa
 
 interface EndpointConfig<T> {
   routePattern: string
@@ -44,7 +44,7 @@ export class NetworkSimulator {
   private readonly behaviourManager = new EndpointBehaviourManager()
   private scheduleEntries: ScheduleEntry[] = DEFAULT_SCHEDULE_ENTRIES
   private puzzles: Puzzle[] = DEFAULT_PUZZLES
-  private species: Species[] = DEFAULT_SPECIES
+  private species: Taxon[] = DEFAULT_SPECIES
 
   constructor(private readonly page: Page) {}
 
@@ -86,7 +86,7 @@ export class NetworkSimulator {
     this.species = DEFAULT_SPECIES
   }
 
-  setSpecies = (species: Species[]) => {
+  setSpecies = (species: Taxon[]) => {
     this.behaviourManager.setBehaviour(EndpointKey.SPECIES, EndpointBehaviour.DEFAULT)
     this.species = species
   }

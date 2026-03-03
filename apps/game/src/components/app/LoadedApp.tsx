@@ -6,7 +6,7 @@ import { HistoryStore } from "@/lib/gameStorage/HistoryStore"
 import { type Puzzles } from "@/lib/puzzles"
 import { createAppRouter } from "@/lib/router"
 import { type Schedule } from "@/lib/schedule"
-import { type SpeciesRepository } from "@/lib/species/Species"
+import { type TaxaRepository } from "@/lib/taxa/Taxon"
 import { defaultClock } from "@/utils/Clock"
 
 import { type GlobalDependencies, GlobalDependenciesProvider } from "./GlobalDependenciesProvider"
@@ -15,20 +15,20 @@ import { TestHooksProvider } from "./TestHooksProvider"
 interface LoadedAppProps {
   schedule: Schedule
   puzzles: Puzzles
-  speciesRepository: SpeciesRepository
+  taxaRepository: TaxaRepository
   initialPath?: string
 }
 
-export const LoadedApp = ({ schedule, puzzles, speciesRepository, initialPath }: LoadedAppProps) => {
+export const LoadedApp = ({ schedule, puzzles, taxaRepository, initialPath }: LoadedAppProps) => {
   const dependencies: GlobalDependencies = useMemo(
     () => ({
       clock: defaultClock,
       schedule,
       puzzles,
       historyStore: new HistoryStore(window.localStorage),
-      speciesRepository,
+      taxaRepository,
     }),
-    [schedule, puzzles, speciesRepository],
+    [schedule, puzzles, taxaRepository],
   )
 
   const router = useMemo(() => createAppRouter(dependencies, initialPath), [dependencies, initialPath])

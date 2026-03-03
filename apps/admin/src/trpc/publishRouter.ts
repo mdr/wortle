@@ -10,9 +10,9 @@ import {
 
 import { IPuzzleRepository } from "@/db/PuzzleRepository"
 import { IScheduleRepository } from "@/db/ScheduleRepository"
-import { ISpeciesRepository } from "@/db/SpeciesRepository"
+import { ITaxaRepository } from "@/db/TaxaRepository"
 import { dbPuzzlesToPuzzlesData } from "@/db/toPuzzle"
-import { dbSpeciesToSpeciesData } from "@/db/toSpecies"
+import { dbTaxaToSpeciesData } from "@/db/toTaxon"
 import { serverLogger } from "@/utils/logger"
 import { IBucketStorage } from "@/utils/R2BucketStorage"
 
@@ -20,7 +20,7 @@ import { protectedProcedure, router } from "./init"
 import { cleanupOrphanImages, syncDirtyImages } from "./publishImages"
 
 interface PublishRouterDeps {
-  speciesRepository: ISpeciesRepository
+  taxaRepository: ITaxaRepository
   puzzleRepository: IPuzzleRepository
   scheduleRepository: IScheduleRepository
   bucketStorage: IBucketStorage
@@ -30,7 +30,7 @@ interface PublishRouterDeps {
 }
 
 export const createPublishRouter = ({
-  speciesRepository,
+  taxaRepository,
   puzzleRepository,
   scheduleRepository,
   bucketStorage,
@@ -59,8 +59,8 @@ export const createPublishRouter = ({
         bucket: dataBucketName,
       })
 
-      const speciesList = await speciesRepository.list()
-      const speciesData = dbSpeciesToSpeciesData(speciesList)
+      const taxaList = await taxaRepository.list()
+      const speciesData = dbTaxaToSpeciesData(taxaList)
       const validatedSpecies = speciesDataJsonSchema.parse(speciesData)
       await bucketStorage.uploadJson({
         bucket: dataBucketName,
@@ -68,7 +68,7 @@ export const createPublishRouter = ({
         body: validatedSpecies,
       })
       serverLogger.info("publish.all", `Uploaded ${SPECIES_DATA_KEY}`, {
-        speciesCount: validatedSpecies.species.length,
+        taxaCount: validatedSpecies.species.length,
         bucket: dataBucketName,
       })
 
@@ -88,7 +88,7 @@ export const createPublishRouter = ({
       await cleanupOrphanImages({ allPuzzles, bucketStorage, imagesBucketName })
 
       serverLogger.info("publish.all", `Published all data`, {
-        speciesCount: validatedSpecies.species.length,
+        taxaCount: validatedSpecies.species.length,
         puzzleCount: validatedPuzzles.puzzles.length,
         scheduleEntryCount: validatedSchedule.schedule.length,
         dirtyImageCount: dirtyPuzzles.length,
@@ -97,7 +97,7 @@ export const createPublishRouter = ({
 
       return {
         success: true,
-        speciesCount: validatedSpecies.species.length,
+        taxaCount: validatedSpecies.species.length,
         puzzleCount: validatedPuzzles.puzzles.length,
         scheduleEntryCount: validatedSchedule.schedule.length,
       }

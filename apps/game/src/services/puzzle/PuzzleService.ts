@@ -1,11 +1,11 @@
-import { Iso8601Date, type Puzzle, type SpeciesId } from "@wortle/shared"
+import { Iso8601Date, type Puzzle, type TaxonId } from "@wortle/shared"
 import { assert } from "tsafe"
 
 import { AttemptResult, createAttemptResult } from "@/lib/AttemptResult"
 import { calculateDailyStatsSummary, DailyStatsSummary } from "@/lib/gameStorage/dailyStatsSummary"
 import { PassOrFail } from "@/lib/gameStorage/HistoryRecord"
 import { HistoryStore } from "@/lib/gameStorage/HistoryStore"
-import { SpeciesRepository } from "@/lib/species/Species"
+import { TaxaRepository } from "@/lib/taxa/Taxon"
 import { ImageIndex } from "@/utils/brandedTypes"
 import { AbstractService } from "@/utils/providerish/AbstractService"
 import { Option } from "@/utils/types/Option"
@@ -74,9 +74,9 @@ export interface PuzzleServiceActions {
   exitFullscreenImageMode: () => void
 
   setSearchQuery: (query: string) => void
-  selectSpecies: (speciesId: SpeciesId) => void
+  selectTaxon: (taxonId: TaxonId) => void
   chooseDifferentPlant: () => void
-  submitAttempt: (speciesId: SpeciesId) => SubmitAttemptResult
+  submitAttempt: (taxonId: TaxonId) => SubmitAttemptResult
   giveUp: () => void
 }
 
@@ -96,7 +96,7 @@ export interface PuzzleServiceState {
 
   attempts: AttemptResult[]
   searchQuery: string
-  selectedSpeciesId: Option<SpeciesId>
+  selectedTaxonId: Option<TaxonId>
   incorrectFeedbackText?: string
 
   statsSummary?: DailyStatsSummary
@@ -108,11 +108,11 @@ export class PuzzleService extends AbstractService<PuzzleServiceState> implement
     scheduledDate: Option<Iso8601Date>,
     private readonly mode: PuzzleMode,
     private readonly historyStore: HistoryStore,
-    private readonly speciesRepository: SpeciesRepository,
+    private readonly taxaRepository: TaxaRepository,
   ) {
     const history = mode !== PuzzleMode.REVIEW ? historyStore.load() : undefined
     const pastEntries = history?.entries ?? []
-    const correctSpecies = speciesRepository.getSpecies(puzzle.speciesId)
+    const correctTaxon = taxaRepository.getTaxon(puzzle.speciesId)
 
     const existingEntry =
       mode !== PuzzleMode.REVIEW && scheduledDate
@@ -120,9 +120,9 @@ export class PuzzleService extends AbstractService<PuzzleServiceState> implement
         : undefined
 
     const submittedSpecies = existingEntry?.submittedSpecies ?? []
-    const attempts = submittedSpecies.map((speciesId) => {
-      const species = speciesRepository.getSpecies(speciesId)
-      return createAttemptResult(species, correctSpecies)
+    const attempts = submittedSpecies.map((taxonId) => {
+      const taxon = taxaRepository.getTaxon(taxonId)
+      return createAttemptResult(taxon, correctTaxon)
     })
 
     const statsSummary =
@@ -134,19 +134,19 @@ export class PuzzleService extends AbstractService<PuzzleServiceState> implement
       attempts,
       outcome: computeInitialOutcome(mode, existingEntry, attempts.length),
       incorrectFeedbackText: undefined,
-      selectedSpeciesId: undefined,
+      selectedTaxonId: undefined,
       searchQuery: "",
       imageGallery: { index: ImageIndex(0), isFullscreen: false },
       statsSummary,
     })
   }
 
-  selectSpecies = (speciesId: SpeciesId): void => {
-    this.setState({ selectedSpeciesId: speciesId, searchQuery: "", incorrectFeedbackText: undefined })
+  selectTaxon = (taxonId: TaxonId): void => {
+    this.setState({ selectedTaxonId: taxonId, searchQuery: "", incorrectFeedbackText: undefined })
   }
 
   chooseDifferentPlant = (): void => {
-    this.setState({ selectedSpeciesId: undefined, searchQuery: "", incorrectFeedbackText: undefined })
+    this.setState({ selectedTaxonId: undefined, searchQuery: "", incorrectFeedbackText: undefined })
   }
 
   setSearchQuery = (query: string): void => {
@@ -176,10 +176,10 @@ export class PuzzleService extends AbstractService<PuzzleServiceState> implement
     this.setState({ imageGallery: { isFullscreen: false } })
   }
 
-  submitAttempt = (speciesId: SpeciesId): SubmitAttemptResult => {
-    const species = this.speciesRepository.getSpecies(speciesId)
-    const correctSpecies = this.speciesRepository.getSpecies(this.state.puzzle.speciesId)
-    const attemptResult = createAttemptResult(species, correctSpecies)
+  submitAttempt = (taxonId: TaxonId): SubmitAttemptResult => {
+    const taxon = this.taxaRepository.getTaxon(taxonId)
+    const correctTaxon = this.taxaRepository.getTaxon(this.state.puzzle.speciesId)
+    const attemptResult = createAttemptResult(taxon, correctTaxon)
     const nextAttempts = [...this.state.attempts, attemptResult]
     const incorrectFeedbackText = attemptResult.isCorrect ? undefined : this.getIncorrectFeedbackText(attemptResult)
     const isCompleted = attemptResult.isCorrect || nextAttempts.length >= MAX_ATTEMPTS
@@ -192,25 +192,25 @@ export class PuzzleService extends AbstractService<PuzzleServiceState> implement
     this.updateState((draft) => {
       draft.attempts.push(attemptResult)
       draft.incorrectFeedbackText = incorrectFeedbackText
-      draft.selectedSpeciesId = undefined
+      draft.selectedTaxonId = undefined
       draft.outcome = outcome
     })
     this.saveEntry(
-      nextAttempts.map((attempt) => attempt.speciesId),
+      nextAttempts.map((attempt) => attempt.taxonId),
       result,
     )
     return { isCorrect: attemptResult.isCorrect, isCompleted }
   }
 
   giveUp = (): void => {
-    this.setState({ outcome: PuzzleOutcome.GAVE_UP, incorrectFeedbackText: undefined, selectedSpeciesId: undefined })
+    this.setState({ outcome: PuzzleOutcome.GAVE_UP, incorrectFeedbackText: undefined, selectedTaxonId: undefined })
     this.saveEntry(
-      this.state.attempts.map((attempt) => attempt.speciesId),
+      this.state.attempts.map((attempt) => attempt.taxonId),
       PassOrFail.FAIL,
     )
   }
 
-  private readonly saveEntry = (submittedSpecies: SpeciesId[], result?: PassOrFail): void => {
+  private readonly saveEntry = (submittedSpecies: TaxonId[], result?: PassOrFail): void => {
     if (this.mode === PuzzleMode.DAILY) {
       const scheduledDate = this.state.scheduledDate
       assert(scheduledDate, "PuzzleService requires a scheduled date in daily mode.")

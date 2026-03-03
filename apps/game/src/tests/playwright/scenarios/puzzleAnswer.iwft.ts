@@ -1,4 +1,4 @@
-import { TestSpeciesIds } from "@wortle/shared"
+import { TestTaxonIds } from "@wortle/shared"
 
 import { TestPuzzles } from "@/lib/testConstants.testUtils"
 
@@ -8,7 +8,7 @@ test("can navigate to puzzle and answer correctly on first try", async ({ homePa
   const puzzlePage = await homePage.clickDailyPuzzle()
   await puzzlePage.checkScreenshot("puzzle-page")
   await puzzlePage.verifyAttemptCounter({ current: 1, max: 3 })
-  await puzzlePage.submitAnswer(TestSpeciesIds.devilsBitScabious)
+  await puzzlePage.submitAnswer(TestTaxonIds.devilsBitScabious)
   await puzzlePage.verifyCorrectAnswer()
   await puzzlePage.checkScreenshot("outcome-correct-first-try")
   await puzzlePage.hoverGlossaryTerm("floret")
@@ -21,7 +21,7 @@ test("can navigate to puzzle and answer correctly on first try", async ({ homePa
 test("can answer correctly after wrong attempts", async ({ homePage }) => {
   const puzzlePage = await homePage.clickPuzzle(0)
 
-  await puzzlePage.submitAnswer(TestSpeciesIds.tansy)
+  await puzzlePage.submitAnswer(TestTaxonIds.tansy)
   await puzzlePage.verifyAttemptHistory(1)
   await puzzlePage.verifyAttemptCounter({ current: 2, max: 3 })
 
@@ -31,7 +31,7 @@ test("can answer correctly after wrong attempts", async ({ homePage }) => {
   await puzzlePage.verifyAttemptHistory(2)
   await puzzlePage.verifyAttemptCounter({ current: 3, max: 3 })
 
-  await puzzlePage.submitAnswer(TestSpeciesIds.daisy)
+  await puzzlePage.submitAnswer(TestTaxonIds.daisy)
   await puzzlePage.verifyCorrectAnswer()
   await puzzlePage.checkScreenshot("outcome-correct-multiple-attempts")
 })
@@ -39,7 +39,7 @@ test("can answer correctly after wrong attempts", async ({ homePage }) => {
 test("fails after 3 wrong attempts", async ({ homePage }) => {
   const puzzlePage = await homePage.clickPuzzle(0)
 
-  await puzzlePage.submitAnswer(TestSpeciesIds.tansy)
+  await puzzlePage.submitAnswer(TestTaxonIds.tansy)
 
   await puzzlePage.searchForPlant("Chicory")
   await puzzlePage.selectFirstPlantOption()
@@ -73,7 +73,7 @@ test("can choose a different plant", async ({ homePage }) => {
 
 test("daily puzzle stays completed after leaving and returning", async ({ homePage }) => {
   const dailyPuzzle = await homePage.clickDailyPuzzle()
-  await dailyPuzzle.submitAnswer(TestSpeciesIds.devilsBitScabious)
+  await dailyPuzzle.submitAnswer(TestTaxonIds.devilsBitScabious)
   await dailyPuzzle.verifyCorrectAnswer()
 
   const backHome = await dailyPuzzle.goHome()

@@ -1,15 +1,11 @@
 import { type Puzzles } from "@/lib/puzzles"
 import { type Schedule } from "@/lib/schedule"
-import { type SpeciesRepository } from "@/lib/species/Species"
+import { type TaxaRepository } from "@/lib/taxa/Taxon"
 import { logger } from "@/utils/Logger"
 
-export const validateDataReferences = (
-  schedule: Schedule,
-  puzzles: Puzzles,
-  speciesRepository: SpeciesRepository,
-): void => {
+export const validateDataReferences = (schedule: Schedule, puzzles: Puzzles, taxaRepository: TaxaRepository): void => {
   validateSchedulePuzzleIds(schedule, puzzles)
-  validatePuzzleSpeciesIds(puzzles, speciesRepository)
+  validatePuzzleTaxonIds(puzzles, taxaRepository)
 }
 
 const validateSchedulePuzzleIds = (schedule: Schedule, puzzles: Puzzles): void => {
@@ -24,11 +20,11 @@ const validateSchedulePuzzleIds = (schedule: Schedule, puzzles: Puzzles): void =
   }
 }
 
-const validatePuzzleSpeciesIds = (puzzles: Puzzles, speciesRepository: SpeciesRepository): void => {
+const validatePuzzleTaxonIds = (puzzles: Puzzles, taxaRepository: TaxaRepository): void => {
   for (const puzzleId of puzzles.getAllPuzzleIds()) {
     const puzzle = puzzles.getPuzzle(puzzleId)
-    if (speciesRepository.findSpecies(puzzle.speciesId) === undefined) {
-      logger.warn("data.invalidSpeciesId", `Puzzle references unknown species ID: ${puzzle.speciesId}`, {
+    if (taxaRepository.findTaxon(puzzle.speciesId) === undefined) {
+      logger.warn("data.invalidTaxonId", `Puzzle references unknown taxon ID: ${puzzle.speciesId}`, {
         puzzleId: puzzle.id,
         speciesId: puzzle.speciesId,
       })

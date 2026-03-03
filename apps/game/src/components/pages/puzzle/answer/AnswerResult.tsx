@@ -2,7 +2,7 @@ import { Card } from "@wortle/ui"
 import { Info } from "lucide-react"
 import { assert } from "tsafe"
 
-import { useSpeciesRepository } from "@/components/app/GlobalDependenciesProvider"
+import { useTaxaRepository } from "@/components/app/GlobalDependenciesProvider"
 import { TipWithGlossary } from "@/components/pages/puzzle/glossary/TipWithGlossary"
 import { AttemptResult } from "@/lib/AttemptResult"
 import { PassOrFail } from "@/lib/gameStorage/HistoryRecord"
@@ -29,9 +29,9 @@ const outcomeToTestId: Record<PuzzleOutcome, string> = {
 }
 
 export const AnswerResult = () => {
-  const speciesRepository = useSpeciesRepository()
+  const taxaRepository = useTaxaRepository()
   const { puzzle, attempts, outcome } = usePuzzleState()
-  const correctSpecies = speciesRepository.getSpecies(puzzle.speciesId)
+  const correctTaxon = taxaRepository.getTaxon(puzzle.speciesId)
   assert(outcome, "AnswerResult requires an outcome")
 
   const isCorrect = outcome === PuzzleOutcome.CORRECT
@@ -111,10 +111,10 @@ export const AnswerResult = () => {
               </p>
               <div className="space-y-2">
                 {(isCorrect ? attempts.filter((attempt) => !attempt.isCorrect) : attempts).map((attempt, index) => {
-                  const species = speciesRepository.getSpecies(attempt.speciesId)
+                  const taxon = taxaRepository.getTaxon(attempt.taxonId)
                   const hint = getHintText(attempt)
                   return (
-                    <div key={attempt.speciesId} className="flex items-stretch gap-2">
+                    <div key={attempt.taxonId} className="flex items-stretch gap-2">
                       <div className="text-foreground/70 flex w-6 items-center justify-center text-sm">
                         #{index + 1}
                       </div>
@@ -124,12 +124,12 @@ export const AnswerResult = () => {
                         }`}
                       >
                         <div>
-                          <p className="text-foreground font-medium">{species.commonName}</p>
-                          <p className="text-muted-foreground text-sm italic">{species.scientificName}</p>
+                          <p className="text-foreground font-medium">{taxon.commonName}</p>
+                          <p className="text-muted-foreground text-sm italic">{taxon.scientificName}</p>
                         </div>
                         <div className="flex flex-col items-end text-right">
                           {hint && <p className="text-muted-foreground text-sm font-medium">{hint}</p>}
-                          <p className="text-muted-foreground mt-auto text-sm">{species.family}</p>
+                          <p className="text-muted-foreground mt-auto text-sm">{taxon.family}</p>
                         </div>
                       </div>
                     </div>
@@ -152,20 +152,20 @@ export const AnswerResult = () => {
             <div className="border-border bg-background flex-1 rounded-lg border p-4">
               <div className="flex items-end justify-between">
                 <div>
-                  <p className="text-foreground text-2xl font-semibold">{correctSpecies.commonName}</p>
-                  <p className="text-muted-foreground text-sm italic">{correctSpecies.scientificName}</p>
+                  <p className="text-foreground text-2xl font-semibold">{correctTaxon.commonName}</p>
+                  <p className="text-muted-foreground text-sm italic">{correctTaxon.scientificName}</p>
                 </div>
-                <p className="text-muted-foreground text-sm">{correctSpecies.family}</p>
+                <p className="text-muted-foreground text-sm">{correctTaxon.family}</p>
               </div>
             </div>
           </div>
         </div>
 
-        {correctSpecies.idTips.length > 0 && (
+        {correctTaxon.idTips.length > 0 && (
           <div className="bg-accent/10 rounded-lg p-4">
             <h3 className="text-foreground mb-2 font-serif text-lg font-semibold">Identification Tips</h3>
             <ul className="text-foreground list-inside list-disc space-y-2 text-sm">
-              {correctSpecies.idTips.map((tip, index) => (
+              {correctTaxon.idTips.map((tip, index) => (
                 <li key={index}>
                   <TipWithGlossary tip={tip} />
                 </li>
@@ -174,11 +174,11 @@ export const AnswerResult = () => {
           </div>
         )}
 
-        {correctSpecies.links.length > 0 && (
+        {correctTaxon.links.length > 0 && (
           <div className="space-y-2">
             <p className="text-foreground text-sm font-medium">Learn more:</p>
             <div className="flex flex-wrap gap-2">
-              {correctSpecies.links.map((link, index) => (
+              {correctTaxon.links.map((link, index) => (
                 <span key={link.name} className="flex items-center gap-2">
                   {index > 0 && <span className="text-muted-foreground">•</span>}
                   <a

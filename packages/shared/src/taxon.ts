@@ -2,9 +2,9 @@ import { z } from "zod"
 
 import { type Url, urlSchema } from "./brandedTypes"
 
-export const speciesIdSchema = z.string().brand<"SpeciesId", "inout">()
-export type SpeciesId = z.output<typeof speciesIdSchema>
-export const SpeciesId = (s: string): SpeciesId => speciesIdSchema.parse(s)
+export const taxonIdSchema = z.string().brand<"TaxonId", "inout">()
+export type TaxonId = z.output<typeof taxonIdSchema>
+export const TaxonId = (s: string): TaxonId => taxonIdSchema.parse(s)
 
 export const scientificNameSchema = z.string().brand<"ScientificName", "inout">()
 export type ScientificName = z.output<typeof scientificNameSchema>
@@ -22,56 +22,56 @@ export const familySchema = z.string().brand<"Family", "inout">()
 export type Family = z.output<typeof familySchema>
 export const Family = (s: string): Family => familySchema.parse(s)
 
-export interface SpeciesLink {
+export interface TaxonLink {
   name: string
   url: Url
 }
 
-export interface Species {
-  id: SpeciesId
+export interface Taxon {
+  id: TaxonId
   scientificName: ScientificName
   family: Family
   commonName: CommonName
   alternativeCommonNames: CommonName[]
   alternativeScientificNames: ScientificName[]
-  links: SpeciesLink[]
+  links: TaxonLink[]
   idTips: string[]
 }
 
-const speciesLinkSchema = z.object({
+const taxonLinkSchema = z.object({
   name: z.string(),
   url: urlSchema,
 })
 
-const speciesSchema = z.object({
-  id: speciesIdSchema,
+const taxonSchema = z.object({
+  id: taxonIdSchema,
   scientificName: scientificNameSchema,
   family: familySchema,
   commonName: commonNameSchema,
   alternativeCommonNames: z.array(commonNameSchema),
   alternativeScientificNames: z.array(scientificNameSchema).default([]),
-  links: z.array(speciesLinkSchema),
+  links: z.array(taxonLinkSchema),
   idTips: z.array(z.string()),
 })
 
 export const speciesDataJsonSchema = z.object({
-  species: z.array(speciesSchema),
+  species: z.array(taxonSchema),
 })
 
 export interface SpeciesData {
-  species: Species[]
+  species: Taxon[]
 }
 
-const matchesSpeciesQuery = (species: Species, query: string): boolean => {
+const matchesTaxonQuery = (taxon: Taxon, query: string): boolean => {
   const lowerQuery = query.toLowerCase()
   const allNames = [
-    species.commonName,
-    ...species.alternativeCommonNames,
-    species.scientificName,
-    ...species.alternativeScientificNames,
+    taxon.commonName,
+    ...taxon.alternativeCommonNames,
+    taxon.scientificName,
+    ...taxon.alternativeScientificNames,
   ]
   return allNames.some((name) => name.toLowerCase().includes(lowerQuery))
 }
 
-export const filterSpeciesByQuery = (species: Species[], query: string, excludedIds: SpeciesId[] = []): Species[] =>
-  species.filter((s) => !excludedIds.includes(s.id) && matchesSpeciesQuery(s, query))
+export const filterTaxaByQuery = (taxa: Taxon[], query: string, excludedIds: TaxonId[] = []): Taxon[] =>
+  taxa.filter((s) => !excludedIds.includes(s.id) && matchesTaxonQuery(s, query))

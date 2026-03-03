@@ -1,21 +1,21 @@
 import { BucketName } from "./brandedTypes"
 import { PuzzleId } from "./puzzle"
-import { SpeciesId } from "./species"
+import { TaxonId } from "./taxon"
 
 export const SPECIES_DATA_BUCKET = BucketName("wortle-data")
 export const ORIGINALS_BUCKET = BucketName("wortle-originals")
 export const IMAGES_BUCKET = BucketName("wortle-images")
 
-export const TestSpeciesIds = {
-  alexanders: SpeciesId("2cd4p9h.21r"),
-  birdsEyePrimrose: SpeciesId("2cd4p9h.94n"),
-  birdsFootTrefoil: SpeciesId("2cd4p9h.1e3"),
-  daisy: SpeciesId("2cd4p9h.xbs"),
-  devilsBitScabious: SpeciesId("2cd4p9h.23w"),
-  feverfew: SpeciesId("2cd4p9h.yhw"),
-  fieldScabious: SpeciesId("2cd4p9h.xyv"),
-  herbRobert: SpeciesId("2cd4p9h.8nb"),
-  tansy: SpeciesId("2cd4p9h.9b1"),
+export const TestTaxonIds = {
+  alexanders: TaxonId("2cd4p9h.21r"),
+  birdsEyePrimrose: TaxonId("2cd4p9h.94n"),
+  birdsFootTrefoil: TaxonId("2cd4p9h.1e3"),
+  daisy: TaxonId("2cd4p9h.xbs"),
+  devilsBitScabious: TaxonId("2cd4p9h.23w"),
+  feverfew: TaxonId("2cd4p9h.yhw"),
+  fieldScabious: TaxonId("2cd4p9h.xyv"),
+  herbRobert: TaxonId("2cd4p9h.8nb"),
+  tansy: TaxonId("2cd4p9h.9b1"),
 } as const
 
 export const TestPuzzleIds = {

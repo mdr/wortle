@@ -3,7 +3,7 @@ import { type ReactNode } from "react"
 import { HistoryStore } from "@/lib/gameStorage/HistoryStore"
 import { type Puzzles } from "@/lib/puzzles"
 import { type Schedule } from "@/lib/schedule"
-import { type SpeciesRepository } from "@/lib/species/Species"
+import { type TaxaRepository } from "@/lib/taxa/Taxon"
 import { type Clock } from "@/utils/Clock"
 import { createOptionalContext, useService } from "@/utils/providerish/serviceHooks"
 
@@ -12,7 +12,7 @@ export interface GlobalDependencies {
   schedule: Schedule
   puzzles: Puzzles
   historyStore: HistoryStore
-  speciesRepository: SpeciesRepository
+  taxaRepository: TaxaRepository
 }
 
 export const GlobalDependenciesContext = createOptionalContext<GlobalDependencies>()
@@ -27,7 +27,7 @@ export const usePuzzles = (): Puzzles => useGlobalDependencies().puzzles
 
 export const useHistoryStore = (): HistoryStore => useGlobalDependencies().historyStore
 
-export const useSpeciesRepository = (): SpeciesRepository => useGlobalDependencies().speciesRepository
+export const useTaxaRepository = (): TaxaRepository => useGlobalDependencies().taxaRepository
 
 interface GlobalDependenciesProviderProps {
   dependencies: GlobalDependencies

@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react"
 import Link from "next/link"
-import { formatDate, Iso8601Date, PuzzleId, ScheduleEntry, SpeciesId } from "@wortle/shared"
+import { formatDate, Iso8601Date, PuzzleId, ScheduleEntry, TaxonId } from "@wortle/shared"
 import { Button, Card, CardContent, CardHeader, CardTitle, toast } from "@wortle/ui"
 import { Plus, Trash2 } from "lucide-react"
 
@@ -38,7 +38,7 @@ const getFirstDayOfWeek = (year: number, month: number): number => (new Date(yea
 
 interface PuzzleInfo {
   id: PuzzleId
-  speciesId: SpeciesId
+  speciesId: TaxonId
   commonName: string
   observationDate: string
   scheduledDates: string[]
@@ -54,7 +54,7 @@ export const ScheduleCalendar = () => {
   const utils = trpc.useUtils()
   const { data: scheduleEntries = [] } = trpc.schedule.list.useQuery()
   const { data: puzzles = [] } = trpc.puzzles.list.useQuery()
-  const { data: species = [] } = trpc.species.list.useQuery()
+  const { data: taxa = [] } = trpc.taxa.list.useQuery()
 
   const setMutation = trpc.schedule.set.useMutation({
     onSuccess: () => {
@@ -74,24 +74,24 @@ export const ScheduleCalendar = () => {
 
   const scheduleMap = useMemo(() => buildScheduleMap(scheduleEntries), [scheduleEntries])
 
-  const speciesMap = useMemo(() => {
+  const taxaMap = useMemo(() => {
     const map = new Map<string, string>()
-    for (const s of species) {
-      map.set(s.id, s.commonName)
+    for (const t of taxa) {
+      map.set(t.id, t.commonName)
     }
     return map
-  }, [species])
+  }, [taxa])
 
   const puzzleInfos: PuzzleInfo[] = useMemo(
     () =>
       puzzles.map((p) => ({
         id: p.id,
         speciesId: p.speciesId,
-        commonName: speciesMap.get(p.speciesId) ?? p.speciesId,
+        commonName: taxaMap.get(p.speciesId) ?? p.speciesId,
         observationDate: p.observationDate,
         scheduledDates: (scheduleMap.byPuzzleId.get(p.id) ?? []).map((e) => e.date),
       })),
-    [puzzles, speciesMap, scheduleMap],
+    [puzzles, taxaMap, scheduleMap],
   )
 
   const sortedPuzzleInfos = useMemo(
@@ -171,7 +171,7 @@ export const ScheduleCalendar = () => {
                 const isToday = dateStr === today
 
                 const puzzleForDay = entry ? puzzles.find((p) => p.id === entry.puzzleId) : undefined
-                const speciesName = puzzleForDay ? (speciesMap.get(puzzleForDay.speciesId) ?? "") : ""
+                const speciesName = puzzleForDay ? (taxaMap.get(puzzleForDay.speciesId) ?? "") : ""
 
                 const isLastCol = (firstDayOfWeek + i) % 7 === 6
                 const isLastRow = i + firstDayOfWeek >= (Math.ceil((daysInMonth + firstDayOfWeek) / 7) - 1) * 7
@@ -224,7 +224,7 @@ export const ScheduleCalendar = () => {
                         {speciesName && (
                           <div className="truncate">
                             <Link
-                              href={`/species/${puzzleForDay?.speciesId}/edit`}
+                              href={`/taxa/${puzzleForDay?.speciesId}/edit`}
                               onClick={(e) => e.stopPropagation()}
                               className="underline-offset-2 hover:underline"
                             >
@@ -276,7 +276,7 @@ export const ScheduleCalendar = () => {
                       #{puzzle.id}
                     </Link>
                     <Link
-                      href={`/species/${puzzle.speciesId}/edit`}
+                      href={`/taxa/${puzzle.speciesId}/edit`}
                       className="truncate font-medium underline-offset-2 hover:underline"
                     >
                       {puzzle.commonName}

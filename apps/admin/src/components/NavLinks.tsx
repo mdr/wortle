@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation"
 import { cn } from "@wortle/ui"
 
 const links = [
-  { href: "/species", label: "Species" },
+  { href: "/taxa", label: "Taxa" },
   { href: "/puzzles", label: "Puzzles" },
   { href: "/schedule", label: "Schedule" },
 ]

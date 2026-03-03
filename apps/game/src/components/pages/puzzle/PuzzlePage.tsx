@@ -2,7 +2,7 @@ import { Iso8601Date, type Puzzle } from "@wortle/shared"
 import { Card } from "@wortle/ui"
 import { useEffect, useMemo, useRef } from "react"
 
-import { useHistoryStore, useSpeciesRepository } from "@/components/app/GlobalDependenciesProvider"
+import { useHistoryStore, useTaxaRepository } from "@/components/app/GlobalDependenciesProvider"
 import { AnswerInputCard } from "@/components/pages/puzzle/answer/AnswerInputCard"
 import { AnswerResult } from "@/components/pages/puzzle/answer/AnswerResult"
 import { AttemptHistory } from "@/components/pages/puzzle/answer/AttemptHistory"
@@ -27,10 +27,10 @@ export interface PuzzlePageProps {
 
 export const PuzzlePage = ({ puzzle, scheduledDate, mode }: PuzzlePageProps) => {
   const historyStore = useHistoryStore()
-  const speciesRepository = useSpeciesRepository()
+  const taxaRepository = useTaxaRepository()
   const service = useMemo(
-    () => new PuzzleService(puzzle, scheduledDate, mode, historyStore, speciesRepository),
-    [puzzle, scheduledDate, mode, historyStore, speciesRepository],
+    () => new PuzzleService(puzzle, scheduledDate, mode, historyStore, taxaRepository),
+    [puzzle, scheduledDate, mode, historyStore, taxaRepository],
   )
 
   return (

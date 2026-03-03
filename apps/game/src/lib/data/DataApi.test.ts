@@ -1,4 +1,4 @@
-import { Degrees, Iso8601Date, PuzzleId, SpeciesId } from "@wortle/shared"
+import { Degrees, Iso8601Date, PuzzleId, TaxonId } from "@wortle/shared"
 import * as mockttp from "mockttp"
 import { describe, expect, it } from "vitest"
 
@@ -100,7 +100,7 @@ describe("DataApi", () => {
 
         expect(data.puzzles).toHaveLength(1)
         expect(data.puzzles[0].id).toEqual(PuzzleId(40))
-        expect(data.puzzles[0].speciesId).toEqual(SpeciesId("2cd4p9h.xbs"))
+        expect(data.puzzles[0].speciesId).toEqual(TaxonId("2cd4p9h.xbs"))
         expect(data.puzzles[0].observationDate).toEqual(Iso8601Date("2025-12-19"))
         expect(data.puzzles[0].location.coordinates).toEqual({ latitude: Degrees(54.0), longitude: Degrees(-1.5) })
       }))

@@ -17,13 +17,8 @@ export const App = ({ initialPath, disableNetworkRetries }: AppProps) => (
     )}
     <QueryProvider disableRetries={disableNetworkRetries}>
       <DataLoader>
-        {(schedule, puzzles, speciesRepository) => (
-          <LoadedApp
-            schedule={schedule}
-            puzzles={puzzles}
-            speciesRepository={speciesRepository}
-            initialPath={initialPath}
-          />
+        {(schedule, puzzles, taxaRepository) => (
+          <LoadedApp schedule={schedule} puzzles={puzzles} taxaRepository={taxaRepository} initialPath={initialPath} />
         )}
       </DataLoader>
     </QueryProvider>

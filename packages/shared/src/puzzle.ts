@@ -1,6 +1,6 @@
 import { z } from "zod"
 
-import { type SpeciesId, speciesIdSchema } from "./species"
+import { type TaxonId, taxonIdSchema } from "./taxon"
 
 export const puzzleIdSchema = z.number().int().positive().brand<"PuzzleId", "inout">()
 export type PuzzleId = z.output<typeof puzzleIdSchema>
@@ -86,7 +86,7 @@ export interface PhotoAttribution {
 
 export interface Puzzle {
   id: PuzzleId
-  speciesId: SpeciesId
+  speciesId: TaxonId
   observationDate: Iso8601Date
   location: Location
   habitat: string
@@ -116,7 +116,7 @@ const photoAttributionSchema = z.object({
 
 export const puzzleSchema = z.object({
   id: puzzleIdSchema,
-  speciesId: speciesIdSchema,
+  speciesId: taxonIdSchema,
   observationDate: iso8601DateSchema,
   location: locationSchema,
   habitat: z.string(),
@@ -132,5 +132,5 @@ export interface PuzzlesData {
   puzzles: Puzzle[]
 }
 
-// Re-export SpeciesId for convenience
-export { type SpeciesId, speciesIdSchema } from "./species"
+// Re-export TaxonId for convenience
+export { type TaxonId, taxonIdSchema } from "./taxon"

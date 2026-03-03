@@ -7,13 +7,13 @@ import { Card, CardDescription, CardHeader, CardTitle } from "@wortle/ui"
 import { trpc } from "@/trpc/client"
 
 export default function Home() {
-  const { data: species, isLoading: speciesLoading } = trpc.species.list.useQuery()
+  const { data: taxa, isLoading: taxaLoading } = trpc.taxa.list.useQuery()
   const { data: puzzles, isLoading: puzzlesLoading } = trpc.puzzles.list.useQuery()
   const { data: schedule, isLoading: scheduleLoading } = trpc.schedule.list.useQuery()
 
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      <Link href="/species">
+      <Link href="/taxa">
         <Card className="hover:bg-muted/50 transition-colors">
           <CardHeader>
             <div className="flex items-center gap-3">
@@ -21,10 +21,8 @@ export default function Home() {
                 <Leaf className="h-5 w-5 text-green-700" />
               </div>
               <div>
-                <CardTitle className="text-base">Species</CardTitle>
-                <CardDescription>
-                  {speciesLoading ? "Loading\u2026" : `${species?.length ?? 0} entries`}
-                </CardDescription>
+                <CardTitle className="text-base">Taxa</CardTitle>
+                <CardDescription>{taxaLoading ? "Loading\u2026" : `${taxa?.length ?? 0} entries`}</CardDescription>
               </div>
             </div>
           </CardHeader>

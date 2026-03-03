@@ -8,10 +8,10 @@ import { dataApi } from "@/lib/data/DataApi"
 import { validateDataReferences } from "@/lib/data/validateDataReferences"
 import { DefaultPuzzles, type Puzzles } from "@/lib/puzzles"
 import { DefaultSchedule, type Schedule } from "@/lib/schedule"
-import { DefaultSpeciesRepository, type SpeciesRepository } from "@/lib/species/Species"
+import { DefaultTaxaRepository, type TaxaRepository } from "@/lib/taxa/Taxon"
 
 interface DataLoaderProps {
-  children: (schedule: Schedule, puzzles: Puzzles, speciesRepository: SpeciesRepository) => ReactNode
+  children: (schedule: Schedule, puzzles: Puzzles, taxaRepository: TaxaRepository) => ReactNode
 }
 
 export const DataLoader = ({ children }: DataLoaderProps) => {
@@ -29,22 +29,22 @@ export const DataLoader = ({ children }: DataLoaderProps) => {
     staleTime: Infinity,
   })
 
-  const speciesQuery = useQuery({
-    queryKey: ["species"],
-    queryFn: dataApi.fetchSpecies,
-    select: (data) => new DefaultSpeciesRepository(data.species),
+  const taxaQuery = useQuery({
+    queryKey: ["taxa"],
+    queryFn: dataApi.fetchTaxa,
+    select: (data) => new DefaultTaxaRepository(data.species),
     staleTime: Infinity,
   })
 
-  const isPending = scheduleQuery.isPending || puzzlesQuery.isPending || speciesQuery.isPending
-  const isSuccess = scheduleQuery.isSuccess && puzzlesQuery.isSuccess && speciesQuery.isSuccess
-  const isError = scheduleQuery.isError || puzzlesQuery.isError || speciesQuery.isError
-  const isFetching = scheduleQuery.isFetching || puzzlesQuery.isFetching || speciesQuery.isFetching
+  const isPending = scheduleQuery.isPending || puzzlesQuery.isPending || taxaQuery.isPending
+  const isSuccess = scheduleQuery.isSuccess && puzzlesQuery.isSuccess && taxaQuery.isSuccess
+  const isError = scheduleQuery.isError || puzzlesQuery.isError || taxaQuery.isError
+  const isFetching = scheduleQuery.isFetching || puzzlesQuery.isFetching || taxaQuery.isFetching
 
   const refetch = () => {
     if (scheduleQuery.isError) void scheduleQuery.refetch()
     if (puzzlesQuery.isError) void puzzlesQuery.refetch()
-    if (speciesQuery.isError) void speciesQuery.refetch()
+    if (taxaQuery.isError) void taxaQuery.refetch()
   }
 
   const showLoading = useSpinDelay(isPending, { delay: 500, minDuration: 300, ssr: false })
@@ -53,12 +53,12 @@ export const DataLoader = ({ children }: DataLoaderProps) => {
   useEffect(() => {
     if (isSuccess && !hasValidated.current) {
       hasValidated.current = true
-      validateDataReferences(scheduleQuery.data, puzzlesQuery.data, speciesQuery.data)
+      validateDataReferences(scheduleQuery.data, puzzlesQuery.data, taxaQuery.data)
     }
-  }, [isSuccess, scheduleQuery.data, puzzlesQuery.data, speciesQuery.data])
+  }, [isSuccess, scheduleQuery.data, puzzlesQuery.data, taxaQuery.data])
 
   if (isSuccess) {
-    return children(scheduleQuery.data, puzzlesQuery.data, speciesQuery.data)
+    return children(scheduleQuery.data, puzzlesQuery.data, taxaQuery.data)
   }
 
   if (isError) {

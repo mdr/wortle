@@ -12,7 +12,7 @@ import {
 import { restrictToVerticalAxis } from "@dnd-kit/modifiers"
 import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from "@dnd-kit/sortable"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { CommonName, Family, ScientificName, SpeciesId, Url } from "@wortle/shared"
+import { CommonName, Family, ScientificName, TaxonId, Url } from "@wortle/shared"
 import {
   Button,
   Command,
@@ -32,7 +32,7 @@ import { useEffect, useId, useRef, useState } from "react"
 import { Controller, useFieldArray, useForm } from "react-hook-form"
 import { z } from "zod"
 
-import { type ApiSpecies } from "@/api/types"
+import { type ApiTaxon } from "@/api/types"
 import { FAMILIES } from "@/constants/families"
 import { validateGlossaryBrackets } from "@/utils/validateGlossaryBrackets"
 
@@ -69,10 +69,10 @@ const formSchema = z.object({
   ),
 })
 
-export type SpeciesFormData = z.infer<typeof formSchema>
+export type TaxonFormData = z.infer<typeof formSchema>
 
-const formDataToApiSpecies = (data: SpeciesFormData): ApiSpecies => ({
-  id: SpeciesId(data.id),
+const formDataToApiTaxon = (data: TaxonFormData): ApiTaxon => ({
+  id: TaxonId(data.id),
   commonName: CommonName(data.commonName),
   scientificName: ScientificName(data.scientificName),
   family: Family(data.family),
@@ -88,32 +88,32 @@ const formDataToApiSpecies = (data: SpeciesFormData): ApiSpecies => ({
   idTips: data.idTips.map((t) => t.value).filter(Boolean),
 })
 
-export const apiSpeciesToFormData = (species: ApiSpecies): SpeciesFormData => ({
-  id: species.id,
-  commonName: species.commonName,
-  scientificName: species.scientificName,
-  family: species.family as SpeciesFormData["family"],
-  alternativeCommonNames: species.alternativeCommonNames.map((n) => ({ value: n })),
-  alternativeScientificNames: species.alternativeScientificNames.map((n) => ({ value: n })),
-  links: species.links.map((l) => ({ name: l.name, url: l.url })),
-  idTips: species.idTips.map((t) => ({ value: t })),
+export const apiTaxonToFormData = (taxon: ApiTaxon): TaxonFormData => ({
+  id: taxon.id,
+  commonName: taxon.commonName,
+  scientificName: taxon.scientificName,
+  family: taxon.family as TaxonFormData["family"],
+  alternativeCommonNames: taxon.alternativeCommonNames.map((n) => ({ value: n })),
+  alternativeScientificNames: taxon.alternativeScientificNames.map((n) => ({ value: n })),
+  links: taxon.links.map((l) => ({ name: l.name, url: l.url })),
+  idTips: taxon.idTips.map((t) => ({ value: t })),
 })
 
-const emptyFormData: SpeciesFormData = {
+const emptyFormData: TaxonFormData = {
   id: "",
   commonName: "",
   scientificName: "",
-  family: undefined as unknown as SpeciesFormData["family"],
+  family: undefined as unknown as TaxonFormData["family"],
   alternativeCommonNames: [],
   alternativeScientificNames: [],
   links: [],
   idTips: [],
 }
 
-type SpeciesFormProps = {
+type TaxonFormProps = {
   mode: "new" | "edit"
-  initialValues?: SpeciesFormData
-  onSubmit: (data: ApiSpecies) => void
+  initialValues?: TaxonFormData
+  onSubmit: (data: ApiTaxon) => void
   onCancel: () => void
   isPending: boolean
   error?: { message: string } | null
@@ -175,7 +175,7 @@ const FamilyCombobox = ({ value, onChange, id }: FamilyComboboxProps) => {
   )
 }
 
-export const SpeciesForm = ({
+export const TaxonForm = ({
   mode,
   initialValues,
   onSubmit,
@@ -184,9 +184,9 @@ export const SpeciesForm = ({
   error,
   onDelete,
   isDeleting,
-}: SpeciesFormProps) => {
+}: TaxonFormProps) => {
   const formId = useId()
-  const form = useForm<SpeciesFormData>({
+  const form = useForm<TaxonFormData>({
     resolver: zodResolver(formSchema),
     defaultValues: initialValues ?? emptyFormData,
   })
@@ -250,7 +250,7 @@ export const SpeciesForm = ({
       }
     }
 
-  const handleFormSubmit = (data: SpeciesFormData) => onSubmit(formDataToApiSpecies(data))
+  const handleFormSubmit = (data: TaxonFormData) => onSubmit(formDataToApiTaxon(data))
 
   const isEditMode = mode === "edit"
 

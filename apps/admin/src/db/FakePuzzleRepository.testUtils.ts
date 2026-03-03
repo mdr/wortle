@@ -1,4 +1,4 @@
-import { Option, SpeciesId } from "@wortle/shared"
+import { Option, TaxonId } from "@wortle/shared"
 
 import { CreateResult, DeleteResult, IPuzzleRepository, PuzzleWithSyncStatus, UpdateResult } from "./PuzzleRepository"
 import { DbPuzzle, PuzzleId } from "./puzzleTypes"
@@ -25,8 +25,8 @@ export class FakePuzzleRepository implements IPuzzleRepository {
     return Promise.resolve({ puzzle, imagesSynced: this.syncStatus.get(id) ?? false })
   }
 
-  countBySpeciesId = (speciesId: SpeciesId): Promise<number> =>
-    Promise.resolve([...this.puzzles.values()].filter((p) => p.speciesId === speciesId).length)
+  countByTaxonId = (taxonId: TaxonId): Promise<number> =>
+    Promise.resolve([...this.puzzles.values()].filter((p) => p.speciesId === taxonId).length)
 
   create = (data: DbPuzzle): Promise<CreateResult> => {
     if (this.puzzles.has(data.id)) {

@@ -1,11 +1,11 @@
-import { CommonName, Family, ScientificName, SpeciesId, Url } from "@wortle/shared"
+import { CommonName, Family, ScientificName, TaxonId, Url } from "@wortle/shared"
 import { describe, expect, it } from "vitest"
 
-import { apiSpeciesToDbSpecies, dbSpeciesToApiSpecies } from "./speciesConversions"
+import { apiTaxonToDbTaxon, dbTaxonToApiTaxon } from "./taxonConversions"
 
-describe("speciesConversions", () => {
-  const dbSpecies = {
-    id: SpeciesId("2cd4p9h.test"),
+describe("taxonConversions", () => {
+  const dbTaxon = {
+    id: TaxonId("2cd4p9h.test"),
     scientificName: ScientificName("Bellis perennis"),
     family: Family("Asteraceae"),
     commonName: CommonName("Daisy"),
@@ -15,8 +15,8 @@ describe("speciesConversions", () => {
     idTips: ["White petals", "Yellow center"],
   }
 
-  const apiSpecies = {
-    id: SpeciesId("2cd4p9h.test"),
+  const apiTaxon = {
+    id: TaxonId("2cd4p9h.test"),
     scientificName: ScientificName("Bellis perennis"),
     family: Family("Asteraceae"),
     commonName: CommonName("Daisy"),
@@ -26,15 +26,15 @@ describe("speciesConversions", () => {
     idTips: ["White petals", "Yellow center"],
   }
 
-  describe("dbSpeciesToApiSpecies", () => {
-    it("converts all fields from DbSpecies to ApiSpecies", () => {
-      expect(dbSpeciesToApiSpecies(dbSpecies)).toEqual(apiSpecies)
+  describe("dbTaxonToApiTaxon", () => {
+    it("converts all fields from DbTaxon to ApiTaxon", () => {
+      expect(dbTaxonToApiTaxon(dbTaxon)).toEqual(apiTaxon)
     })
   })
 
-  describe("apiSpeciesToDbSpecies", () => {
-    it("converts all fields from ApiSpecies to DbSpecies", () => {
-      expect(apiSpeciesToDbSpecies(apiSpecies)).toEqual(dbSpecies)
+  describe("apiTaxonToDbTaxon", () => {
+    it("converts all fields from ApiTaxon to DbTaxon", () => {
+      expect(apiTaxonToDbTaxon(apiTaxon)).toEqual(dbTaxon)
     })
   })
 })

@@ -2,34 +2,34 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import { clsx } from "clsx"
 import { useEffect, useId, useRef, useState } from "react"
 
-import { useSpeciesRepository } from "@/components/app/GlobalDependenciesProvider"
+import { useTaxaRepository } from "@/components/app/GlobalDependenciesProvider"
 import { usePuzzleServiceActions, usePuzzleState } from "@/services/puzzle/puzzleServiceHooks"
 
 import { PuzzleTestIds } from "../PuzzleTestIds"
 
 export const PlantSearch = () => {
-  const { attempts, selectedSpeciesId, searchQuery } = usePuzzleState()
+  const { attempts, selectedTaxonId, searchQuery } = usePuzzleState()
   const puzzleActions = usePuzzleServiceActions()
-  const speciesRepository = useSpeciesRepository()
-  const excludedSpeciesIds = attempts.map((attempt) => attempt.speciesId)
+  const taxaRepository = useTaxaRepository()
+  const excludedTaxonIds = attempts.map((attempt) => attempt.taxonId)
   const open = searchQuery.length > 0
   const { containerRef, handleFocus, handleBlur } = useScrollToLabelOnFocus(open)
   const inputId = useId()
 
-  const filteredSpecies = speciesRepository.filterSpecies(searchQuery, excludedSpeciesIds)
-  const selectedSpecies = selectedSpeciesId ? speciesRepository.findSpecies(selectedSpeciesId) : undefined
+  const filteredTaxa = taxaRepository.filterTaxa(searchQuery, excludedTaxonIds)
+  const selectedTaxon = selectedTaxonId ? taxaRepository.findTaxon(selectedTaxonId) : undefined
 
-  if (selectedSpecies) {
+  if (selectedTaxon) {
     return (
       <div className="space-y-2">
         <div className="border-border bg-muted flex items-end justify-between rounded-lg border p-3">
           <div>
             <p className="text-foreground font-medium" data-testid={PuzzleTestIds.selectedPlantName}>
-              {selectedSpecies.commonName}
+              {selectedTaxon.commonName}
             </p>
-            <p className="text-foreground/70 text-xs italic">{selectedSpecies.scientificName}</p>
+            <p className="text-foreground/70 text-xs italic">{selectedTaxon.scientificName}</p>
           </div>
-          <p className="text-foreground/70 text-xs">{selectedSpecies.family}</p>
+          <p className="text-foreground/70 text-xs">{selectedTaxon.family}</p>
         </div>
         <button
           type="button"
@@ -61,18 +61,18 @@ export const PlantSearch = () => {
         <CommandList className={clsx({ hidden: !open })}>
           <CommandEmpty>No plants found. Try a different name.</CommandEmpty>
           <CommandGroup heading="Suggestions">
-            {filteredSpecies.map((species) => (
+            {filteredTaxa.map((taxon) => (
               <CommandItem
-                key={species.id}
-                value={species.commonName}
-                onSelect={() => puzzleActions.selectSpecies(species.id)}
+                key={taxon.id}
+                value={taxon.commonName}
+                onSelect={() => puzzleActions.selectTaxon(taxon.id)}
                 className="group"
                 data-testid={PuzzleTestIds.plantOption}
               >
                 <div className="flex flex-1 flex-col">
-                  <span className="font-medium">{species.commonName}</span>
+                  <span className="font-medium">{taxon.commonName}</span>
                   <span className="text-muted-foreground group-data-[selected=true]:text-primary-foreground/70 text-xs italic">
-                    {species.scientificName}
+                    {taxon.scientificName}
                   </span>
                 </div>
               </CommandItem>

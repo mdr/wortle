@@ -1,4 +1,4 @@
-import { Degrees, ImageKey, Iso8601Date, License, MediaType, TestPuzzleIds, TestSpeciesIds } from "@wortle/shared"
+import { Degrees, ImageKey, Iso8601Date, License, MediaType, TestPuzzleIds, TestTaxonIds } from "@wortle/shared"
 import { describe, expect, it } from "vitest"
 
 import { CreateResult, DeleteResult, PuzzleRepository, UpdateResult } from "./PuzzleRepository"
@@ -7,7 +7,7 @@ import { createTestDb } from "./testDb.testUtils"
 
 const makeDbPuzzle = (overrides: Partial<DbPuzzle> = {}): DbPuzzle => ({
   id: TestPuzzleIds.daisy,
-  speciesId: TestSpeciesIds.daisy,
+  speciesId: TestTaxonIds.daisy,
   observationDate: Iso8601Date("2025-01-15"),
   location: {
     description: "North Yorkshire, England",

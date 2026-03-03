@@ -26,17 +26,17 @@ export {
   commonNameSchema,
   Family,
   familySchema,
-  filterSpeciesByQuery,
+  filterTaxaByQuery,
   Genus,
   genusSchema,
   ScientificName,
   scientificNameSchema,
   speciesDataJsonSchema,
-  SpeciesId,
-  speciesIdSchema,
-} from "./species"
+  TaxonId,
+  taxonIdSchema,
+} from "./taxon"
 
-export type { Species, SpeciesData, SpeciesLink } from "./species"
+export type { SpeciesData, Taxon, TaxonLink } from "./taxon"
 
 export {
   Degrees,
@@ -66,4 +66,4 @@ export type { ScheduleData, ScheduleEntry } from "./schedule"
 
 export { getOnlyElement } from "./getOnlyElement.testUtils"
 
-export { TestPuzzleIds, TestSpeciesIds } from "./testConstants.testUtils"
+export { TestPuzzleIds, TestTaxonIds } from "./testConstants.testUtils"

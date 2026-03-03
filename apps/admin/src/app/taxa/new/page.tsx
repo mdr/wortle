@@ -5,28 +5,28 @@ import { ArrowLeft } from "lucide-react"
 
 import { useRouter } from "next/navigation"
 
-import { SpeciesForm } from "@/components/SpeciesForm"
+import { TaxonForm } from "@/components/TaxonForm"
 import { useGoBack } from "@/hooks/useGoBack"
 import { trpc } from "@/trpc/client"
 
-export default function NewSpeciesPage() {
+export default function NewTaxonPage() {
   const router = useRouter()
-  const goBack = useGoBack("/species")
+  const goBack = useGoBack("/taxa")
   const utils = trpc.useUtils()
 
-  const createMutation = trpc.species.create.useMutation({
-    onMutate: async (newSpecies) => {
-      await utils.species.list.cancel()
-      const previous = utils.species.list.getData()
-      utils.species.list.setData(undefined, (old) => [...(old ?? []), newSpecies])
+  const createMutation = trpc.taxa.create.useMutation({
+    onMutate: async (newTaxon) => {
+      await utils.taxa.list.cancel()
+      const previous = utils.taxa.list.getData()
+      utils.taxa.list.setData(undefined, (old) => [...(old ?? []), newTaxon])
       return { previous }
     },
-    onError: (_err, _newSpecies, context) => {
+    onError: (_err, _newTaxon, context) => {
       if (context?.previous) {
-        utils.species.list.setData(undefined, context.previous)
+        utils.taxa.list.setData(undefined, context.previous)
       }
     },
-    onSuccess: (_data, variables) => router.push(`/species/${variables.id}/edit`),
+    onSuccess: (_data, variables) => router.push(`/taxa/${variables.id}/edit`),
   })
 
   return (
@@ -37,11 +37,11 @@ export default function NewSpeciesPage() {
             <Button variant="ghost" size="icon-sm" aria-label="Go back" onClick={goBack}>
               <ArrowLeft className="h-4 w-4" />
             </Button>
-            <CardTitle>New Species</CardTitle>
+            <CardTitle>New Taxon</CardTitle>
           </div>
         </CardHeader>
         <CardContent>
-          <SpeciesForm
+          <TaxonForm
             mode="new"
             onSubmit={(data) => createMutation.mutate(data)}
             onCancel={goBack}

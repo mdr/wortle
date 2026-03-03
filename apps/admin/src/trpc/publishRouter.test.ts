@@ -11,28 +11,28 @@ import {
   speciesDataJsonSchema,
   puzzlesDataJsonSchema,
   TestPuzzleIds,
-  TestSpeciesIds,
+  TestTaxonIds,
 } from "@wortle/shared"
 import { describe, expect, it } from "vitest"
 
 import { FakePuzzleRepository } from "@/db/FakePuzzleRepository.testUtils"
 import { FakeScheduleRepository } from "@/db/FakeScheduleRepository.testUtils"
-import { FakeSpeciesRepository } from "@/db/FakeSpeciesRepository.testUtils"
+import { FakeTaxaRepository } from "@/db/FakeTaxaRepository.testUtils"
 import { FakeBucketStorage } from "@/utils/FakeBucketStorage.testUtils"
 import { IMAGE_WIDTHS } from "@/utils/imageProcessor"
 
 import { router } from "./init"
 import { createPublishRouter } from "./publishRouter"
-import { makeDbPuzzle, makeDbSpecies, testContext } from "./testFactories.testUtils"
+import { makeDbPuzzle, makeDbTaxon, testContext } from "./testFactories.testUtils"
 
 const createTestCaller = (
-  speciesRepository: FakeSpeciesRepository,
+  taxaRepository: FakeTaxaRepository,
   puzzleRepository: FakePuzzleRepository,
   bucketStorage: FakeBucketStorage,
   scheduleRepository: FakeScheduleRepository = new FakeScheduleRepository(),
 ) => {
   const publishRouter = createPublishRouter({
-    speciesRepository,
+    taxaRepository,
     puzzleRepository,
     scheduleRepository,
     bucketStorage,
@@ -47,46 +47,44 @@ const createTestCaller = (
 describe("publishRouter", () => {
   describe("all", () => {
     it("publishes species data to R2 sorted by scientific name", async () => {
-      const speciesRepo = new FakeSpeciesRepository()
-      await speciesRepo.create(
-        makeDbSpecies({ id: TestSpeciesIds.tansy, scientificName: ScientificName("Tanacetum vulgare") }),
+      const taxaRepo = new FakeTaxaRepository()
+      await taxaRepo.create(
+        makeDbTaxon({ id: TestTaxonIds.tansy, scientificName: ScientificName("Tanacetum vulgare") }),
       )
-      await speciesRepo.create(
-        makeDbSpecies({ id: TestSpeciesIds.daisy, scientificName: ScientificName("Bellis perennis") }),
-      )
-      await speciesRepo.create(
-        makeDbSpecies({ id: TestSpeciesIds.herbRobert, scientificName: ScientificName("Geranium robertianum") }),
+      await taxaRepo.create(makeDbTaxon({ id: TestTaxonIds.daisy, scientificName: ScientificName("Bellis perennis") }))
+      await taxaRepo.create(
+        makeDbTaxon({ id: TestTaxonIds.herbRobert, scientificName: ScientificName("Geranium robertianum") }),
       )
       const puzzleRepo = new FakePuzzleRepository()
       const bucketStorage = new FakeBucketStorage()
-      const caller = createTestCaller(speciesRepo, puzzleRepo, bucketStorage)
+      const caller = createTestCaller(taxaRepo, puzzleRepo, bucketStorage)
 
       const result = await caller.publish.all()
 
-      expect(result).toEqual({ success: true, speciesCount: 3, puzzleCount: 0, scheduleEntryCount: 0 })
+      expect(result).toEqual({ success: true, taxaCount: 3, puzzleCount: 0, scheduleEntryCount: 0 })
       const uploadedBody = speciesDataJsonSchema.parse(bucketStorage.getJson(SPECIES_DATA_BUCKET, SPECIES_DATA_KEY))
       expect(uploadedBody.species.map((s) => s.id)).toEqual([
-        TestSpeciesIds.daisy,
-        TestSpeciesIds.herbRobert,
-        TestSpeciesIds.tansy,
+        TestTaxonIds.daisy,
+        TestTaxonIds.herbRobert,
+        TestTaxonIds.tansy,
       ])
     })
 
-    it("publishes empty species array when no species exist", async () => {
-      const speciesRepo = new FakeSpeciesRepository()
+    it("publishes empty species array when no taxa exist", async () => {
+      const taxaRepo = new FakeTaxaRepository()
       const puzzleRepo = new FakePuzzleRepository()
       const bucketStorage = new FakeBucketStorage()
-      const caller = createTestCaller(speciesRepo, puzzleRepo, bucketStorage)
+      const caller = createTestCaller(taxaRepo, puzzleRepo, bucketStorage)
 
       const result = await caller.publish.all()
 
-      expect(result).toEqual({ success: true, speciesCount: 0, puzzleCount: 0, scheduleEntryCount: 0 })
+      expect(result).toEqual({ success: true, taxaCount: 0, puzzleCount: 0, scheduleEntryCount: 0 })
       const uploadedBody = speciesDataJsonSchema.parse(bucketStorage.getJson(SPECIES_DATA_BUCKET, SPECIES_DATA_KEY))
       expect(uploadedBody.species).toEqual([])
     })
 
     it("publishes puzzles data sorted by id", async () => {
-      const speciesRepo = new FakeSpeciesRepository()
+      const taxaRepo = new FakeTaxaRepository()
       const puzzleRepo = new FakePuzzleRepository()
       const bucketStorage = new FakeBucketStorage()
       const puzzle1 = makeDbPuzzle({ id: TestPuzzleIds.herbRobert })
@@ -95,7 +93,7 @@ describe("publishRouter", () => {
       await puzzleRepo.create(puzzle2)
       await bucketStorage.seedOriginalJpeg(puzzle1.id, puzzle1.images[0].imageKey)
       await bucketStorage.seedOriginalJpeg(puzzle2.id, puzzle2.images[0].imageKey)
-      const caller = createTestCaller(speciesRepo, puzzleRepo, bucketStorage)
+      const caller = createTestCaller(taxaRepo, puzzleRepo, bucketStorage)
 
       const result = await caller.publish.all()
 
@@ -105,13 +103,13 @@ describe("publishRouter", () => {
     })
 
     it("generates WebP variants for dirty puzzles", async () => {
-      const speciesRepo = new FakeSpeciesRepository()
+      const taxaRepo = new FakeTaxaRepository()
       const puzzleRepo = new FakePuzzleRepository()
       const bucketStorage = new FakeBucketStorage()
       const puzzle = makeDbPuzzle()
       await puzzleRepo.create(puzzle)
       await bucketStorage.seedOriginalJpeg(puzzle.id, puzzle.images[0].imageKey)
-      const caller = createTestCaller(speciesRepo, puzzleRepo, bucketStorage)
+      const caller = createTestCaller(taxaRepo, puzzleRepo, bucketStorage)
 
       await caller.publish.all()
 
@@ -123,13 +121,13 @@ describe("publishRouter", () => {
     })
 
     it("marks puzzles as synced after processing", async () => {
-      const speciesRepo = new FakeSpeciesRepository()
+      const taxaRepo = new FakeTaxaRepository()
       const puzzleRepo = new FakePuzzleRepository()
       const bucketStorage = new FakeBucketStorage()
       const puzzle = makeDbPuzzle()
       await puzzleRepo.create(puzzle)
       await bucketStorage.seedOriginalJpeg(puzzle.id, puzzle.images[0].imageKey)
-      const caller = createTestCaller(speciesRepo, puzzleRepo, bucketStorage)
+      const caller = createTestCaller(taxaRepo, puzzleRepo, bucketStorage)
 
       await caller.publish.all()
 
@@ -138,13 +136,13 @@ describe("publishRouter", () => {
     })
 
     it("skips WebP generation for already-synced puzzles", async () => {
-      const speciesRepo = new FakeSpeciesRepository()
+      const taxaRepo = new FakeTaxaRepository()
       const puzzleRepo = new FakePuzzleRepository()
       const bucketStorage = new FakeBucketStorage()
       const puzzle = makeDbPuzzle()
       await puzzleRepo.create(puzzle)
       await bucketStorage.seedOriginalJpeg(puzzle.id, puzzle.images[0].imageKey)
-      const caller = createTestCaller(speciesRepo, puzzleRepo, bucketStorage)
+      const caller = createTestCaller(taxaRepo, puzzleRepo, bucketStorage)
 
       await caller.publish.all()
 
@@ -156,7 +154,7 @@ describe("publishRouter", () => {
     })
 
     it("strips mediaType from puzzle images in published JSON", async () => {
-      const speciesRepo = new FakeSpeciesRepository()
+      const taxaRepo = new FakeTaxaRepository()
       const puzzleRepo = new FakePuzzleRepository()
       const bucketStorage = new FakeBucketStorage()
       const puzzle = makeDbPuzzle({
@@ -164,7 +162,7 @@ describe("publishRouter", () => {
       })
       await puzzleRepo.create(puzzle)
       await bucketStorage.seedOriginalJpeg(puzzle.id, ImageKey("flower"))
-      const caller = createTestCaller(speciesRepo, puzzleRepo, bucketStorage)
+      const caller = createTestCaller(taxaRepo, puzzleRepo, bucketStorage)
 
       await caller.publish.all()
 
@@ -173,7 +171,7 @@ describe("publishRouter", () => {
     })
 
     it("cleans up orphan WebP images", async () => {
-      const speciesRepo = new FakeSpeciesRepository()
+      const taxaRepo = new FakeTaxaRepository()
       const puzzleRepo = new FakePuzzleRepository()
       const bucketStorage = new FakeBucketStorage()
       const orphanKey = ObjectKey("puzzles/999/old-image-400.webp")
@@ -183,7 +181,7 @@ describe("publishRouter", () => {
         body: new ArrayBuffer(1),
         contentType: MediaType.IMAGE_WEBP,
       })
-      const caller = createTestCaller(speciesRepo, puzzleRepo, bucketStorage)
+      const caller = createTestCaller(taxaRepo, puzzleRepo, bucketStorage)
 
       await caller.publish.all()
 

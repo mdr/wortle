@@ -5,7 +5,7 @@ import {
   objectKeySchema,
   License,
   puzzleIdSchema,
-  speciesIdSchema,
+  taxonIdSchema,
 } from "@wortle/shared"
 import { z } from "zod"
 
@@ -34,7 +34,7 @@ const apiPhotoAttributionSchema = z.object({
 
 export const apiPuzzleSchema = z.object({
   id: puzzleIdSchema,
-  speciesId: speciesIdSchema,
+  speciesId: taxonIdSchema,
   observationDate: iso8601DateSchema,
   location: apiLocationSchema,
   habitat: z.string(),

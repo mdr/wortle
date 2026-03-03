@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router"
 import { formatDate } from "@wortle/shared"
 
-import { usePuzzles, useSchedule, useSpeciesRepository } from "@/components/app/GlobalDependenciesProvider"
+import { usePuzzles, useSchedule, useTaxaRepository } from "@/components/app/GlobalDependenciesProvider"
 import { type PuzzleHistoryEntry } from "@/lib/gameStorage/HistoryRecord"
 import { getResultDescription, getResultMedal } from "@/lib/resultMedal"
 
@@ -15,13 +15,13 @@ interface HistoryItemProps {
 export const HistoryItem = ({ entry, isToday }: HistoryItemProps) => {
   const schedule = useSchedule()
   const puzzles = usePuzzles()
-  const speciesRepository = useSpeciesRepository()
+  const taxaRepository = useTaxaRepository()
   const puzzleId = schedule.findPuzzleForDate(entry.date)
   if (!puzzleId) return null
 
   const puzzle = puzzles.getPuzzle(puzzleId)
-  const species = speciesRepository.getSpecies(puzzle.speciesId)
-  const speciesName = species.commonName
+  const taxon = taxaRepository.getTaxon(puzzle.speciesId)
+  const taxonName = taxon.commonName
   const attemptCount = entry.submittedSpecies.length
 
   return (
@@ -33,7 +33,7 @@ export const HistoryItem = ({ entry, isToday }: HistoryItemProps) => {
           </span>
           <span className="sr-only">{getResultDescription({ attemptCount, result: entry.result, isToday })}:</span>
           <div>
-            <p className="text-foreground font-medium">{speciesName}</p>
+            <p className="text-foreground font-medium">{taxonName}</p>
             <p className="text-foreground/70 text-xs">{formatDate(entry.date)}</p>
           </div>
         </div>

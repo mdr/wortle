@@ -1,11 +1,11 @@
-import { CommonName, Family, ScientificName, SpeciesId, Url } from "@wortle/shared"
+import { CommonName, Family, ScientificName, TaxonId, Url } from "@wortle/shared"
 import { describe, expect, it } from "vitest"
 
-import { dbSpeciesToSpecies, dbSpeciesToSpeciesData } from "./toSpecies"
+import { dbTaxonToTaxon, dbTaxaToSpeciesData } from "./toTaxon"
 
-describe("dbSpeciesToSpecies", () => {
-  const dbSpecies = {
-    id: SpeciesId("2cd4p9h.test"),
+describe("dbTaxonToTaxon", () => {
+  const dbTaxon = {
+    id: TaxonId("2cd4p9h.test"),
     scientificName: ScientificName("Bellis perennis"),
     family: Family("Asteraceae"),
     commonName: CommonName("Daisy"),
@@ -15,9 +15,9 @@ describe("dbSpeciesToSpecies", () => {
     idTips: ["White petals", "Yellow center"],
   }
 
-  it("converts all fields from DbSpecies to Species", () => {
-    expect(dbSpeciesToSpecies(dbSpecies)).toEqual({
-      id: SpeciesId("2cd4p9h.test"),
+  it("converts all fields from DbTaxon to Taxon", () => {
+    expect(dbTaxonToTaxon(dbTaxon)).toEqual({
+      id: TaxonId("2cd4p9h.test"),
       scientificName: ScientificName("Bellis perennis"),
       family: Family("Asteraceae"),
       commonName: CommonName("Daisy"),
@@ -29,11 +29,11 @@ describe("dbSpeciesToSpecies", () => {
   })
 })
 
-describe("dbSpeciesToSpeciesData", () => {
-  it("converts DbSpecies array to SpeciesData sorted by scientific name", () => {
-    const dbSpecies = [
+describe("dbTaxaToSpeciesData", () => {
+  it("converts DbTaxon array to SpeciesData sorted by scientific name", () => {
+    const dbTaxa = [
       {
-        id: SpeciesId("2cd4p9h.z"),
+        id: TaxonId("2cd4p9h.z"),
         scientificName: ScientificName("Zinnia elegans"),
         family: Family("Asteraceae"),
         commonName: CommonName("Zinnia"),
@@ -43,7 +43,7 @@ describe("dbSpeciesToSpeciesData", () => {
         idTips: [],
       },
       {
-        id: SpeciesId("2cd4p9h.a"),
+        id: TaxonId("2cd4p9h.a"),
         scientificName: ScientificName("Achillea millefolium"),
         family: Family("Asteraceae"),
         commonName: CommonName("Yarrow"),
@@ -54,7 +54,7 @@ describe("dbSpeciesToSpeciesData", () => {
       },
     ]
 
-    const result = dbSpeciesToSpeciesData(dbSpecies)
+    const result = dbTaxaToSpeciesData(dbTaxa)
 
     expect(result.species[0].scientificName).toBe("Achillea millefolium")
     expect(result.species[1].scientificName).toBe("Zinnia elegans")

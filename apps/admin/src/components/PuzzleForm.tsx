@@ -14,7 +14,7 @@ import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrate
 import { zodResolver } from "@hookform/resolvers/zod"
 import {
   Degrees,
-  filterSpeciesByQuery,
+  filterTaxaByQuery,
   getLicenseDisplayName,
   ImageKey,
   Iso8601Date,
@@ -22,7 +22,7 @@ import {
   MediaType,
   ObjectKey,
   PuzzleId,
-  SpeciesId,
+  TaxonId,
 } from "@wortle/shared"
 import {
   Button,
@@ -63,7 +63,7 @@ const LocationPicker = dynamic(() => import("./LocationPicker").then((mod) => mo
 
 const formSchema = z.object({
   id: z.number().int().positive("ID must be a positive integer"),
-  speciesId: z.string().min(1, "Species is required"),
+  speciesId: z.string().min(1, "Taxon is required"),
   observationDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Required"),
   location: z.object({
     description: z.string().min(1, "Location description is required"),
@@ -91,7 +91,7 @@ export type PuzzleFormData = z.infer<typeof formSchema>
 
 const formDataToCreatePuzzleRequest = (data: PuzzleFormData): CreatePuzzleRequest => ({
   id: PuzzleId(data.id),
-  speciesId: SpeciesId(data.speciesId),
+  speciesId: TaxonId(data.speciesId),
   observationDate: Iso8601Date(data.observationDate),
   location: {
     description: data.location.description,
@@ -169,26 +169,26 @@ type PuzzleFormProps = {
   isDeleting?: boolean
 }
 
-type SpeciesComboboxProps = {
-  value: SpeciesId | ""
-  onChange: (value: SpeciesId) => void
+type TaxonComboboxProps = {
+  value: TaxonId | ""
+  onChange: (value: TaxonId) => void
   id?: string
 }
 
-const SpeciesCombobox = ({ value, onChange, id }: SpeciesComboboxProps) => {
+const TaxonCombobox = ({ value, onChange, id }: TaxonComboboxProps) => {
   const [open, setOpen] = useState(false)
   const [search, setSearch] = useState("")
-  const { data: speciesList, isLoading, error, refetch } = trpc.species.list.useQuery()
+  const { data: taxaList, isLoading, error, refetch } = trpc.taxa.list.useQuery()
 
-  const filteredSpecies = speciesList ? filterSpeciesByQuery(speciesList, search) : []
+  const filteredTaxa = taxaList ? filterTaxaByQuery(taxaList, search) : []
 
-  const selectedSpecies = speciesList?.find((s) => s.id === value)
+  const selectedTaxon = taxaList?.find((s) => s.id === value)
 
   const getButtonText = () => {
-    if (error) return "Failed to load species"
-    if (isLoading) return "Loading species..."
-    if (selectedSpecies) return `${selectedSpecies.commonName} (${selectedSpecies.scientificName})`
-    return "Select a species..."
+    if (error) return "Failed to load taxa"
+    if (isLoading) return "Loading taxa..."
+    if (selectedTaxon) return `${selectedTaxon.commonName} (${selectedTaxon.scientificName})`
+    return "Select a taxon..."
   }
 
   return (
@@ -208,34 +208,34 @@ const SpeciesCombobox = ({ value, onChange, id }: SpeciesComboboxProps) => {
       </PopoverTrigger>
       <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0" align="start">
         <Command shouldFilter={false}>
-          <CommandInput placeholder="Search species..." value={search} onValueChange={setSearch} />
+          <CommandInput placeholder="Search taxa..." value={search} onValueChange={setSearch} />
           <CommandList>
             {error ? (
               <div className="p-4 text-center">
-                <p className="text-destructive text-sm">Failed to load species</p>
+                <p className="text-destructive text-sm">Failed to load taxa</p>
                 <Button variant="outline" size="sm" className="mt-2" onClick={() => void refetch()}>
                   Retry
                 </Button>
               </div>
             ) : (
               <>
-                <CommandEmpty>No species found.</CommandEmpty>
+                <CommandEmpty>No taxa found.</CommandEmpty>
                 <CommandGroup>
-                  {filteredSpecies.map((species) => (
+                  {filteredTaxa.map((taxon) => (
                     <CommandItem
-                      key={species.id}
-                      value={species.id}
+                      key={taxon.id}
+                      value={taxon.id}
                       onSelect={() => {
-                        onChange(species.id)
+                        onChange(taxon.id)
                         setOpen(false)
                         setSearch("")
                       }}
                     >
                       <Check
-                        className={`mr-2 h-4 w-4 text-current ${value === species.id ? "opacity-100" : "opacity-0"}`}
+                        className={`mr-2 h-4 w-4 text-current ${value === taxon.id ? "opacity-100" : "opacity-0"}`}
                       />
                       <span>
-                        {species.commonName} <span className="italic opacity-70">({species.scientificName})</span>
+                        {taxon.commonName} <span className="italic opacity-70">({taxon.scientificName})</span>
                       </span>
                     </CommandItem>
                   ))}
@@ -376,16 +376,12 @@ export const PuzzleForm = ({
       </div>
 
       <div className="space-y-1">
-        <Label htmlFor={`${formId}-speciesId`}>Species</Label>
+        <Label htmlFor={`${formId}-speciesId`}>Taxon</Label>
         <Controller
           control={form.control}
           name="speciesId"
           render={({ field }) => (
-            <SpeciesCombobox
-              id={`${formId}-speciesId`}
-              value={field.value as SpeciesId | ""}
-              onChange={field.onChange}
-            />
+            <TaxonCombobox id={`${formId}-speciesId`} value={field.value as TaxonId | ""} onChange={field.onChange} />
           )}
         />
         {form.formState.errors.speciesId && (

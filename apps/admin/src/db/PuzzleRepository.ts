@@ -1,4 +1,4 @@
-import { Option, SpeciesId } from "@wortle/shared"
+import { Option, TaxonId } from "@wortle/shared"
 import { eq, inArray, sql } from "drizzle-orm"
 import { PgDatabase } from "drizzle-orm/pg-core"
 
@@ -36,7 +36,7 @@ export interface IPuzzleRepository {
   listWithSyncStatus: () => Promise<PuzzleWithSyncStatus[]>
   findById: (id: PuzzleId) => Promise<Option<DbPuzzle>>
   findByIdWithSyncStatus: (id: PuzzleId) => Promise<Option<PuzzleWithSyncStatus>>
-  countBySpeciesId: (speciesId: SpeciesId) => Promise<number>
+  countByTaxonId: (taxonId: TaxonId) => Promise<number>
   create: (data: DbPuzzle) => Promise<CreateResult>
   update: (data: DbPuzzle) => Promise<UpdateResult>
   delete: (id: PuzzleId) => Promise<DeleteResult>
@@ -69,11 +69,11 @@ export class PuzzleRepository implements IPuzzleRepository {
     return row ? { puzzle: parseDbPuzzle(row.data), imagesSynced: row.imagesSynced } : undefined
   }
 
-  countBySpeciesId = async (speciesId: SpeciesId): Promise<number> => {
+  countByTaxonId = async (taxonId: TaxonId): Promise<number> => {
     const [{ count }] = await this.db
       .select({ count: sql<number>`count(*)::int` })
       .from(puzzles)
-      .where(sql`${puzzles.data}->>'speciesId' = ${speciesId}`)
+      .where(sql`${puzzles.data}->>'speciesId' = ${taxonId}`)
     return count
   }
 

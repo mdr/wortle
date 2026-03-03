@@ -1,6 +1,6 @@
 import { Card } from "@wortle/ui"
 
-import { useSpeciesRepository } from "@/components/app/GlobalDependenciesProvider"
+import { useTaxaRepository } from "@/components/app/GlobalDependenciesProvider"
 import { AttemptResult } from "@/lib/AttemptResult"
 import { Option } from "@/utils/types/Option"
 
@@ -24,24 +24,24 @@ const getAttemptStyles = (attempt: AttemptResult): string => {
 }
 
 export const AttemptHistory = ({ attempts }: AttemptHistoryProps) => {
-  const speciesRepository = useSpeciesRepository()
+  const taxaRepository = useTaxaRepository()
   return (
     <Card className="p-4" data-testid={AttemptHistoryTestIds.container}>
       <h3 className="text-muted-foreground mb-3 text-sm font-medium">Previous attempts</h3>
       <div className="space-y-2">
         {attempts.map((attempt, index) => {
-          const species = speciesRepository.getSpecies(attempt.speciesId)
+          const taxon = taxaRepository.getTaxon(attempt.taxonId)
           const hint = getHintText(attempt)
           return (
-            <div key={attempt.speciesId} className="flex items-stretch gap-2">
+            <div key={attempt.taxonId} className="flex items-stretch gap-2">
               <div className="text-muted-foreground flex w-6 items-center justify-center text-sm">#{index + 1}</div>
               <div
                 className={`flex flex-1 items-stretch justify-between rounded-md border p-3 ${getAttemptStyles(attempt)}`}
                 data-testid={AttemptHistoryTestIds.item}
               >
                 <div>
-                  <p className="text-foreground font-medium">{species.commonName}</p>
-                  <p className="text-muted-foreground text-sm italic">{species.scientificName}</p>
+                  <p className="text-foreground font-medium">{taxon.commonName}</p>
+                  <p className="text-muted-foreground text-sm italic">{taxon.scientificName}</p>
                 </div>
                 <div className="flex flex-col items-end text-right">
                   {hint && (
@@ -49,7 +49,7 @@ export const AttemptHistory = ({ attempts }: AttemptHistoryProps) => {
                       {hint}
                     </p>
                   )}
-                  <p className="text-muted-foreground mt-auto text-sm">{species.family}</p>
+                  <p className="text-muted-foreground mt-auto text-sm">{taxon.family}</p>
                 </div>
               </div>
             </div>

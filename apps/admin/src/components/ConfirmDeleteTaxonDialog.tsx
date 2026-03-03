@@ -11,25 +11,25 @@ import {
   AlertDialogTitle,
 } from "@wortle/ui"
 
-type ConfirmDeleteSpeciesDialogProps = {
-  speciesName: string
+type ConfirmDeleteTaxonDialogProps = {
+  taxonName: string
   open: boolean
   onOpenChange: (open: boolean) => void
   onConfirm: () => void
 }
 
-export const ConfirmDeleteSpeciesDialog = ({
-  speciesName,
+export const ConfirmDeleteTaxonDialog = ({
+  taxonName,
   open,
   onOpenChange,
   onConfirm,
-}: ConfirmDeleteSpeciesDialogProps) => (
+}: ConfirmDeleteTaxonDialogProps) => (
   <AlertDialog open={open} onOpenChange={onOpenChange}>
     <AlertDialogContent>
       <AlertDialogHeader>
-        <AlertDialogTitle>Delete species?</AlertDialogTitle>
+        <AlertDialogTitle>Delete taxon?</AlertDialogTitle>
         <AlertDialogDescription>
-          This will permanently delete "{speciesName}". This action cannot be undone.
+          This will permanently delete "{taxonName}". This action cannot be undone.
         </AlertDialogDescription>
       </AlertDialogHeader>
       <AlertDialogFooter>

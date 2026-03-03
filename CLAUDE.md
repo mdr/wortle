@@ -91,8 +91,8 @@ This project uses two testing styles:
 - `task admin:db:migrate:prod`: run migrations on prod database.
 - `task admin:db:seed-puzzles:dev`: seed puzzle data to dev database from data.wortle.app.
 - `task admin:db:seed-puzzles:prod`: seed puzzle data to prod database from data.wortle.app.
-- `task admin:db:seed-species:dev`: seed species data to dev database from data.wortle.app.
-- `task admin:db:seed-species:prod`: seed species data to prod database from data.wortle.app.
+- `task admin:db:seed-taxa:dev`: seed taxa data to dev database from data.wortle.app.
+- `task admin:db:seed-taxa:prod`: seed taxa data to prod database from data.wortle.app.
 
 ### Infrastructure (`infra/`)
 

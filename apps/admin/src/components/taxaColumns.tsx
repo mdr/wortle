@@ -4,7 +4,7 @@ import { type Column, type ColumnDef } from "@tanstack/react-table"
 import { Button } from "@wortle/ui"
 import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react"
 
-import { type ApiSpecies } from "@/api/types"
+import { type ApiTaxon } from "@/api/types"
 
 const SortableHeader = <T,>({ column, label }: { column: Column<T>; label: string }) => {
   const sorted = column.getIsSorted()
@@ -22,7 +22,7 @@ const SortableHeader = <T,>({ column, label }: { column: Column<T>; label: strin
   )
 }
 
-export const speciesColumns: ColumnDef<ApiSpecies>[] = [
+export const taxaColumns: ColumnDef<ApiTaxon>[] = [
   {
     accessorKey: "id",
     header: ({ column }) => <SortableHeader column={column} label="ID" />,

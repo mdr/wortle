@@ -1,25 +1,25 @@
-import { Iso8601Date, PuzzleId, SpeciesId } from "@wortle/shared"
+import { Iso8601Date, PuzzleId, TaxonId } from "@wortle/shared"
 
 import { defaultPuzzles } from "@/lib/puzzles"
 import { defaultSchedule } from "@/lib/schedule"
-import { testSpeciesRepository } from "@/lib/species/testSpecies.testUtils"
+import { testTaxaRepository } from "@/lib/taxa/testTaxa.testUtils"
 import { Option } from "@/utils/types/Option"
 
 export interface TestPuzzle {
   id: PuzzleId
-  speciesId: SpeciesId
+  speciesId: TaxonId
   correctAnswer: string
   scheduledDate: Option<Iso8601Date>
 }
 
 const createTestPuzzle = (puzzleId: PuzzleId): TestPuzzle => {
   const puzzle = defaultPuzzles.getPuzzle(puzzleId)
-  const species = testSpeciesRepository.getSpecies(puzzle.speciesId)
+  const taxon = testTaxaRepository.getTaxon(puzzle.speciesId)
   const scheduledDate = defaultSchedule.findFirstDateForPuzzle(puzzleId)
   return {
     id: puzzleId,
     speciesId: puzzle.speciesId,
-    correctAnswer: species.commonName,
+    correctAnswer: taxon.commonName,
     scheduledDate,
   }
 }

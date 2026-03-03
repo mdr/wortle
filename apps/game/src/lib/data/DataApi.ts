@@ -33,10 +33,10 @@ export class DataApi {
     return puzzlesDataJsonSchema.parse(json)
   }
 
-  fetchSpecies = async (): Promise<SpeciesData> => {
+  fetchTaxa = async (): Promise<SpeciesData> => {
     const response = await fetch(`${this.baseUrl}/${SPECIES_DATA_KEY}`)
     if (!response.ok) {
-      throw new Error(`Failed to fetch species: ${response.status} ${response.statusText}`)
+      throw new Error(`Failed to fetch taxa: ${response.status} ${response.statusText}`)
     }
     const json: unknown = await response.json()
     return speciesDataJsonSchema.parse(json)

@@ -2,11 +2,11 @@ import { Iso8601Date, PuzzleId } from "@wortle/shared"
 import { boolean, integer, jsonb, pgTable, text } from "drizzle-orm/pg-core"
 
 import type { DbPuzzle } from "./puzzleTypes"
-import type { DbSpecies, SpeciesId } from "./types"
+import type { DbTaxon, TaxonId } from "./types"
 
-export const species = pgTable("species", {
-  id: text("id").$type<SpeciesId>().primaryKey(),
-  data: jsonb("data").$type<DbSpecies>().notNull(),
+export const taxa = pgTable("species", {
+  id: text("id").$type<TaxonId>().primaryKey(),
+  data: jsonb("data").$type<DbTaxon>().notNull(),
 })
 
 export const puzzles = pgTable("puzzles", {

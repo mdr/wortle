@@ -1,10 +1,10 @@
-import { CommonName, Family, ScientificName, type Species, SpeciesId, Url } from "@wortle/shared"
+import { CommonName, Family, ScientificName, type Taxon, TaxonId, Url } from "@wortle/shared"
 
-import { DefaultSpeciesRepository, type SpeciesRepository } from "./Species"
+import { DefaultTaxaRepository, type TaxaRepository } from "./Taxon"
 
-export const testSpecies: Species[] = [
+export const testTaxa: Taxon[] = [
   {
-    id: SpeciesId("2cd4p9h.23w"),
+    id: TaxonId("2cd4p9h.23w"),
     scientificName: ScientificName("Succisa pratensis"),
     family: Family("Caprifoliaceae"),
     commonName: CommonName("Devil's-bit Scabious"),
@@ -22,7 +22,7 @@ export const testSpecies: Species[] = [
     idTips: ["Flower heads rounded with equal sized [[floret]]s", "All leaves [[entire]]", "[[Corolla]] 4-lobed"],
   },
   {
-    id: SpeciesId("2cd4p9h.9b1"),
+    id: TaxonId("2cd4p9h.9b1"),
     scientificName: ScientificName("Tanacetum vulgare"),
     family: Family("Asteraceae"),
     commonName: CommonName("Tansy"),
@@ -44,7 +44,7 @@ export const testSpecies: Species[] = [
     ],
   },
   {
-    id: SpeciesId("2cd4p9h.yhw"),
+    id: TaxonId("2cd4p9h.yhw"),
     scientificName: ScientificName("Tanacetum parthenium"),
     family: Family("Asteraceae"),
     commonName: CommonName("Feverfew"),
@@ -54,7 +54,7 @@ export const testSpecies: Species[] = [
     idTips: [],
   },
   {
-    id: SpeciesId("2cd4p9h.xyv"),
+    id: TaxonId("2cd4p9h.xyv"),
     scientificName: ScientificName("Knautia arvensis"),
     family: Family("Caprifoliaceae"),
     commonName: CommonName("Field Scabious"),
@@ -64,7 +64,7 @@ export const testSpecies: Species[] = [
     idTips: [],
   },
   {
-    id: SpeciesId("2cd4p9h.1e3"),
+    id: TaxonId("2cd4p9h.1e3"),
     scientificName: ScientificName("Lotus corniculatus"),
     family: Family("Fabaceae"),
     commonName: CommonName("Bird's-foot Trefoil"),
@@ -74,7 +74,7 @@ export const testSpecies: Species[] = [
     idTips: [],
   },
   {
-    id: SpeciesId("2cd4p9h.94n"),
+    id: TaxonId("2cd4p9h.94n"),
     scientificName: ScientificName("Primula farinosa"),
     family: Family("Primulaceae"),
     commonName: CommonName("Bird's-eye Primrose"),
@@ -87,7 +87,7 @@ export const testSpecies: Species[] = [
     idTips: [],
   },
   {
-    id: SpeciesId("2cd4p9h.8nb"),
+    id: TaxonId("2cd4p9h.8nb"),
     scientificName: ScientificName("Geranium robertianum"),
     family: Family("Geraniaceae"),
     commonName: CommonName("Herb-Robert"),
@@ -105,7 +105,7 @@ export const testSpecies: Species[] = [
     idTips: [],
   },
   {
-    id: SpeciesId("2cd4p9h.xbs"),
+    id: TaxonId("2cd4p9h.xbs"),
     scientificName: ScientificName("Bellis perennis"),
     family: Family("Asteraceae"),
     commonName: CommonName("Daisy"),
@@ -123,7 +123,7 @@ export const testSpecies: Species[] = [
     idTips: [],
   },
   {
-    id: SpeciesId("2cd4p9h.21r"),
+    id: TaxonId("2cd4p9h.21r"),
     scientificName: ScientificName("Smyrnium olusatrum"),
     family: Family("Apiaceae"),
     commonName: CommonName("Alexanders"),
@@ -133,7 +133,7 @@ export const testSpecies: Species[] = [
     idTips: [],
   },
   {
-    id: SpeciesId("2cd4p9h.xgb"),
+    id: TaxonId("2cd4p9h.xgb"),
     scientificName: ScientificName("Cichorium intybus"),
     family: Family("Asteraceae"),
     commonName: CommonName("Chicory"),
@@ -143,7 +143,7 @@ export const testSpecies: Species[] = [
     idTips: [],
   },
   {
-    id: SpeciesId("2cd4p9h.z9"),
+    id: TaxonId("2cd4p9h.z9"),
     scientificName: ScientificName("Hyacinthoides non-scripta"),
     family: Family("Asparagaceae"),
     commonName: CommonName("Bluebell"),
@@ -154,4 +154,4 @@ export const testSpecies: Species[] = [
   },
 ]
 
-export const testSpeciesRepository: SpeciesRepository = new DefaultSpeciesRepository(testSpecies)
+export const testTaxaRepository: TaxaRepository = new DefaultTaxaRepository(testTaxa)

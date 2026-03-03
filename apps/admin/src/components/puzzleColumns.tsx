@@ -30,7 +30,7 @@ export const puzzleColumns: ColumnDef<ApiPuzzle>[] = [
   },
   {
     accessorKey: "speciesId",
-    header: ({ column }) => <SortableHeader column={column} label="Species ID" />,
+    header: ({ column }) => <SortableHeader column={column} label="Taxon ID" />,
     cell: ({ row }) => <span className="font-mono text-sm">{row.getValue("speciesId")}</span>,
   },
   {

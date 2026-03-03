@@ -30,12 +30,12 @@ const main = async () => {
   }
 
   const { species } = parsed.data
-  console.log(`Found ${species.length} species to import`)
+  console.log(`Found ${species.length} taxa to import`)
 
   const pool = new Pool({ connectionString: databaseUrl })
   const db = drizzle(pool, { schema })
 
-  console.log("Inserting species into database...")
+  console.log("Inserting taxa into database...")
 
   const values = species.map((s) => ({
     id: s.id,
@@ -43,16 +43,16 @@ const main = async () => {
   }))
 
   await db
-    .insert(schema.species)
+    .insert(schema.taxa)
     .values(values)
     .onConflictDoUpdate({
-      target: schema.species.id,
+      target: schema.taxa.id,
       set: {
         data: sql`excluded.data`,
       },
     })
 
-  console.log(`Successfully imported ${species.length} species`)
+  console.log(`Successfully imported ${species.length} taxa`)
 
   await pool.end()
 }

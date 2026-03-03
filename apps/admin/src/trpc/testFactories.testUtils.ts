@@ -8,18 +8,18 @@ import {
   License,
   ScientificName,
   TestPuzzleIds,
-  TestSpeciesIds,
+  TestTaxonIds,
 } from "@wortle/shared"
 
 import { ApiPuzzle, CreatePuzzleRequest, EditPuzzleRequest, PuzzleRequestImage } from "@/api/puzzleTypes"
-import { ApiSpecies } from "@/api/types"
+import { ApiTaxon } from "@/api/types"
 import { DbPuzzle } from "@/db/puzzleTypes"
-import { DbSpecies } from "@/db/types"
+import { DbTaxon } from "@/db/types"
 
 import { Context } from "./init"
 
-export const makeDbSpecies = (overrides: Partial<DbSpecies> = {}): DbSpecies => ({
-  id: TestSpeciesIds.daisy,
+export const makeDbTaxon = (overrides: Partial<DbTaxon> = {}): DbTaxon => ({
+  id: TestTaxonIds.daisy,
   scientificName: ScientificName("Bellis perennis"),
   family: Family("Asteraceae"),
   commonName: CommonName("Daisy"),
@@ -30,8 +30,8 @@ export const makeDbSpecies = (overrides: Partial<DbSpecies> = {}): DbSpecies => 
   ...overrides,
 })
 
-export const makeApiSpecies = (overrides: Partial<ApiSpecies> = {}): ApiSpecies => ({
-  id: TestSpeciesIds.daisy,
+export const makeApiTaxon = (overrides: Partial<ApiTaxon> = {}): ApiTaxon => ({
+  id: TestTaxonIds.daisy,
   scientificName: ScientificName("Bellis perennis"),
   family: Family("Asteraceae"),
   commonName: CommonName("Daisy"),
@@ -44,7 +44,7 @@ export const makeApiSpecies = (overrides: Partial<ApiSpecies> = {}): ApiSpecies 
 
 export const makeDbPuzzle = (overrides: Partial<DbPuzzle> = {}): DbPuzzle => ({
   id: TestPuzzleIds.daisy,
-  speciesId: TestSpeciesIds.daisy,
+  speciesId: TestTaxonIds.daisy,
   observationDate: Iso8601Date("2025-01-15"),
   location: {
     description: "North Yorkshire, England",
@@ -58,7 +58,7 @@ export const makeDbPuzzle = (overrides: Partial<DbPuzzle> = {}): DbPuzzle => ({
 
 export const makeApiPuzzle = (overrides: Partial<ApiPuzzle> = {}): ApiPuzzle => ({
   id: TestPuzzleIds.daisy,
-  speciesId: TestSpeciesIds.daisy,
+  speciesId: TestTaxonIds.daisy,
   observationDate: Iso8601Date("2025-01-15"),
   location: {
     description: "North Yorkshire, England",
@@ -73,7 +73,7 @@ export const makeApiPuzzle = (overrides: Partial<ApiPuzzle> = {}): ApiPuzzle => 
 
 export const makeCreatePuzzleRequest = (overrides: Partial<CreatePuzzleRequest> = {}): CreatePuzzleRequest => ({
   id: TestPuzzleIds.daisy,
-  speciesId: TestSpeciesIds.daisy,
+  speciesId: TestTaxonIds.daisy,
   observationDate: Iso8601Date("2025-01-15"),
   location: {
     description: "North Yorkshire, England",

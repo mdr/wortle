@@ -1,4 +1,4 @@
-import { TestSpeciesIds } from "@wortle/shared"
+import { TestTaxonIds } from "@wortle/shared"
 
 import { TestDate } from "@/lib/testConstants.testUtils"
 
@@ -11,12 +11,12 @@ export const createHistoryStore = () => new HistoryStore(createMemoryStorage())
 export const createPuzzleHistoryEntry = (overrides: Partial<PuzzleHistoryEntry> = {}): PuzzleHistoryEntry => ({
   date: TestDate,
   result: PassOrFail.PASS,
-  submittedSpecies: [TestSpeciesIds.alexanders],
+  submittedSpecies: [TestTaxonIds.alexanders],
   ...overrides,
 })
 
 export const createInProgressEntry = (overrides: Partial<PuzzleHistoryEntry> = {}): PuzzleHistoryEntry => ({
   date: TestDate,
-  submittedSpecies: [TestSpeciesIds.alexanders],
+  submittedSpecies: [TestTaxonIds.alexanders],
   ...overrides,
 })

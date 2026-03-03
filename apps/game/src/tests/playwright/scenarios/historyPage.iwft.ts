@@ -1,4 +1,4 @@
-import { TestSpeciesIds } from "@wortle/shared"
+import { TestTaxonIds } from "@wortle/shared"
 
 import { test } from "../fixtures"
 
@@ -10,7 +10,7 @@ test("history page shows empty state when no puzzles completed", async ({ histor
 
 test("history page shows completed puzzle", async ({ homePage }) => {
   const puzzlePage = await homePage.clickDailyPuzzle()
-  await puzzlePage.submitAnswer(TestSpeciesIds.devilsBitScabious)
+  await puzzlePage.submitAnswer(TestTaxonIds.devilsBitScabious)
   await puzzlePage.verifyCorrectAnswer()
 
   const home = await puzzlePage.goHome()

@@ -1,4 +1,4 @@
-import { Iso8601Date, type Puzzle, TestSpeciesIds } from "@wortle/shared"
+import { Iso8601Date, type Puzzle, TestTaxonIds } from "@wortle/shared"
 import { describe, expect, it } from "vitest"
 
 import { PassOrFail } from "@/lib/gameStorage/HistoryRecord"
@@ -10,7 +10,7 @@ import {
 } from "@/lib/gameStorage/HistoryStore.testUtils"
 import { createMemoryStorage } from "@/lib/gameStorage/storage.testUtils"
 import { defaultPuzzles } from "@/lib/puzzles"
-import { testSpeciesRepository } from "@/lib/species/testSpecies.testUtils"
+import { testTaxaRepository } from "@/lib/taxa/testTaxa.testUtils"
 import { TestDate, TestPuzzles } from "@/lib/testConstants.testUtils"
 import { ImageIndex } from "@/utils/brandedTypes"
 
@@ -90,7 +90,7 @@ const makePuzzleService = (
     options.date ?? TestDate,
     options.mode ?? PuzzleMode.REVIEW,
     historyStore,
-    testSpeciesRepository,
+    testTaxaRepository,
   )
 }
 
@@ -101,7 +101,7 @@ describe("PuzzleService", () => {
       historyStore.saveEntry({
         date: TestDate,
         result: PassOrFail.PASS,
-        submittedSpecies: [TestSpeciesIds.herbRobert, TestSpeciesIds.daisy],
+        submittedSpecies: [TestTaxonIds.herbRobert, TestTaxonIds.daisy],
       })
 
       const service = makePuzzleService({ mode: PuzzleMode.DAILY, historyStore })
@@ -110,7 +110,7 @@ describe("PuzzleService", () => {
         attempts: [{ isCorrect: false }, { isCorrect: true }],
         outcome: PuzzleOutcome.CORRECT,
         incorrectFeedbackText: undefined,
-        selectedSpeciesId: undefined,
+        selectedTaxonId: undefined,
         searchQuery: "",
         imageGallery: { index: 0, isFullscreen: false },
         statsSummary: { played: 1, wins: 1 },
@@ -122,7 +122,7 @@ describe("PuzzleService", () => {
       historyStore.saveEntry({
         date: TestDate,
         result: PassOrFail.FAIL,
-        submittedSpecies: [TestSpeciesIds.herbRobert],
+        submittedSpecies: [TestTaxonIds.herbRobert],
       })
 
       const service = makePuzzleService({ mode: PuzzleMode.DAILY, historyStore })
@@ -138,7 +138,7 @@ describe("PuzzleService", () => {
       historyStore.saveEntry({
         date: TestDate,
         result: PassOrFail.FAIL,
-        submittedSpecies: [TestSpeciesIds.herbRobert, TestSpeciesIds.tansy, TestSpeciesIds.fieldScabious],
+        submittedSpecies: [TestTaxonIds.herbRobert, TestTaxonIds.tansy, TestTaxonIds.fieldScabious],
       })
 
       const service = makePuzzleService({ mode: PuzzleMode.DAILY, historyStore })
@@ -154,7 +154,7 @@ describe("PuzzleService", () => {
       historyStore.saveEntry({
         date: TestDate,
         result: PassOrFail.PASS,
-        submittedSpecies: [TestSpeciesIds.daisy],
+        submittedSpecies: [TestTaxonIds.daisy],
       })
 
       const service = makePuzzleService({ mode: PuzzleMode.REVIEW, historyStore })
@@ -170,7 +170,7 @@ describe("PuzzleService", () => {
       historyStore.saveEntry({
         date: TestDate,
         result: PassOrFail.PASS,
-        submittedSpecies: [TestSpeciesIds.herbRobert, TestSpeciesIds.daisy],
+        submittedSpecies: [TestTaxonIds.herbRobert, TestTaxonIds.daisy],
       })
 
       const service = makePuzzleService({ mode: PuzzleMode.ARCHIVE, historyStore, date: TestDate })
@@ -197,7 +197,7 @@ describe("PuzzleService", () => {
       historyStore.saveEntry({
         date: TestDate,
         result: PassOrFail.FAIL,
-        submittedSpecies: [TestSpeciesIds.herbRobert],
+        submittedSpecies: [TestTaxonIds.herbRobert],
       })
 
       const service = makePuzzleService({ mode: PuzzleMode.ARCHIVE, historyStore, date: TestDate })
@@ -209,17 +209,17 @@ describe("PuzzleService", () => {
     })
   })
 
-  describe("selectSpecies", () => {
-    it("updates selected species and clears incorrect feedback and search query", () => {
+  describe("selectTaxon", () => {
+    it("updates selected taxon and clears incorrect feedback and search query", () => {
       const service = makePuzzleService()
 
-      service.submitAttempt(TestSpeciesIds.herbRobert)
+      service.submitAttempt(TestTaxonIds.herbRobert)
       expect(service.state.incorrectFeedbackText).toBeDefined()
 
       service.setSearchQuery("herb")
-      service.selectSpecies(TestSpeciesIds.herbRobert)
+      service.selectTaxon(TestTaxonIds.herbRobert)
       expect(service.state).toMatchObject({
-        selectedSpeciesId: TestSpeciesIds.herbRobert,
+        selectedTaxonId: TestTaxonIds.herbRobert,
         incorrectFeedbackText: undefined,
         searchQuery: "",
       })
@@ -227,16 +227,16 @@ describe("PuzzleService", () => {
   })
 
   describe("chooseDifferentPlant", () => {
-    it("clears selected species, incorrect feedback, and search query", () => {
+    it("clears selected taxon, incorrect feedback, and search query", () => {
       const service = makePuzzleService()
 
-      service.selectSpecies(TestSpeciesIds.herbRobert)
-      service.submitAttempt(TestSpeciesIds.herbRobert)
+      service.selectTaxon(TestTaxonIds.herbRobert)
+      service.submitAttempt(TestTaxonIds.herbRobert)
       service.setSearchQuery("tansy")
 
       service.chooseDifferentPlant()
       expect(service.state).toMatchObject({
-        selectedSpeciesId: undefined,
+        selectedTaxonId: undefined,
         incorrectFeedbackText: undefined,
         searchQuery: "",
       })
@@ -262,7 +262,7 @@ describe("PuzzleService", () => {
       expect(result).toEqual({ isCorrect: true, isCompleted: true })
       expect(service.state).toMatchObject({
         attempts: [{ isCorrect: true }],
-        selectedSpeciesId: undefined,
+        selectedTaxonId: undefined,
         incorrectFeedbackText: undefined,
       })
     })
@@ -270,7 +270,7 @@ describe("PuzzleService", () => {
     it("records an incorrect attempt with no match and returns not completed", () => {
       const service = makePuzzleService()
 
-      const result = service.submitAttempt(TestSpeciesIds.herbRobert)
+      const result = service.submitAttempt(TestTaxonIds.herbRobert)
 
       expect(result).toEqual({ isCorrect: false, isCompleted: false })
       expect(service.state).toMatchObject({
@@ -283,7 +283,7 @@ describe("PuzzleService", () => {
     it("shows family match feedback when family matches but genus does not", () => {
       const service = makePuzzleService()
 
-      const result = service.submitAttempt(TestSpeciesIds.tansy)
+      const result = service.submitAttempt(TestTaxonIds.tansy)
 
       expect(result).toEqual({ isCorrect: false, isCompleted: false })
       expect(service.state).toMatchObject({
@@ -295,7 +295,7 @@ describe("PuzzleService", () => {
     it("shows genus match feedback when genus matches", () => {
       const service = makePuzzleService({ puzzle: defaultPuzzles.getPuzzle(TestPuzzles.tansy.id) })
 
-      const result = service.submitAttempt(TestSpeciesIds.feverfew)
+      const result = service.submitAttempt(TestTaxonIds.feverfew)
 
       expect(result).toEqual({ isCorrect: false, isCompleted: false })
       expect(service.state).toMatchObject({
@@ -308,9 +308,9 @@ describe("PuzzleService", () => {
       const historyStore = new HistoryStore(createMemoryStorage())
       const service = makePuzzleService({ mode: PuzzleMode.DAILY, historyStore })
 
-      service.submitAttempt(TestSpeciesIds.herbRobert)
-      service.submitAttempt(TestSpeciesIds.tansy)
-      service.submitAttempt(TestSpeciesIds.birdsFootTrefoil)
+      service.submitAttempt(TestTaxonIds.herbRobert)
+      service.submitAttempt(TestTaxonIds.tansy)
+      service.submitAttempt(TestTaxonIds.birdsFootTrefoil)
 
       expect(service.state).toMatchObject({
         attempts: [{ isCorrect: false }, { isCorrect: false }, { isCorrect: false }],
@@ -321,7 +321,7 @@ describe("PuzzleService", () => {
         {
           date: TestDate,
           result: PassOrFail.FAIL,
-          submittedSpecies: [TestSpeciesIds.herbRobert, TestSpeciesIds.tansy, TestSpeciesIds.birdsFootTrefoil],
+          submittedSpecies: [TestTaxonIds.herbRobert, TestTaxonIds.tansy, TestTaxonIds.birdsFootTrefoil],
         },
       ])
     })
@@ -332,19 +332,19 @@ describe("PuzzleService", () => {
       const historyStore = new HistoryStore(createMemoryStorage())
       const service = makePuzzleService({ mode: PuzzleMode.DAILY, historyStore })
 
-      service.submitAttempt(TestSpeciesIds.herbRobert)
+      service.submitAttempt(TestTaxonIds.herbRobert)
       service.giveUp()
 
       expect(service.state).toMatchObject({
         outcome: PuzzleOutcome.GAVE_UP,
-        selectedSpeciesId: undefined,
+        selectedTaxonId: undefined,
         incorrectFeedbackText: undefined,
       })
       expect(historyStore.load().entries).toEqual([
         {
           date: TestDate,
           result: PassOrFail.FAIL,
-          submittedSpecies: [TestSpeciesIds.herbRobert],
+          submittedSpecies: [TestTaxonIds.herbRobert],
         },
       ])
     })
@@ -427,13 +427,13 @@ describe("PuzzleService", () => {
       const historyStore = new HistoryStore(createMemoryStorage())
       const service = makePuzzleService({ mode: PuzzleMode.DAILY, historyStore })
 
-      service.submitAttempt(TestSpeciesIds.herbRobert)
+      service.submitAttempt(TestTaxonIds.herbRobert)
 
       const attempts = historyStore.load().entries
       expect(attempts).toHaveLength(1)
       expect(attempts[0]).toEqual({
         date: TestDate,
-        submittedSpecies: [TestSpeciesIds.herbRobert],
+        submittedSpecies: [TestTaxonIds.herbRobert],
       })
     })
 
@@ -441,7 +441,7 @@ describe("PuzzleService", () => {
       const historyStore = new HistoryStore(createMemoryStorage())
       const service = makePuzzleService({ mode: PuzzleMode.REVIEW, historyStore })
 
-      service.submitAttempt(TestSpeciesIds.herbRobert)
+      service.submitAttempt(TestTaxonIds.herbRobert)
 
       expect(historyStore.load().entries).toHaveLength(0)
     })
@@ -450,14 +450,14 @@ describe("PuzzleService", () => {
       const historyStore = new HistoryStore(createMemoryStorage())
       historyStore.saveEntry(
         createInProgressEntry({
-          submittedSpecies: [TestSpeciesIds.herbRobert, TestSpeciesIds.tansy],
+          submittedSpecies: [TestTaxonIds.herbRobert, TestTaxonIds.tansy],
         }),
       )
 
       const service = makePuzzleService({ mode: PuzzleMode.DAILY, historyStore })
 
       expect(service.state).toMatchObject({
-        attempts: [{ speciesId: TestSpeciesIds.herbRobert }, { speciesId: TestSpeciesIds.tansy }],
+        attempts: [{ taxonId: TestTaxonIds.herbRobert }, { taxonId: TestTaxonIds.tansy }],
       })
     })
 

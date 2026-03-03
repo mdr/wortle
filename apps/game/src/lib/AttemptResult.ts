@@ -1,17 +1,17 @@
-import { type Species, type SpeciesId } from "@wortle/shared"
+import { type Taxon, type TaxonId } from "@wortle/shared"
 
-import { getGenus } from "./species/Species"
+import { getGenus } from "./taxa/Taxon"
 
 export interface AttemptResult {
-  speciesId: SpeciesId
+  taxonId: TaxonId
   isCorrect: boolean
   genusMatch: boolean
   familyMatch: boolean
 }
 
-export const createAttemptResult = (attemptedSpecies: Species, correctSpecies: Species): AttemptResult => ({
-  speciesId: attemptedSpecies.id,
-  isCorrect: attemptedSpecies.id === correctSpecies.id,
-  genusMatch: getGenus(attemptedSpecies.scientificName) === getGenus(correctSpecies.scientificName),
-  familyMatch: attemptedSpecies.family === correctSpecies.family,
+export const createAttemptResult = (attemptedTaxon: Taxon, correctTaxon: Taxon): AttemptResult => ({
+  taxonId: attemptedTaxon.id,
+  isCorrect: attemptedTaxon.id === correctTaxon.id,
+  genusMatch: getGenus(attemptedTaxon.scientificName) === getGenus(correctTaxon.scientificName),
+  familyMatch: attemptedTaxon.family === correctTaxon.family,
 })

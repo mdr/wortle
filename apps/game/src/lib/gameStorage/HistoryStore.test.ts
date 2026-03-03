@@ -1,4 +1,4 @@
-import { Iso8601Date, TestSpeciesIds } from "@wortle/shared"
+import { Iso8601Date, TestTaxonIds } from "@wortle/shared"
 import { describe, expect, it } from "vitest"
 
 import { PassOrFail } from "./HistoryRecord"
@@ -19,7 +19,7 @@ describe("HistoryStore", () => {
     store.saveEntry({
       date: Iso8601Date("2026-06-08"),
       result: PassOrFail.PASS,
-      submittedSpecies: [TestSpeciesIds.birdsFootTrefoil, TestSpeciesIds.herbRobert],
+      submittedSpecies: [TestTaxonIds.birdsFootTrefoil, TestTaxonIds.herbRobert],
     })
 
     expect(store.load()).toEqual({
@@ -27,7 +27,7 @@ describe("HistoryStore", () => {
         {
           date: Iso8601Date("2026-06-08"),
           result: PassOrFail.PASS,
-          submittedSpecies: [TestSpeciesIds.birdsFootTrefoil, TestSpeciesIds.herbRobert],
+          submittedSpecies: [TestTaxonIds.birdsFootTrefoil, TestTaxonIds.herbRobert],
         },
       ],
     })

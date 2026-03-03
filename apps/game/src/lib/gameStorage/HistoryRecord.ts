@@ -1,4 +1,4 @@
-import { Iso8601Date, SpeciesId } from "@wortle/shared"
+import { Iso8601Date, TaxonId } from "@wortle/shared"
 import { assert, Equals } from "tsafe"
 import { z } from "zod"
 
@@ -10,7 +10,7 @@ export enum PassOrFail {
 export interface PuzzleHistoryEntry {
   readonly date: Iso8601Date
   readonly result?: PassOrFail
-  readonly submittedSpecies: SpeciesId[]
+  readonly submittedSpecies: TaxonId[]
 }
 
 export interface HistoryRecord {
@@ -21,7 +21,7 @@ const puzzleHistoryEntrySchema: z.ZodType<PuzzleHistoryEntry> = z
   .strictObject({
     date: z.string().transform(Iso8601Date),
     result: z.enum([PassOrFail.PASS, PassOrFail.FAIL]).optional(),
-    submittedSpecies: z.array(z.string().transform(SpeciesId)),
+    submittedSpecies: z.array(z.string().transform(TaxonId)),
   })
   .readonly()
 

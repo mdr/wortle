@@ -1,4 +1,4 @@
-import { Degrees, ImageKey, Iso8601Date, License, type Puzzle, PuzzleId, SpeciesId } from "@wortle/shared"
+import { Degrees, ImageKey, Iso8601Date, License, type Puzzle, PuzzleId, TaxonId } from "@wortle/shared"
 import { assert } from "tsafe"
 
 import { Option } from "@/utils/types/Option"
@@ -26,7 +26,7 @@ export class DefaultPuzzles implements Puzzles {
 const defaultPuzzleData: Puzzle[] = [
   {
     id: PuzzleId(40),
-    speciesId: SpeciesId("2cd4p9h.xbs"), // Daisy
+    speciesId: TaxonId("2cd4p9h.xbs"), // Daisy
     observationDate: Iso8601Date("2025-12-19"),
     location: {
       description: "North Yorkshire, England",
@@ -45,7 +45,7 @@ const defaultPuzzleData: Puzzle[] = [
   },
   {
     id: PuzzleId(41),
-    speciesId: SpeciesId("2cd4p9h.8nb"), // Herb-Robert
+    speciesId: TaxonId("2cd4p9h.8nb"), // Herb-Robert
     observationDate: Iso8601Date("2023-07-20"),
     location: {
       description: "North Yorkshire, England",
@@ -63,7 +63,7 @@ const defaultPuzzleData: Puzzle[] = [
   },
   {
     id: PuzzleId(42),
-    speciesId: SpeciesId("2cd4p9h.94n"), // Bird's-eye Primrose
+    speciesId: TaxonId("2cd4p9h.94n"), // Bird's-eye Primrose
     observationDate: Iso8601Date("2024-05-18"),
     location: {
       description: "North Yorkshire, England",
@@ -82,7 +82,7 @@ const defaultPuzzleData: Puzzle[] = [
   },
   {
     id: PuzzleId(43),
-    speciesId: SpeciesId("2cd4p9h.23w"), // Devil's-bit Scabious
+    speciesId: TaxonId("2cd4p9h.23w"), // Devil's-bit Scabious
     observationDate: Iso8601Date("2025-08-13"),
     location: {
       description: "Northumberland, England",
@@ -102,7 +102,7 @@ const defaultPuzzleData: Puzzle[] = [
   },
   {
     id: PuzzleId(44),
-    speciesId: SpeciesId("2cd4p9h.9b1"), // Tansy
+    speciesId: TaxonId("2cd4p9h.9b1"), // Tansy
     observationDate: Iso8601Date("2023-08-03"),
     location: {
       description: "North Yorkshire, England",

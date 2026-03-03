@@ -1,4 +1,4 @@
-import { SpeciesId } from "@wortle/shared"
+import { TaxonId } from "@wortle/shared"
 
 import {
   AnswerTestIds,
@@ -7,7 +7,7 @@ import {
   ShareResultTestIds,
 } from "@/components/pages/puzzle/PuzzleTestIds"
 import { SharedTestIds } from "@/components/shared/SharedTestIds"
-import { testSpeciesRepository } from "@/lib/species/testSpecies.testUtils"
+import { testTaxaRepository } from "@/lib/taxa/testTaxa.testUtils"
 
 import { expect } from "../fixtures"
 import { GalleryPageObject } from "./GalleryPageObject"
@@ -31,10 +31,10 @@ export class PuzzlePageObject extends PageObject {
   confirmSelection = (): Promise<void> =>
     this.step("confirmSelection", () => this.get(PuzzleTestIds.submitAnswer).click())
 
-  submitAnswer = (speciesId: SpeciesId): Promise<void> =>
-    this.step(`submitAnswer(${speciesId})`, async () => {
-      const species = testSpeciesRepository.getSpecies(speciesId)
-      await this.searchForPlant(species.commonName)
+  submitAnswer = (taxonId: TaxonId): Promise<void> =>
+    this.step(`submitAnswer(${taxonId})`, async () => {
+      const taxon = testTaxaRepository.getTaxon(taxonId)
+      await this.searchForPlant(taxon.commonName)
       await this.selectFirstPlantOption()
       await this.confirmSelection()
     })

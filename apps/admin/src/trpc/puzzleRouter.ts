@@ -1,4 +1,4 @@
-import { BucketName, ObjectKey, puzzleIdSchema, PuzzleId, SpeciesId } from "@wortle/shared"
+import { BucketName, ObjectKey, puzzleIdSchema, PuzzleId, TaxonId } from "@wortle/shared"
 import { TRPCError } from "@trpc/server"
 
 import {
@@ -8,7 +8,7 @@ import {
 } from "@/api/puzzleConversions"
 import { createPuzzleRequestSchema, editPuzzleRequestSchema, PuzzleRequestImage } from "@/api/puzzleTypes"
 import { CreateResult, DeleteResult, IPuzzleRepository, UpdateResult } from "@/db/PuzzleRepository"
-import { ISpeciesRepository } from "@/db/SpeciesRepository"
+import { ITaxaRepository } from "@/db/TaxaRepository"
 import { imageMediaTypeExtension } from "@/utils/imageMediaType"
 import { serverLogger } from "@/utils/logger"
 import { IBucketStorage } from "@/utils/R2BucketStorage"
@@ -18,7 +18,7 @@ import { protectedProcedure, router } from "./init"
 
 type PuzzleRouterDeps = {
   puzzleRepository: IPuzzleRepository
-  speciesRepository: ISpeciesRepository
+  taxaRepository: ITaxaRepository
   bucketStorage: IBucketStorage
   originalsBucketName: BucketName
 }
@@ -58,19 +58,19 @@ const promoteStagedImages = async (
   }
 }
 
-const validateSpeciesExists = async (speciesRepository: ISpeciesRepository, speciesId: SpeciesId): Promise<void> => {
-  const species = await speciesRepository.findById(speciesId)
-  if (species === undefined) {
+const validateTaxonExists = async (taxaRepository: ITaxaRepository, taxonId: TaxonId): Promise<void> => {
+  const taxon = await taxaRepository.findById(taxonId)
+  if (taxon === undefined) {
     throw new TRPCError({
       code: TrpcErrorCode.UNPROCESSABLE_CONTENT,
-      message: `Species "${speciesId}" does not exist`,
+      message: `Taxon "${taxonId}" does not exist`,
     })
   }
 }
 
 export const createPuzzleRouter = ({
   puzzleRepository,
-  speciesRepository,
+  taxaRepository,
   bucketStorage,
   originalsBucketName,
 }: PuzzleRouterDeps) =>
@@ -89,7 +89,7 @@ export const createPuzzleRouter = ({
     }),
 
     create: protectedProcedure.input(createPuzzleRequestSchema).mutation(async ({ input: request }) => {
-      await validateSpeciesExists(speciesRepository, request.speciesId)
+      await validateTaxonExists(taxaRepository, request.speciesId)
       await validateStagedImagesExist(bucketStorage, originalsBucketName, request.images)
       const dbPuzzle = createPuzzleRequestToDbPuzzle(request)
       const result = await puzzleRepository.create(dbPuzzle)
@@ -105,7 +105,7 @@ export const createPuzzleRouter = ({
     }),
 
     update: protectedProcedure.input(editPuzzleRequestSchema).mutation(async ({ input: request }) => {
-      await validateSpeciesExists(speciesRepository, request.speciesId)
+      await validateTaxonExists(taxaRepository, request.speciesId)
       await validateStagedImagesExist(bucketStorage, originalsBucketName, request.images)
       const dbPuzzle = editPuzzleRequestToDbPuzzle(request)
       const result = await puzzleRepository.update(dbPuzzle)

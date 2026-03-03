@@ -1,4 +1,4 @@
-import { getNextDay, TestSpeciesIds } from "@wortle/shared"
+import { getNextDay, TestTaxonIds } from "@wortle/shared"
 import { assert } from "tsafe"
 
 import { TestPuzzles } from "@/lib/testConstants.testUtils"
@@ -11,7 +11,7 @@ test("viewing abandoned puzzle from history shows not-completed state", async ({
 
   const homePage = await launcher.launchHomePage({ today: scheduledDate })
   const puzzlePage = await homePage.clickDailyPuzzle()
-  await puzzlePage.submitAnswer(TestSpeciesIds.daisy)
+  await puzzlePage.submitAnswer(TestTaxonIds.daisy)
 
   await puzzlePage.setClockDate(getNextDay(scheduledDate))
   const historyPage = await puzzlePage.goToHistory()

@@ -1,5 +1,5 @@
 import { useUmami } from "@danielgtmn/umami-react"
-import { SpeciesId } from "@wortle/shared"
+import { TaxonId } from "@wortle/shared"
 import { Button, Card } from "@wortle/ui"
 import { assert } from "tsafe"
 
@@ -13,29 +13,29 @@ import { PuzzleTestIds } from "../PuzzleTestIds"
 export const AnswerInputCard = () => {
   const { scope, shake } = useShakeAnswerInput()
   const puzzleActions = usePuzzleServiceActions()
-  const { puzzle, mode, attempts, incorrectFeedbackText, selectedSpeciesId } = usePuzzleState()
+  const { puzzle, mode, attempts, incorrectFeedbackText, selectedTaxonId } = usePuzzleState()
   const { track } = useUmami()
 
-  const trackPuzzleCompleted = (correct: boolean, attemptSpeciesIds: SpeciesId[]) => {
+  const trackPuzzleCompleted = (correct: boolean, attemptTaxonIds: TaxonId[]) => {
     track("puzzleCompleted", {
       puzzleId: puzzle.id,
       mode,
-      attempts: attemptSpeciesIds.length,
+      attempts: attemptTaxonIds.length,
       correct,
-      attempt1: attemptSpeciesIds[0],
-      attempt2: attemptSpeciesIds[1],
-      attempt3: attemptSpeciesIds[2],
+      attempt1: attemptTaxonIds[0],
+      attempt2: attemptTaxonIds[1],
+      attempt3: attemptTaxonIds[2],
     })
   }
 
   const handleSubmit = () => {
-    assert(selectedSpeciesId, "Selected species is required to submit an answer.")
-    const { isCorrect, isCompleted } = puzzleActions.submitAttempt(selectedSpeciesId)
+    assert(selectedTaxonId, "Selected taxon is required to submit an answer.")
+    const { isCorrect, isCompleted } = puzzleActions.submitAttempt(selectedTaxonId)
     if (!isCorrect) {
       shake()
     }
     if (isCompleted) {
-      trackPuzzleCompleted(isCorrect, [...attempts.map((a) => a.speciesId), selectedSpeciesId])
+      trackPuzzleCompleted(isCorrect, [...attempts.map((a) => a.taxonId), selectedTaxonId])
     }
   }
 
@@ -43,7 +43,7 @@ export const AnswerInputCard = () => {
     puzzleActions.giveUp()
     trackPuzzleCompleted(
       false,
-      attempts.map((a) => a.speciesId),
+      attempts.map((a) => a.taxonId),
     )
   }
 
@@ -63,7 +63,7 @@ export const AnswerInputCard = () => {
         <div className="space-y-4">
           <PlantSearch />
 
-          {selectedSpeciesId && (
+          {selectedTaxonId && (
             <Button onClick={handleSubmit} className="w-full" size="lg" data-testid={PuzzleTestIds.submitAnswer}>
               I'll go with this
             </Button>

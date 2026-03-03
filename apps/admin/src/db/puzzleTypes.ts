@@ -5,14 +5,14 @@ import {
   License,
   MediaType,
   puzzleIdSchema,
-  speciesIdSchema,
+  taxonIdSchema,
 } from "@wortle/shared"
 import { z } from "zod"
 
 import { imageMediaTypeSchema } from "@/utils/imageMediaType"
 
 export { PuzzleId } from "@wortle/shared"
-export type { Degrees, ImageKey, Iso8601Date, SpeciesId } from "@wortle/shared"
+export type { Degrees, ImageKey, Iso8601Date, TaxonId } from "@wortle/shared"
 
 const dbCoordinatesSchema = z.object({
   latitude: degreesSchema,
@@ -37,7 +37,7 @@ const dbPhotoAttributionSchema = z.object({
 
 export const dbPuzzleSchema = z.object({
   id: puzzleIdSchema,
-  speciesId: speciesIdSchema,
+  speciesId: taxonIdSchema,
   observationDate: iso8601DateSchema,
   location: dbLocationSchema,
   habitat: z.string(),

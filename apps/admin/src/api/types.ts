@@ -1,21 +1,21 @@
-import { commonNameSchema, familySchema, scientificNameSchema, speciesIdSchema, urlSchema } from "@wortle/shared"
+import { commonNameSchema, familySchema, scientificNameSchema, taxonIdSchema, urlSchema } from "@wortle/shared"
 import { z } from "zod"
 
-const apiSpeciesLinkSchema = z.object({
+const apiTaxonLinkSchema = z.object({
   name: z.string(),
   url: urlSchema,
 })
 
-export const apiSpeciesSchema = z.object({
-  id: speciesIdSchema,
+export const apiTaxonSchema = z.object({
+  id: taxonIdSchema,
   scientificName: scientificNameSchema,
   family: familySchema,
   commonName: commonNameSchema,
   alternativeCommonNames: z.array(commonNameSchema),
   alternativeScientificNames: z.array(scientificNameSchema),
-  links: z.array(apiSpeciesLinkSchema),
+  links: z.array(apiTaxonLinkSchema),
   idTips: z.array(z.string()),
 })
 
-export type ApiSpeciesLink = z.infer<typeof apiSpeciesLinkSchema>
-export type ApiSpecies = z.infer<typeof apiSpeciesSchema>
+export type ApiTaxonLink = z.infer<typeof apiTaxonLinkSchema>
+export type ApiTaxon = z.infer<typeof apiTaxonSchema>

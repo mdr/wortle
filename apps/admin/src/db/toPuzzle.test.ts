@@ -6,7 +6,7 @@ import {
   MediaType,
   PuzzleId,
   TestPuzzleIds,
-  TestSpeciesIds,
+  TestTaxonIds,
 } from "@wortle/shared"
 import { describe, expect, it } from "vitest"
 
@@ -15,7 +15,7 @@ import { dbPuzzleToPuzzle, dbPuzzlesToPuzzlesData } from "./toPuzzle"
 
 const makeDbPuzzle = (overrides: Partial<DbPuzzle> = {}): DbPuzzle => ({
   id: TestPuzzleIds.daisy,
-  speciesId: TestSpeciesIds.daisy,
+  speciesId: TestTaxonIds.daisy,
   observationDate: Iso8601Date("2025-01-15"),
   location: {
     description: "North Yorkshire, England",

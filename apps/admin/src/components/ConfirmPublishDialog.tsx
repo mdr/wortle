@@ -14,7 +14,7 @@ import {
 import type { Option } from "@wortle/shared"
 
 type ConfirmPublishDialogProps = {
-  speciesCount: number
+  taxaCount: number
   puzzleCount: number
   scheduleEntryCount: number
   open: boolean
@@ -25,7 +25,7 @@ type ConfirmPublishDialogProps = {
 }
 
 export const ConfirmPublishDialog = ({
-  speciesCount,
+  taxaCount,
   puzzleCount,
   scheduleEntryCount,
   open,
@@ -39,8 +39,8 @@ export const ConfirmPublishDialog = ({
       <AlertDialogHeader>
         <AlertDialogTitle>Publish game data?</AlertDialogTitle>
         <AlertDialogDescription>
-          This will upload {speciesCount} species, {puzzleCount} puzzles, and {scheduleEntryCount} schedule entries to
-          the live data bucket. The changes will be visible to all users.
+          This will upload {taxaCount} taxa, {puzzleCount} puzzles, and {scheduleEntryCount} schedule entries to the
+          live data bucket. The changes will be visible to all users.
         </AlertDialogDescription>
       </AlertDialogHeader>
       {error && (
