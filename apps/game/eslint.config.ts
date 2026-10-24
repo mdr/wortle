@@ -1,7 +1,6 @@
 import tseslint from "typescript-eslint"
 import reactHooks from "eslint-plugin-react-hooks"
 import react from "eslint-plugin-react"
-import reactCompiler from "eslint-plugin-react-compiler"
 import jsxA11y from "eslint-plugin-jsx-a11y"
 import unusedImports from "eslint-plugin-unused-imports"
 import simpleImportSort from "eslint-plugin-simple-import-sort"
@@ -39,7 +38,6 @@ const config = [
     plugins: {
       "react-hooks": reactHooks,
       react,
-      "react-compiler": reactCompiler,
       "jsx-a11y": jsxA11y,
       "unused-imports": unusedImports,
       "simple-import-sort": simpleImportSort,
@@ -57,7 +55,6 @@ const config = [
       "react/no-unescaped-entities": "off",
       "react/self-closing-comp": "error",
       "react/hook-use-state": "error",
-      "react-compiler/react-compiler": "error",
       ...reactHooks.configs.recommended.rules,
       ...jsxA11y.configs.recommended.rules,
       "simple-import-sort/imports": "error",
