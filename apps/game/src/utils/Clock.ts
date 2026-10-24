@@ -6,6 +6,7 @@ export interface Clock {
   readonly setDate?: (date: Iso8601Date) => void
 }
 
+/** @public Not yet wired up while the game runs on a fixed date (see defaultClock) */
 export class RealClock implements Clock {
   now = (): Date => new Date()
   todayIso = (): Iso8601Date => toIso8601Date(this.now())

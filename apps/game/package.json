@@ -35,7 +35,6 @@
     "react-simple-maps": "5.0.5",
     "react-zoom-pan-pinch": "4.2.0",
     "spin-delay": "2.0.1",
-    "tailwind-merge": "catalog:",
     "tsafe": "1.8.12",
     "zod": "catalog:"
   },
@@ -71,7 +70,6 @@
     "postcss": "8.5.31",
     "postcss-load-config": "6.0.1",
     "prettier": "catalog:",
-    "prettier-plugin-tailwindcss": "catalog:",
     "rollup-plugin-visualizer": "7.1.1",
     "sharp": "0.35.5",
     "tailwindcss": "4.3.3",

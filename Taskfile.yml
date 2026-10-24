@@ -108,13 +108,13 @@ tasks:
     desc: Find unused code
     dir: apps/game
     cmds:
-      - pnpm exec knip {{.CLI_ARGS}}
+      - pnpm exec knip --directory ../.. --workspace apps/game {{.CLI_ARGS}}
 
   game:knip:prod:
     desc: Find unused code (production only, ignores test usage)
     dir: apps/game
     cmds:
-      - pnpm exec knip --production {{.CLI_ARGS}}
+      - pnpm exec knip --directory ../.. --workspace apps/game --production {{.CLI_ARGS}}
 
   game:ngrok:
     desc: Expose local dev server via ngrok
@@ -347,9 +347,9 @@ tasks:
   update-screenshots:
     aliases:
       - us
-    desc: Trigger GitHub Actions workflow to update snapshots
+    desc: Trigger GitHub Actions workflow to update snapshots on the current branch
     cmds:
-      - gh workflow run update-snapshots.yml --ref main
+      - gh workflow run update-snapshots.yml --ref $(git branch --show-current)
       - sleep 2
       - GH_PAGER= gh run list --workflow=update-snapshots.yml --limit=1 --json url --jq '.[0].url'
 
