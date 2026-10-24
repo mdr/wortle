@@ -7,5 +7,5 @@ export const processImage = async (sourceBuffer: ArrayBuffer, width: number): Pr
     .resize(width, undefined, { withoutEnlargement: true })
     .webp()
     .toBuffer()
-  return buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength) as ArrayBuffer
+  return buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength)
 }

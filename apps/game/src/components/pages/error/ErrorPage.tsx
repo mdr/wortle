@@ -9,7 +9,7 @@ import { assetUrl } from "@/utils/utils"
 import { ErrorTestIds } from "./ErrorTestIds"
 
 export interface ErrorPageProps {
-  error: Error
+  error: unknown
 }
 
 export const ErrorPage = ({ error }: ErrorPageProps) => {
@@ -43,7 +43,9 @@ export const ErrorPage = ({ error }: ErrorPageProps) => {
             <summary className="text-muted-foreground hover:text-foreground cursor-pointer text-sm">
               Technical details
             </summary>
-            <pre className="bg-muted text-muted-foreground mt-2 overflow-auto rounded p-3 text-xs">{error.message}</pre>
+            <pre className="bg-muted text-muted-foreground mt-2 overflow-auto rounded p-3 text-xs">
+              {error instanceof Error ? error.message : String(error)}
+            </pre>
           </details>
           <Link to="/">
             <Button>

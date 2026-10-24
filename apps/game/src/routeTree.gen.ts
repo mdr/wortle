@@ -9,27 +9,17 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as HistoryRouteImport } from './routes/history'
-import { Route as ErrorTestRouteImport } from './routes/error-test'
-import { Route as DailyRouteImport } from './routes/daily'
-import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as ReviewPuzzleIdRouteImport } from './routes/review/$puzzleId'
+import { Route as AboutRouteImport } from './routes/about'
+import { Route as DailyRouteImport } from './routes/daily'
+import { Route as ErrorTestRouteImport } from './routes/error-test'
+import { Route as HistoryRouteImport } from './routes/history'
 import { Route as ArchiveDateRouteImport } from './routes/archive/$date'
+import { Route as ReviewPuzzleIdRouteImport } from './routes/review/$puzzleId'
 
-const HistoryRoute = HistoryRouteImport.update({
-  id: '/history',
-  path: '/history',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ErrorTestRoute = ErrorTestRouteImport.update({
-  id: '/error-test',
-  path: '/error-test',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DailyRoute = DailyRouteImport.update({
-  id: '/daily',
-  path: '/daily',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutRoute = AboutRouteImport.update({
@@ -37,19 +27,29 @@ const AboutRoute = AboutRouteImport.update({
   path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const DailyRoute = DailyRouteImport.update({
+  id: '/daily',
+  path: '/daily',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ReviewPuzzleIdRoute = ReviewPuzzleIdRouteImport.update({
-  id: '/review/$puzzleId',
-  path: '/review/$puzzleId',
+const ErrorTestRoute = ErrorTestRouteImport.update({
+  id: '/error-test',
+  path: '/error-test',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HistoryRoute = HistoryRouteImport.update({
+  id: '/history',
+  path: '/history',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ArchiveDateRoute = ArchiveDateRouteImport.update({
   id: '/archive/$date',
   path: '/archive/$date',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReviewPuzzleIdRoute = ReviewPuzzleIdRouteImport.update({
+  id: '/review/$puzzleId',
+  path: '/review/$puzzleId',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -123,25 +123,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/history': {
-      id: '/history'
-      path: '/history'
-      fullPath: '/history'
-      preLoaderRoute: typeof HistoryRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error-test': {
-      id: '/error-test'
-      path: '/error-test'
-      fullPath: '/error-test'
-      preLoaderRoute: typeof ErrorTestRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/daily': {
-      id: '/daily'
-      path: '/daily'
-      fullPath: '/daily'
-      preLoaderRoute: typeof DailyRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/about': {
@@ -151,18 +137,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/daily': {
+      id: '/daily'
+      path: '/daily'
+      fullPath: '/daily'
+      preLoaderRoute: typeof DailyRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/review/$puzzleId': {
-      id: '/review/$puzzleId'
-      path: '/review/$puzzleId'
-      fullPath: '/review/$puzzleId'
-      preLoaderRoute: typeof ReviewPuzzleIdRouteImport
+    '/error-test': {
+      id: '/error-test'
+      path: '/error-test'
+      fullPath: '/error-test'
+      preLoaderRoute: typeof ErrorTestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/history': {
+      id: '/history'
+      path: '/history'
+      fullPath: '/history'
+      preLoaderRoute: typeof HistoryRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/archive/$date': {
@@ -170,6 +163,13 @@ declare module '@tanstack/react-router' {
       path: '/archive/$date'
       fullPath: '/archive/$date'
       preLoaderRoute: typeof ArchiveDateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/review/$puzzleId': {
+      id: '/review/$puzzleId'
+      path: '/review/$puzzleId'
+      fullPath: '/review/$puzzleId'
+      preLoaderRoute: typeof ReviewPuzzleIdRouteImport
       parentRoute: typeof rootRouteImport
     }
   }

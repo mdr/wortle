@@ -4,13 +4,11 @@ export type ClassNameList = string & Brand.Brand<"ClassNameList">
 export const ClassNameList = Brand.nominal<ClassNameList>()
 
 export type ImageIndex = number & Brand.Brand<"ImageIndex">
-export const ImageIndex = Brand.refined<ImageIndex>(
-  (n): n is ImageIndex => Number.isInteger(n) && n >= 0,
-  (n) => Brand.error(`Invalid image index (must be non-negative integer): ${n}`),
+export const ImageIndex = Brand.make<ImageIndex>(
+  (n) => (Number.isInteger(n) && n >= 0) || `Invalid image index (must be non-negative integer): ${n}`,
 )
 
 export type Pixels = number & Brand.Brand<"Pixels">
-export const Pixels = Brand.refined<Pixels>(
-  (n): n is Pixels => Number.isInteger(n) && n > 0,
-  (n) => Brand.error(`Invalid pixel value (must be positive integer): ${n}`),
+export const Pixels = Brand.make<Pixels>(
+  (n) => (Number.isInteger(n) && n > 0) || `Invalid pixel value (must be positive integer): ${n}`,
 )

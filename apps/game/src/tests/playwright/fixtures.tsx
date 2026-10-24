@@ -105,35 +105,29 @@ export const test = ctBase.extend<Fixtures>({
     },
     { auto: true },
   ],
-  // eslint-disable-next-line @typescript-eslint/unbound-method
   launcher: async ({ mount }, use) => {
     await use(new Launcher(mount))
   },
-  // eslint-disable-next-line @typescript-eslint/unbound-method
   homePage: async ({ mount }, use) => {
     const mountResult = await launchApp(mount)
     const homePage = await new HomePageObject(mountResult).verifyIsShown()
     await use(homePage)
   },
-  // eslint-disable-next-line @typescript-eslint/unbound-method
   notFoundPage: async ({ mount }, use) => {
     const mountResult = await launchApp(mount, "/non-existent-page")
     const notFoundPage = await new NotFoundPageObject(mountResult).verifyIsShown()
     await use(notFoundPage)
   },
-  // eslint-disable-next-line @typescript-eslint/unbound-method
   errorPage: async ({ mount }, use) => {
     const mountResult = await launchApp(mount, "/error-test")
     const errorPage = await new ErrorPageObject(mountResult).verifyIsShown()
     await use(errorPage)
   },
-  // eslint-disable-next-line @typescript-eslint/unbound-method
   archivePage: async ({ mount }, use) => {
     const mountResult = await launchApp(mount, `/archive/${TestPuzzles.devilsBitScabious.scheduledDate}`)
     const archivePage = await new PuzzlePageObject(mountResult).verifyIsShown()
     await use(archivePage)
   },
-  // eslint-disable-next-line @typescript-eslint/unbound-method
   historyPage: async ({ mount }, use) => {
     const mountResult = await launchApp(mount, "/history")
     const historyPage = await new HistoryPageObject(mountResult).verifyIsShown()

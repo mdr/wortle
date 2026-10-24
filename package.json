@@ -1,12 +1,7 @@
 {
   "name": "wortle-monorepo",
   "private": true,
-  "packageManager": "pnpm@10.26.1",
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "sharp"
-    ]
-  },
+  "packageManager": "pnpm@12.15.0",
   "scripts": {
     "dev": "turbo dev",
     "build": "turbo build",
@@ -21,7 +16,7 @@
   "devDependencies": {
     "prettier": "catalog:",
     "prettier-plugin-tailwindcss": "catalog:",
-    "sherif": "1.10.0",
-    "turbo": "2.8.12"
+    "sherif": "1.13.0",
+    "turbo": "2.11.10"
   }
 }

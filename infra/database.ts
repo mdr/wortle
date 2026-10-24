@@ -24,5 +24,6 @@ new vercel.ProjectEnvironmentVariable("admin-database-url", {
   projectId: adminProject.id,
   key: "DATABASE_URL",
   value: prodDatabaseUrl,
+  sensitive: false,
   targets: ["production", "preview"],
 })

@@ -104,7 +104,7 @@ jobs:
 
       - name: Update snapshots if tests failed
         if: steps.check-us.outputs.update_screenshots == 'true' && steps.test-iwft.outcome == 'failure'
-        run: pnpm test:iwft --update-snapshots
+        run: task game:test:iwft -- --update-snapshots
 
       - name: Commit updated snapshots
         if: steps.check-us.outputs.update_screenshots == 'true' && steps.test-iwft.outcome == 'failure'

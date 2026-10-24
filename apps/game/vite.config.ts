@@ -1,5 +1,6 @@
 import { defineConfig } from "vitest/config"
-import react from "@vitejs/plugin-react"
+import react, { reactCompilerPreset } from "@vitejs/plugin-react"
+import babel from "@rolldown/plugin-babel"
 import { tanstackRouter } from "@tanstack/router-plugin/vite"
 import { visualizer } from "rollup-plugin-visualizer"
 import path from "path"
@@ -9,11 +10,8 @@ const analyze = process.env.ANALYZE === "true"
 export default defineConfig({
   plugins: [
     tanstackRouter({ routesDirectory: "./src/routes" }),
-    react({
-      babel: {
-        plugins: [["babel-plugin-react-compiler", {}]],
-      },
-    }),
+    react(),
+    babel({ presets: [reactCompilerPreset()] }),
     analyze &&
       visualizer({
         filename: "dist/stats.html",
@@ -24,7 +22,7 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "src"),
+      "@": path.resolve(import.meta.dirname, "src"),
     },
   },
   server: {

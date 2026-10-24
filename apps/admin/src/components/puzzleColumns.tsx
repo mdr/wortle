@@ -1,12 +1,19 @@
 "use client"
 
-import { type Column, type ColumnDef } from "@tanstack/react-table"
+import { type Column, type ColumnDef, type RowData } from "@tanstack/react-table"
 import { Button } from "@wortle/ui"
 import { ArrowDown, ArrowUp, ArrowUpDown, Check, TriangleAlert } from "lucide-react"
 
+import { type DataTableFeatures } from "@/components/DataTable"
 import { type ApiPuzzle } from "@/api/puzzleTypes"
 
-const SortableHeader = <T,>({ column, label }: { column: Column<T>; label: string }) => {
+const SortableHeader = <T extends RowData>({
+  column,
+  label,
+}: {
+  column: Column<DataTableFeatures, T>
+  label: string
+}) => {
   const sorted = column.getIsSorted()
   return (
     <Button variant="ghost" size="sm" className="-ml-3" onClick={() => column.toggleSorting()}>
@@ -22,7 +29,7 @@ const SortableHeader = <T,>({ column, label }: { column: Column<T>; label: strin
   )
 }
 
-export const puzzleColumns: ColumnDef<ApiPuzzle>[] = [
+export const puzzleColumns: ColumnDef<DataTableFeatures, ApiPuzzle>[] = [
   {
     accessorKey: "id",
     header: ({ column }) => <SortableHeader column={column} label="ID" />,

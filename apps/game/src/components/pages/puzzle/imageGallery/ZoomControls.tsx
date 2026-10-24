@@ -12,7 +12,7 @@ export const ZoomControls = () => {
         variant="ghost"
         size="icon"
         className="size-12 rounded-full text-white hover:bg-black/70 hover:text-white"
-        onClick={() => zoomOut()}
+        onClick={() => void zoomOut()}
         data-testid={FullscreenTestIds.zoomOut}
       >
         <ZoomOut className="size-6" />
@@ -22,7 +22,7 @@ export const ZoomControls = () => {
         variant="ghost"
         size="icon"
         className="size-12 rounded-full text-white hover:bg-black/70 hover:text-white"
-        onClick={() => resetTransform()}
+        onClick={() => void resetTransform()}
         data-testid={FullscreenTestIds.resetZoom}
       >
         <RotateCcw className="size-6" />
@@ -32,7 +32,7 @@ export const ZoomControls = () => {
         variant="ghost"
         size="icon"
         className="size-12 rounded-full text-white hover:bg-black/70 hover:text-white"
-        onClick={() => zoomIn()}
+        onClick={() => void zoomIn()}
         data-testid={FullscreenTestIds.zoomIn}
       >
         <ZoomIn className="size-6" />

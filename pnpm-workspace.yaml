@@ -3,23 +3,30 @@ packages:
   - packages/*
   - infra
 
+allowBuilds:
+  "@pulumi/neon": false
+  esbuild: false
+  protobufjs: false
+  sharp: true
+  tls-impersonate: false
+
 catalog:
-  "@tanstack/react-query": 5.90.21
-  "@types/node": 25.3.3
-  "@types/react": 19.2.14
-  "@types/react-dom": 19.2.3
+  "@tanstack/react-query": 5.104.5
+  "@types/node": 26.6.5
+  "@types/react": 19.3.0
+  "@types/react-dom": 19.3.0
   clsx: 2.1.1
-  effect: 3.19.19
-  eslint: 9.28.0
+  effect: 4.0.6
+  eslint: 10.13.0
   jest-extended: 7.0.0
-  lucide-react: 0.576.0
-  mockttp: 4.2.1
-  prettier: 3.8.1
-  prettier-plugin-tailwindcss: 0.7.2
-  react: 19.2.4
-  react-dom: 19.2.4
-  tailwind-merge: 3.5.0
-  typescript: 5.9.3
-  typescript-eslint: 8.56.1
-  vitest: 4.0.18
-  zod: 4.3.6
+  lucide-react: 1.61.0
+  mockttp: 4.6.5
+  prettier: 3.9.10
+  prettier-plugin-tailwindcss: 0.8.1
+  react: 19.3.1
+  react-dom: 19.3.1
+  tailwind-merge: 3.7.0
+  typescript: 6.0.3
+  typescript-eslint: 8.72.0
+  vitest: 5.0.5
+  zod: 4.6.7
