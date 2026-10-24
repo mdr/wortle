@@ -37,15 +37,15 @@ jobs:
         run: task install
 
       - name: Install Playwright browsers
-        run: task test:iwft:install
+        run: task game:test:iwft:install
 
       - name: Update IWFT snapshots
-        run: pnpm test:iwft --update-snapshots
+        run: task game:test:iwft -- --update-snapshots
 
       - name: Check for changes
         id: git-check
         run: |
-          git add src/tests/playwright/snapshots
+          git add apps/game/src/tests/playwright/snapshots
           changed_files=$(git status --porcelain)
           change_count=$(echo "$changed_files" | grep -c . || true)
           echo "changes=$change_count" >> $GITHUB_OUTPUT

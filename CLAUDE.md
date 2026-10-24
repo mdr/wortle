@@ -50,7 +50,7 @@ This project uses two testing styles:
 - `task secrets`: scan for secrets with gitleaks.
 - `task security`: run trivy security scan.
 - `task sherif`: check monorepo dependency consistency.
-- `task update-screenshots` (alias `us`): trigger GitHub Actions workflow to update snapshots.
+- `task update-screenshots` (alias `us`): trigger GitHub Actions workflow to update snapshots on the current branch (commits any changes to that branch).
 
 ### Game (`apps/game`)
 
