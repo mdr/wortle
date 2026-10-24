@@ -18,15 +18,15 @@ export const useFullscreenKeyboardShortcuts = (): void => {
     puzzleActions.goToNextImage()
   })
   useHotkeys("equal,shift+equal,add", () => {
-    zoomIn()
+    void zoomIn()
   })
   useHotkeys("minus,shift+minus,subtract", () => {
-    zoomOut()
+    void zoomOut()
   })
 
   useEffect(() => {
     return () => {
-      resetTransform()
+      void resetTransform()
     }
   }, [resetTransform])
 }

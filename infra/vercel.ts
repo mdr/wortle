@@ -46,6 +46,7 @@ new vercel.ProjectEnvironmentVariable("admin-turbo-telemetry-disabled", {
   projectId: adminProject.id,
   key: "TURBO_TELEMETRY_DISABLED",
   value: "1",
+  sensitive: false,
   targets: ["production", "preview"],
 })
 
@@ -56,6 +57,7 @@ new vercel.ProjectEnvironmentVariable("admin-cloudflare-account-id", {
   projectId: adminProject.id,
   key: "CLOUDFLARE_ACCOUNT_ID",
   value: "b9b4484585e9307f7c60257ca27dd5ab",
+  sensitive: false,
   targets: ["production", "preview"],
 })
 
@@ -63,6 +65,7 @@ new vercel.ProjectEnvironmentVariable("admin-cloudflare-api-token", {
   projectId: adminProject.id,
   key: "CLOUDFLARE_API_TOKEN",
   value: adminR2ApiToken,
+  sensitive: false,
   targets: ["production", "preview"],
 })
 
@@ -70,6 +73,7 @@ new vercel.ProjectEnvironmentVariable("admin-data-bucket-name-prod", {
   projectId: adminProject.id,
   key: "DATA_BUCKET_NAME",
   value: "wortle-data",
+  sensitive: false,
   targets: ["production"],
 })
 
@@ -77,6 +81,7 @@ new vercel.ProjectEnvironmentVariable("admin-data-bucket-name-preview", {
   projectId: adminProject.id,
   key: "DATA_BUCKET_NAME",
   value: "wortle-data-dev",
+  sensitive: false,
   targets: ["preview"],
 })
 
@@ -84,6 +89,7 @@ new vercel.ProjectEnvironmentVariable("admin-originals-bucket-name-prod", {
   projectId: adminProject.id,
   key: "ORIGINALS_BUCKET_NAME",
   value: "wortle-originals",
+  sensitive: false,
   targets: ["production"],
 })
 
@@ -91,6 +97,7 @@ new vercel.ProjectEnvironmentVariable("admin-originals-bucket-name-preview", {
   projectId: adminProject.id,
   key: "ORIGINALS_BUCKET_NAME",
   value: "wortle-originals-dev",
+  sensitive: false,
   targets: ["preview"],
 })
 
@@ -98,6 +105,7 @@ new vercel.ProjectEnvironmentVariable("admin-images-bucket-name-prod", {
   projectId: adminProject.id,
   key: "IMAGES_BUCKET_NAME",
   value: "wortle-images",
+  sensitive: false,
   targets: ["production"],
 })
 
@@ -105,6 +113,7 @@ new vercel.ProjectEnvironmentVariable("admin-images-bucket-name-preview", {
   projectId: adminProject.id,
   key: "IMAGES_BUCKET_NAME",
   value: "wortle-images-dev",
+  sensitive: false,
   targets: ["preview"],
 })
 
@@ -115,6 +124,7 @@ new vercel.ProjectEnvironmentVariable("admin-cron-secret", {
   projectId: adminProject.id,
   key: "CRON_SECRET",
   value: cronSecret.result,
+  sensitive: false,
   targets: ["production", "preview"],
 })
 
@@ -125,6 +135,7 @@ new vercel.ProjectEnvironmentVariable("admin-kinde-client-id", {
   projectId: adminProject.id,
   key: "KINDE_CLIENT_ID",
   value: "7fcfc9e6121143bbaead8f08a317c8da",
+  sensitive: false,
   targets: ["production", "preview"],
 })
 
@@ -132,6 +143,7 @@ new vercel.ProjectEnvironmentVariable("admin-kinde-client-secret", {
   projectId: adminProject.id,
   key: "KINDE_CLIENT_SECRET",
   value: kindeClientSecret,
+  sensitive: false,
   targets: ["production", "preview"],
 })
 
@@ -139,6 +151,7 @@ new vercel.ProjectEnvironmentVariable("admin-kinde-issuer-url", {
   projectId: adminProject.id,
   key: "KINDE_ISSUER_URL",
   value: "https://wortle.kinde.com",
+  sensitive: false,
   targets: ["production", "preview"],
 })
 
@@ -146,6 +159,7 @@ new vercel.ProjectEnvironmentVariable("admin-kinde-site-url", {
   projectId: adminProject.id,
   key: "KINDE_SITE_URL",
   value: "https://admin.wortle.app",
+  sensitive: false,
   targets: ["production", "preview"],
 })
 
@@ -153,6 +167,7 @@ new vercel.ProjectEnvironmentVariable("admin-kinde-post-logout-redirect", {
   projectId: adminProject.id,
   key: "KINDE_POST_LOGOUT_REDIRECT_URL",
   value: "https://admin.wortle.app",
+  sensitive: false,
   targets: ["production", "preview"],
 })
 
@@ -160,5 +175,6 @@ new vercel.ProjectEnvironmentVariable("admin-kinde-post-login-redirect", {
   projectId: adminProject.id,
   key: "KINDE_POST_LOGIN_REDIRECT_URL",
   value: "https://admin.wortle.app",
+  sensitive: false,
   targets: ["production", "preview"],
 })

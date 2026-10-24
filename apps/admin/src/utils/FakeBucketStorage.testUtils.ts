@@ -98,7 +98,7 @@ export class FakeBucketStorage implements IBucketStorage {
     const buffer = await sharp({ create: { width: 10, height: 10, channels: 3, background: "red" } })
       .jpeg()
       .toBuffer()
-    const body = buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength) as ArrayBuffer
+    const body = buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength)
     await this.uploadBinary({
       bucket: ORIGINALS_BUCKET,
       key: ObjectKey(`${puzzleId}/${imageKey}.jpg`),

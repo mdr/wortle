@@ -7,7 +7,7 @@ const createTestImage = async (width: number, height: number): Promise<ArrayBuff
   const buffer = await sharp({ create: { width, height, channels: 3, background: "red" } })
     .jpeg()
     .toBuffer()
-  return buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength) as ArrayBuffer
+  return buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength)
 }
 
 describe("processImage", () => {

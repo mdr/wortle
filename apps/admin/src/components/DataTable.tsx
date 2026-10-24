@@ -2,38 +2,54 @@
 
 import {
   type ColumnDef,
+  columnFilteringFeature,
+  createFilteredRowModel,
+  createSortedRowModel,
   flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getSortedRowModel,
+  globalFilteringFeature,
+  type RowData,
+  rowSortingFeature,
+  sortFn_alphanumeric,
+  sortFn_datetime,
+  sortFn_text,
   type SortingState,
-  useReactTable,
+  tableFeatures,
+  useTable,
 } from "@tanstack/react-table"
 import { Input, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@wortle/ui"
 import { useState } from "react"
 
-type DataTableProps<TData, TValue> = {
-  columns: ColumnDef<TData, TValue>[]
+const dataTableFeatures = tableFeatures({
+  rowSortingFeature,
+  columnFilteringFeature,
+  globalFilteringFeature,
+  sortedRowModel: createSortedRowModel(),
+  filteredRowModel: createFilteredRowModel(),
+  sortFns: { alphanumeric: sortFn_alphanumeric, text: sortFn_text, datetime: sortFn_datetime },
+})
+
+export type DataTableFeatures = typeof dataTableFeatures
+
+type DataTableProps<TData extends RowData> = {
+  columns: ColumnDef<DataTableFeatures, TData>[]
   data: TData[]
   filterPlaceholder?: string
   onRowClick?: (row: TData) => void
 }
 
-export const DataTable = <TData, TValue>({
+export const DataTable = <TData extends RowData>({
   columns,
   data,
   filterPlaceholder = "Filter...",
   onRowClick,
-}: DataTableProps<TData, TValue>) => {
+}: DataTableProps<TData>) => {
   const [sorting, setSorting] = useState<SortingState>([])
   const [globalFilter, setGlobalFilter] = useState("")
 
-  const table = useReactTable({
+  const table = useTable({
+    features: dataTableFeatures,
     data,
     columns,
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
     onSortingChange: setSorting,
     onGlobalFilterChange: setGlobalFilter,
     state: {
@@ -70,11 +86,10 @@ export const DataTable = <TData, TValue>({
               rows.map((row) => (
                 <TableRow
                   key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
                   onClick={() => onRowClick?.(row.original)}
                   className={onRowClick ? "cursor-pointer" : ""}
                 >
-                  {row.getVisibleCells().map((cell) => (
+                  {row.getAllCells().map((cell) => (
                     <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
                   ))}
                 </TableRow>

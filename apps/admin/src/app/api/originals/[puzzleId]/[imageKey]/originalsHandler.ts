@@ -17,7 +17,7 @@ const MEDIA_TYPE_BY_EXTENSION = new Map(
 
 const convertToJpeg = async (data: ArrayBuffer): Promise<ArrayBuffer> => {
   const buffer = await sharp(Buffer.from(data)).jpeg().toBuffer()
-  return buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength) as ArrayBuffer
+  return buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength)
 }
 
 export const createOriginalsHandler =
