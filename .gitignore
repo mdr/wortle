@@ -21,6 +21,8 @@ yarn-error.log*
 .env*
 !.env.rclone
 !.env.wrangler
+!.envrc
+.direnv/
 
 # typescript
 *.tsbuildinfo

@@ -6,6 +6,38 @@ tasks:
     cmds:
       - pnpm install
 
+  env:local:
+    desc: Generate .env.local files for local dev (dev database and buckets) from Pulumi and 1Password
+    preconditions:
+      - sh: test ! -e apps/admin/.env.local && test ! -e apps/game/.env.local
+        msg: .env.local already exists in apps/admin or apps/game; delete it first to regenerate
+    cmds:
+      - |
+        set -euo pipefail
+        database_url=$(cd infra && pulumi stack output devDatabaseUrl --show-secrets --stack prod)
+        kinde_client_secret=$(cd infra && pulumi config get wortle-infra:kinde-client-secret --stack prod)
+        cloudflare_api_token=$(op read --account=my.1password.com "op://Wortle/Cloudflare API token - Wortle images/Token Value")
+        cat > apps/admin/.env.local <<EOF
+        KINDE_CLIENT_ID=7fcfc9e6121143bbaead8f08a317c8da
+        KINDE_CLIENT_SECRET=$kinde_client_secret
+        KINDE_ISSUER_URL=https://wortle.kinde.com
+        KINDE_SITE_URL=http://localhost:3101
+        KINDE_POST_LOGOUT_REDIRECT_URL=http://localhost:3101
+        KINDE_POST_LOGIN_REDIRECT_URL=http://localhost:3101
+        DATABASE_URL=$database_url
+        CLOUDFLARE_ACCOUNT_ID=b9b4484585e9307f7c60257ca27dd5ab
+        CLOUDFLARE_API_TOKEN=$cloudflare_api_token
+        DATA_BUCKET_NAME=wortle-data-dev
+        ORIGINALS_BUCKET_NAME=wortle-originals-dev
+        IMAGES_BUCKET_NAME=wortle-images-dev
+        CRON_SECRET=$(openssl rand -hex 16)
+        EOF
+        cat > apps/game/.env.local <<EOF
+        VITE_DATA_URL=https://data-dev.wortle.app
+        VITE_IMAGES_URL=https://images-dev.wortle.app/puzzles
+        EOF
+        echo "Wrote apps/admin/.env.local and apps/game/.env.local"
+
   # Game app tasks
   game:format:
     desc: Format game files with Prettier
