@@ -1,5 +1,7 @@
 import type { MountResult } from "@playwright/experimental-ct-react"
-import { Page } from "@playwright/test"
+import { Locator, Page } from "@playwright/test"
+
+import { NavLinksTestIds } from "@/components/NavLinksTestIds"
 
 import { test } from "../fixtures"
 
@@ -20,6 +22,7 @@ export abstract class PageObject {
 
   protected step = <T>(name: string, body: () => T | Promise<T>): Promise<T> => test.step(`${this.name}.${name}`, body)
 
-  protected clickNavLink = (label: string): Promise<void> =>
-    this.page.getByRole("navigation").getByRole("link", { name: label, exact: true }).click()
+  protected get = (testId: string): Locator => this.page.getByTestId(testId)
+
+  protected clickNavLink = (href: string): Promise<void> => this.get(NavLinksTestIds.link(href)).click()
 }

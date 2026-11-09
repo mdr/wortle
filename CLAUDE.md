@@ -38,6 +38,11 @@ This project uses two testing styles:
 
 - **Unit tests** (`task test:unit`): Vitest tests for small functions, utilities, and larger pieces of logic like PuzzleService. These test code in isolation.
 - **IWFTs** (`task test:iwft`): Isolated Whole Frontend Tests using Playwright component tests that render the entire `<App />`. These check whole user journeys without needing an independent environment.
+  - IWFTs never touch the internet: `OfflineWorld` (`src/tests/playwright/network/`) answers requests beyond localhost from checked-in stand-ins and fails the test on any other outside request. If the app starts using a new outside resource, add a stand-in there.
+  - `BrowserErrors` echoes page errors and `console.error` to the test output and fails the test on any it didn't expect. A test that provokes an error on purpose declares it with `browserErrors.allow(/.../)`.
+  - Page objects locate elements by test ID: each component exports a `*TestIds` module that sets `data-testid` and is imported by the page objects.
+  - Check that something is absent only after a positive check proves the screen has reached the state in question.
+  - The component-test server picks a free port per run, so suites in several worktrees can run at once.
   - In `apps/admin`, IWFTs render the real Next.js pages outside Next: `next/link` and `next/navigation` are aliased to test shims (`src/tests/playwright/nextShims/`), and `TrpcSimulator` serves `/api/trpc` from the real tRPC routers backed by fake repositories. Add routes to `TestApp.tsx` and routers to `TrpcSimulator` as tests need them.
 
 ## Task Commands

@@ -6,6 +6,7 @@ test("share button copies result to clipboard after correct answer", async ({ ho
   await page.context().grantPermissions(["clipboard-write", "clipboard-read"])
 
   const puzzlePage = await homePage.clickDailyPuzzle()
+  await puzzlePage.verifySearchInputVisible()
   await puzzlePage.verifyShareButtonHidden()
 
   await puzzlePage.submitAnswer(TestTaxonIds.devilsBitScabious)

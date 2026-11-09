@@ -13,6 +13,8 @@ import { apiTaxonToFormData, TaxonForm } from "@/components/TaxonForm"
 import { useGoBack } from "@/hooks/useGoBack"
 import { useTRPC } from "@/trpc/client"
 
+import { EditTaxonPageTestIds } from "./EditTaxonPageTestIds"
+
 export default function EditTaxonPage() {
   const router = useRouter()
   const goBack = useGoBack("/taxa")
@@ -82,7 +84,7 @@ export default function EditTaxonPage() {
 
   return (
     <div className="mx-auto max-w-3xl">
-      <Card>
+      <Card data-testid={EditTaxonPageTestIds.page}>
         <CardHeader>
           <div className="flex items-center gap-2">
             <Button variant="ghost" size="icon-sm" aria-label="Go back" onClick={goBack}>

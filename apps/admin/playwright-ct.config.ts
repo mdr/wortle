@@ -1,8 +1,26 @@
 import { defineConfig, devices } from "@playwright/experimental-ct-react"
+import { createServer } from "net"
 import path from "path"
 import { fileURLToPath } from "url"
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
+
+const findFreePort = () =>
+  new Promise<number>((resolve, reject) => {
+    const server = createServer()
+    server.on("error", reject)
+    server.listen(0, () => {
+      const address = server.address()
+      server.close(() =>
+        address && typeof address === "object" ? resolve(address.port) : reject(new Error("No port")),
+      )
+    })
+  })
+
+// Picked once by the main process, then inherited by the workers (which re-load this config),
+// so parallel runs in other worktrees, or a fixed-port server already running, never collide.
+process.env.WORTLE_ADMIN_CT_PORT ??= String(await findFreePort())
+const ctPort = Number(process.env.WORTLE_ADMIN_CT_PORT)
 const shims = path.resolve(__dirname, "src/tests/playwright/nextShims")
 
 export default defineConfig({
@@ -16,7 +34,7 @@ export default defineConfig({
   reporter: "html",
   use: {
     trace: "on-first-retry",
-    ctPort: 3102,
+    ctPort,
     ctViteConfig: {
       resolve: {
         alias: [

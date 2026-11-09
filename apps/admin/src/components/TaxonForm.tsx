@@ -37,6 +37,7 @@ import { FAMILIES } from "@/constants/families"
 import { validateGlossaryBrackets } from "@/utils/validateGlossaryBrackets"
 
 import { SortableItem } from "./SortableItem"
+import { TaxonFormTestIds } from "./TaxonFormTestIds"
 
 const scientificNameSchema = z
   .string()
@@ -291,7 +292,11 @@ export const TaxonForm = ({
 
       <div className="space-y-1">
         <Label htmlFor={`${formId}-commonName`}>Common Name</Label>
-        <Input id={`${formId}-commonName`} {...form.register("commonName")} />
+        <Input
+          id={`${formId}-commonName`}
+          data-testid={TaxonFormTestIds.commonNameInput}
+          {...form.register("commonName")}
+        />
         {form.formState.errors.commonName && (
           <p className="text-destructive text-sm">{form.formState.errors.commonName.message}</p>
         )}
@@ -531,7 +536,11 @@ export const TaxonForm = ({
       {error && <div className="text-destructive text-sm">{error.message}</div>}
 
       <div className="flex gap-2 pt-2">
-        <Button type="submit" disabled={!form.formState.isDirty || isPending}>
+        <Button
+          type="submit"
+          data-testid={TaxonFormTestIds.submitButton}
+          disabled={!form.formState.isDirty || isPending}
+        >
           {isPending ? (isEditMode ? "Saving..." : "Creating...") : isEditMode ? "Save" : "Create"}
         </Button>
         <Button type="button" variant="outline" onClick={onCancel}>

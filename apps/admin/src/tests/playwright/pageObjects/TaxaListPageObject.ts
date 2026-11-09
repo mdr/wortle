@@ -1,3 +1,6 @@
+import { TaxaPageTestIds } from "@/app/taxa/TaxaPageTestIds"
+import { TaxaColumnsTestIds } from "@/components/TaxaColumnsTestIds"
+
 import { expect } from "../fixtures"
 import { EditTaxonPageObject } from "./EditTaxonPageObject"
 import { PageObject } from "./PageObject"
@@ -5,7 +8,7 @@ import { PageObject } from "./PageObject"
 export class TaxaListPageObject extends PageObject {
   verifyIsShown = (): Promise<this> =>
     this.step("verifyIsShown", async () => {
-      await expect(this.page.getByText(/^Taxa \(\d+\)$/)).toBeVisible()
+      await expect(this.get(TaxaPageTestIds.page)).toBeVisible()
       return this
     })
 
@@ -19,5 +22,5 @@ export class TaxaListPageObject extends PageObject {
     })
 
   private readonly commonNameCell = (commonName: string) =>
-    this.page.getByRole("cell", { name: commonName, exact: true })
+    this.get(TaxaColumnsTestIds.commonName).and(this.page.getByText(commonName, { exact: true }))
 }

@@ -1,4 +1,3 @@
-import type { Page } from "@playwright/test"
 import {
   Iso8601Date,
   type Puzzle,
@@ -21,6 +20,7 @@ import {
   handleEndpointBehaviour,
   StallResponse,
 } from "./EndpointBehaviour.testUtils"
+import type { OfflineWorld } from "./OfflineWorld.testUtils"
 
 export const DEFAULT_SCHEDULE_ENTRIES: ScheduleEntry[] = [
   { date: Iso8601Date("2026-06-08"), puzzleId: PuzzleId(43) },
@@ -46,7 +46,7 @@ export class NetworkSimulator {
   private puzzles: Puzzle[] = DEFAULT_PUZZLES
   private species: Taxon[] = DEFAULT_SPECIES
 
-  constructor(private readonly page: Page) {}
+  constructor(private readonly offlineWorld: OfflineWorld) {}
 
   simulateFetchScheduleSuccess = () => {
     this.behaviourManager.setBehaviour(EndpointKey.SCHEDULE, EndpointBehaviour.DEFAULT)
@@ -130,7 +130,7 @@ export class NetworkSimulator {
   }
 
   private readonly installRoute = <T>(config: EndpointConfig<T>) =>
-    this.page.route(config.routePattern, async (route) => {
+    this.offlineWorld.serve(config.routePattern, async (route) => {
       try {
         const json = handleEndpointBehaviour(this.behaviourManager.getBehaviour(config.endpointKey), config.handle)
         await route.fulfill({ json })

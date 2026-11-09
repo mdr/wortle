@@ -4,6 +4,8 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@wortle/ui"
 
+import { NavLinksTestIds } from "./NavLinksTestIds"
+
 const links = [
   { href: "/taxa", label: "Taxa" },
   { href: "/puzzles", label: "Puzzles" },
@@ -19,6 +21,7 @@ export const NavLinks = () => {
         <Link
           key={link.href}
           href={link.href}
+          data-testid={NavLinksTestIds.link(link.href)}
           className={cn(
             "text-sm",
             pathname.startsWith(link.href)

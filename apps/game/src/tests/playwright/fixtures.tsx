@@ -5,7 +5,9 @@ import { addCoverageReport } from "monocart-reporter"
 
 import { TestPuzzles } from "@/lib/testConstants.testUtils"
 
+import { BrowserErrors } from "./BrowserErrors.testUtils"
 import { NetworkSimulator } from "./network/NetworkSimulator.testUtils"
+import { OfflineWorld } from "./network/OfflineWorld.testUtils"
 import { ErrorPageObject } from "./pageObjects/ErrorPageObject"
 import { HistoryPageObject } from "./pageObjects/HistoryPageObject"
 import { HomePageObject } from "./pageObjects/HomePageObject"
@@ -80,6 +82,8 @@ interface Fixtures {
   archivePage: PuzzlePageObject
   historyPage: HistoryPageObject
   coverageFixture: undefined
+  browserErrors: BrowserErrors
+  offlineWorld: OfflineWorld
   networkSimulator: NetworkSimulator
 }
 
@@ -97,9 +101,26 @@ export const test = ctBase.extend<Fixtures>({
     },
     { auto: true },
   ],
-  networkSimulator: [
+  browserErrors: [
     async ({ page }, use) => {
-      const simulator = new NetworkSimulator(page)
+      const browserErrors = new BrowserErrors(page)
+      await use(browserErrors)
+      browserErrors.verifyNoUnexpectedErrors()
+    },
+    { auto: true },
+  ],
+  offlineWorld: [
+    async ({ page }, use) => {
+      const offlineWorld = new OfflineWorld(page)
+      await offlineWorld.install()
+      await use(offlineWorld)
+      offlineWorld.verifyNoOutsideRequests()
+    },
+    { auto: true },
+  ],
+  networkSimulator: [
+    async ({ offlineWorld }, use) => {
+      const simulator = new NetworkSimulator(offlineWorld)
       await simulator.install()
       await use(simulator)
     },

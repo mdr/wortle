@@ -7,6 +7,8 @@ import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react"
 import { type DataTableFeatures } from "@/components/DataTable"
 import { type ApiTaxon } from "@/api/types"
 
+import { TaxaColumnsTestIds } from "./TaxaColumnsTestIds"
+
 const SortableHeader = <T extends RowData>({
   column,
   label,
@@ -38,6 +40,7 @@ export const taxaColumns: ColumnDef<DataTableFeatures, ApiTaxon>[] = [
   {
     accessorKey: "commonName",
     header: ({ column }) => <SortableHeader column={column} label="Common Name" />,
+    cell: ({ row }) => <span data-testid={TaxaColumnsTestIds.commonName}>{row.original.commonName}</span>,
   },
   {
     accessorKey: "scientificName",

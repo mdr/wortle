@@ -12,8 +12,9 @@ test("shows loading screen while data loads, then shows home page", async ({ net
   await loaderPage.waitForHomePage()
 })
 
-test("can retry after error and load home page", async ({ networkSimulator, launcher }) => {
+test("can retry after error and load home page", async ({ networkSimulator, launcher, browserErrors }) => {
   networkSimulator.simulateFetchAllError()
+  browserErrors.allow(/500 \(Internal Server Error\)|\[query\.error\] Query failed/)
 
   const errorPage = await launcher.launchExpectingErrorPage()
 
