@@ -1,15 +1,17 @@
 "use client"
 
+import { useQuery } from "@tanstack/react-query"
 import Link from "next/link"
 import { CalendarDays, Leaf, Puzzle, Upload } from "lucide-react"
 import { Card, CardDescription, CardHeader, CardTitle } from "@wortle/ui"
 
-import { trpc } from "@/trpc/client"
+import { useTRPC } from "@/trpc/client"
 
 export default function Home() {
-  const { data: taxa, isLoading: taxaLoading } = trpc.taxa.list.useQuery()
-  const { data: puzzles, isLoading: puzzlesLoading } = trpc.puzzles.list.useQuery()
-  const { data: schedule, isLoading: scheduleLoading } = trpc.schedule.list.useQuery()
+  const trpc = useTRPC()
+  const { data: taxa, isLoading: taxaLoading } = useQuery(trpc.taxa.list.queryOptions())
+  const { data: puzzles, isLoading: puzzlesLoading } = useQuery(trpc.puzzles.list.queryOptions())
+  const { data: schedule, isLoading: scheduleLoading } = useQuery(trpc.schedule.list.queryOptions())
 
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

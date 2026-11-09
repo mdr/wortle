@@ -1,23 +1,27 @@
 "use client"
 
+import { useMutation, useQuery } from "@tanstack/react-query"
 import { useState } from "react"
 import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, toast } from "@wortle/ui"
 
 import { ConfirmPublishDialog } from "@/components/ConfirmPublishDialog"
-import { trpc } from "@/trpc/client"
+import { useTRPC } from "@/trpc/client"
 
 export default function PublishPage() {
+  const trpc = useTRPC()
   const [publishDialogOpen, setPublishDialogOpen] = useState(false)
-  const { data: taxa } = trpc.taxa.list.useQuery()
-  const { data: puzzles } = trpc.puzzles.list.useQuery()
-  const { data: schedule } = trpc.schedule.list.useQuery()
+  const { data: taxa } = useQuery(trpc.taxa.list.queryOptions())
+  const { data: puzzles } = useQuery(trpc.puzzles.list.queryOptions())
+  const { data: schedule } = useQuery(trpc.schedule.list.queryOptions())
 
-  const publishMutation = trpc.publish.all.useMutation({
-    onSuccess: () => {
-      setPublishDialogOpen(false)
-      toast.success("Published successfully")
-    },
-  })
+  const publishMutation = useMutation(
+    trpc.publish.all.mutationOptions({
+      onSuccess: () => {
+        setPublishDialogOpen(false)
+        toast.success("Published successfully")
+      },
+    }),
+  )
 
   const openPublishDialog = () => {
     publishMutation.reset()

@@ -277,12 +277,12 @@ importers:
       '@trpc/client':
         specifier: 11.25.0
         version: 11.25.0(@trpc/server@11.25.0(@types/ws@8.18.2)(next@16.4.5(@babel/core@8.1.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@26.6.6)(babel-plugin-react-compiler@1.0.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(typescript@6.0.3))(typescript@6.0.3)
-      '@trpc/react-query':
-        specifier: 11.25.0
-        version: 11.25.0(@tanstack/react-query@5.107.1(@types/react@19.3.0)(react@19.3.1))(@trpc/client@11.25.0(@trpc/server@11.25.0(@types/ws@8.18.2)(next@16.4.5(@babel/core@8.1.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@26.6.6)(babel-plugin-react-compiler@1.0.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(typescript@6.0.3))(typescript@6.0.3))(@trpc/server@11.25.0(@types/ws@8.18.2)(next@16.4.5(@babel/core@8.1.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@26.6.6)(babel-plugin-react-compiler@1.0.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(typescript@6.0.3))(react@19.3.1)(typescript@6.0.3)
       '@trpc/server':
         specifier: 11.25.0
         version: 11.25.0(@types/ws@8.18.2)(next@16.4.5(@babel/core@8.1.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@26.6.6)(babel-plugin-react-compiler@1.0.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(typescript@6.0.3)
+      '@trpc/tanstack-react-query':
+        specifier: 11.25.0
+        version: 11.25.0(@tanstack/react-query@5.107.1(@types/react@19.3.0)(react@19.3.1))(@trpc/client@11.25.0(@trpc/server@11.25.0(@types/ws@8.18.2)(next@16.4.5(@babel/core@8.1.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@26.6.6)(babel-plugin-react-compiler@1.0.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(typescript@6.0.3))(typescript@6.0.3))(@trpc/server@11.25.0(@types/ws@8.18.2)(next@16.4.5(@babel/core@8.1.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@26.6.6)(babel-plugin-react-compiler@1.0.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(typescript@6.0.3))(react@19.3.1)(typescript@6.0.3)
       '@wortle/shared':
         specifier: workspace:*
         version: link:../../packages/shared
@@ -3413,15 +3413,6 @@ packages:
       '@trpc/server': 11.25.0
       typescript: '>=5.7.2'
 
-  '@trpc/react-query@11.25.0':
-    resolution: {integrity: sha512-VYlT3+K3NJ8vjfxXbaZGANaD4ZH6dLIFYi2ASVMcWmsAY2OxUEXyYMwnUyivXY98g9yUidk6D6iScWlkZq4sAg==}
-    peerDependencies:
-      '@tanstack/react-query': ^5.80.3
-      '@trpc/client': 11.25.0
-      '@trpc/server': 11.25.0
-      react: '>=18.2.0'
-      typescript: '>=5.7.2'
-
   '@trpc/server@11.25.0':
     resolution: {integrity: sha512-WnUlGgLdaRoOKbLKn/t3+6cnjPJndNKvJZYJ7RXSZwFOa1dam6Z8atf551KE0vz2vhyxRtcnk+58P7M/ztAjNw==}
     peerDependencies:
@@ -3442,6 +3433,15 @@ packages:
         optional: true
       next:
         optional: true
+
+  '@trpc/tanstack-react-query@11.25.0':
+    resolution: {integrity: sha512-1CP9pcj4q9D446YkLwOM/0fWrW+V0KSC/wNApRoSJrdVrSORFYaqMCncwDfWv848niOdi3tMVS0/ryY50l4yvA==}
+    peerDependencies:
+      '@tanstack/react-query': ^5.80.3
+      '@trpc/client': 11.25.0
+      '@trpc/server': 11.25.0
+      react: '>=18.2.0'
+      typescript: '>=5.7.2'
 
   '@turbo/darwin-64@2.11.10':
     resolution: {integrity: sha512-By4idRap5+nLnMuRzLB4qkOPRlvNdyY1ne4VJYDyUoUB11H94k7uif9mbe3JT8JSNXs1D68uMcBj6hJ/jMQRvA==}
@@ -9341,20 +9341,20 @@ snapshots:
       '@trpc/server': 11.25.0(@types/ws@8.18.2)(next@16.4.5(@babel/core@8.1.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@26.6.6)(babel-plugin-react-compiler@1.0.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(typescript@6.0.3)
       typescript: 6.0.3
 
-  '@trpc/react-query@11.25.0(@tanstack/react-query@5.107.1(@types/react@19.3.0)(react@19.3.1))(@trpc/client@11.25.0(@trpc/server@11.25.0(@types/ws@8.18.2)(next@16.4.5(@babel/core@8.1.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@26.6.6)(babel-plugin-react-compiler@1.0.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(typescript@6.0.3))(typescript@6.0.3))(@trpc/server@11.25.0(@types/ws@8.18.2)(next@16.4.5(@babel/core@8.1.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@26.6.6)(babel-plugin-react-compiler@1.0.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(typescript@6.0.3))(react@19.3.1)(typescript@6.0.3)':
-    dependencies:
-      '@tanstack/react-query': 5.107.1(@types/react@19.3.0)(react@19.3.1)
-      '@trpc/client': 11.25.0(@trpc/server@11.25.0(@types/ws@8.18.2)(next@16.4.5(@babel/core@8.1.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@26.6.6)(babel-plugin-react-compiler@1.0.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(typescript@6.0.3))(typescript@6.0.3)
-      '@trpc/server': 11.25.0(@types/ws@8.18.2)(next@16.4.5(@babel/core@8.1.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@26.6.6)(babel-plugin-react-compiler@1.0.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(typescript@6.0.3)
-      react: 19.3.1
-      typescript: 6.0.3
-
   '@trpc/server@11.25.0(@types/ws@8.18.2)(next@16.4.5(@babel/core@8.1.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@26.6.6)(babel-plugin-react-compiler@1.0.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(typescript@6.0.3)':
     dependencies:
       typescript: 6.0.3
     optionalDependencies:
       '@types/ws': 8.18.2
       next: 16.4.5(@babel/core@8.1.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@26.6.6)(babel-plugin-react-compiler@1.0.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
+
+  '@trpc/tanstack-react-query@11.25.0(@tanstack/react-query@5.107.1(@types/react@19.3.0)(react@19.3.1))(@trpc/client@11.25.0(@trpc/server@11.25.0(@types/ws@8.18.2)(next@16.4.5(@babel/core@8.1.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@26.6.6)(babel-plugin-react-compiler@1.0.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(typescript@6.0.3))(typescript@6.0.3))(@trpc/server@11.25.0(@types/ws@8.18.2)(next@16.4.5(@babel/core@8.1.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@26.6.6)(babel-plugin-react-compiler@1.0.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(typescript@6.0.3))(react@19.3.1)(typescript@6.0.3)':
+    dependencies:
+      '@tanstack/react-query': 5.107.1(@types/react@19.3.0)(react@19.3.1)
+      '@trpc/client': 11.25.0(@trpc/server@11.25.0(@types/ws@8.18.2)(next@16.4.5(@babel/core@8.1.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@26.6.6)(babel-plugin-react-compiler@1.0.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(typescript@6.0.3))(typescript@6.0.3)
+      '@trpc/server': 11.25.0(@types/ws@8.18.2)(next@16.4.5(@babel/core@8.1.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@26.6.6)(babel-plugin-react-compiler@1.0.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(typescript@6.0.3)
+      react: 19.3.1
+      typescript: 6.0.3
 
   '@turbo/darwin-64@2.11.10':
     optional: true

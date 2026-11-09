@@ -1,5 +1,6 @@
 "use client"
 
+import { useQuery } from "@tanstack/react-query"
 import {
   closestCenter,
   DndContext,
@@ -52,7 +53,7 @@ import { Controller, useFieldArray, useForm } from "react-hook-form"
 import { z } from "zod"
 
 import { type ApiPuzzle, type CreatePuzzleRequest, type EditPuzzleRequest } from "@/api/puzzleTypes"
-import { trpc } from "@/trpc/client"
+import { useTRPC } from "@/trpc/client"
 import { toPreviewBlob } from "@/utils/heicPreview"
 import { imageMediaTypeExtension, imageMediaTypeSchema } from "@/utils/imageMediaType"
 import { filenameToImageKey, uploadImage } from "@/utils/uploadImage"
@@ -178,7 +179,8 @@ type TaxonComboboxProps = {
 const TaxonCombobox = ({ value, onChange, id }: TaxonComboboxProps) => {
   const [open, setOpen] = useState(false)
   const [search, setSearch] = useState("")
-  const { data: taxaList, isLoading, error, refetch } = trpc.taxa.list.useQuery()
+  const trpc = useTRPC()
+  const { data: taxaList, isLoading, error, refetch } = useQuery(trpc.taxa.list.queryOptions())
 
   const filteredTaxa = taxaList ? filterTaxaByQuery(taxaList, search) : []
 

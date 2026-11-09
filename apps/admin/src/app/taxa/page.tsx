@@ -1,16 +1,18 @@
 "use client"
 
+import { useQuery } from "@tanstack/react-query"
 import { Button, Card, CardContent, CardHeader, CardTitle } from "@wortle/ui"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 
 import { DataTable } from "@/components/DataTable"
 import { taxaColumns } from "@/components/taxaColumns"
-import { trpc } from "@/trpc/client"
+import { useTRPC } from "@/trpc/client"
 
 export default function TaxaPage() {
   const router = useRouter()
-  const { data: taxa, isLoading, error } = trpc.taxa.list.useQuery()
+  const trpc = useTRPC()
+  const { data: taxa, isLoading, error } = useQuery(trpc.taxa.list.queryOptions())
 
   if (isLoading) return <div>Loading...</div>
   if (error) return <div>Error: {error.message}</div>

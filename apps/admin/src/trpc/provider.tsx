@@ -1,12 +1,13 @@
 "use client"
 
 import { MutationCache, QueryCache, QueryClient, QueryClientProvider } from "@tanstack/react-query"
-import { httpBatchLink, TRPCClientError } from "@trpc/client"
+import { createTRPCClient, httpBatchLink, TRPCClientError } from "@trpc/client"
 import { useState } from "react"
 
 import { clientLogger } from "@/utils/logger"
 
-import { trpc } from "./client"
+import { TRPCContextProvider } from "./client"
+import type { AppRouter } from "./router"
 
 const getTrpcPath = (key: unknown): string => (Array.isArray(key) ? key.join(".") : "unknown")
 
@@ -46,7 +47,7 @@ export const TRPCProvider = ({ children }: { children: React.ReactNode }) => {
       }),
   )
   const [trpcClient] = useState(() =>
-    trpc.createClient({
+    createTRPCClient<AppRouter>({
       links: [
         httpBatchLink({
           url: `${getBaseUrl()}/api/trpc`,
@@ -56,8 +57,10 @@ export const TRPCProvider = ({ children }: { children: React.ReactNode }) => {
   )
 
   return (
-    <trpc.Provider client={trpcClient} queryClient={queryClient}>
-      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-    </trpc.Provider>
+    <QueryClientProvider client={queryClient}>
+      <TRPCContextProvider trpcClient={trpcClient} queryClient={queryClient}>
+        {children}
+      </TRPCContextProvider>
+    </QueryClientProvider>
   )
 }

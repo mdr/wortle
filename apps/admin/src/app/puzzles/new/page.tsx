@@ -1,5 +1,6 @@
 "use client"
 
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { Button, Card, CardContent, CardHeader, CardTitle } from "@wortle/ui"
 import { ArrowLeft } from "lucide-react"
 
@@ -7,27 +8,31 @@ import { useRouter } from "next/navigation"
 
 import { FormMode, PuzzleForm } from "@/components/PuzzleForm"
 import { useGoBack } from "@/hooks/useGoBack"
-import { trpc } from "@/trpc/client"
+import { useTRPC } from "@/trpc/client"
 
 export default function NewPuzzlePage() {
   const router = useRouter()
   const goBack = useGoBack("/puzzles")
-  const utils = trpc.useUtils()
+  const trpc = useTRPC()
+  const queryClient = useQueryClient()
+  const listKey = trpc.puzzles.list.queryKey()
 
-  const createMutation = trpc.puzzles.create.useMutation({
-    onMutate: async (newPuzzle) => {
-      await utils.puzzles.list.cancel()
-      const previous = utils.puzzles.list.getData()
-      utils.puzzles.list.setData(undefined, (old) => [...(old ?? []), { ...newPuzzle, imagesSynced: false }])
-      return { previous }
-    },
-    onError: (_err, _newPuzzle, context) => {
-      if (context?.previous) {
-        utils.puzzles.list.setData(undefined, context.previous)
-      }
-    },
-    onSuccess: (_data, variables) => router.push(`/puzzles/${variables.id}/edit`),
-  })
+  const createMutation = useMutation(
+    trpc.puzzles.create.mutationOptions({
+      onMutate: async (newPuzzle) => {
+        await queryClient.cancelQueries({ queryKey: listKey })
+        const previous = queryClient.getQueryData(listKey)
+        queryClient.setQueryData(listKey, (old) => [...(old ?? []), { ...newPuzzle, imagesSynced: false }])
+        return { previous }
+      },
+      onError: (_err, _newPuzzle, context) => {
+        if (context?.previous) {
+          queryClient.setQueryData(listKey, context.previous)
+        }
+      },
+      onSuccess: (_data, variables) => router.push(`/puzzles/${variables.id}/edit`),
+    }),
+  )
 
   return (
     <div className="mx-auto max-w-3xl">

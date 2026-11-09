@@ -1,5 +1,6 @@
 "use client"
 
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { PuzzleId } from "@wortle/shared"
 import { Button, Card, CardContent, CardHeader, CardTitle } from "@wortle/ui"
 import { ArrowLeft, Check, TriangleAlert } from "lucide-react"
@@ -10,52 +11,60 @@ import { useState } from "react"
 import { ConfirmDeletePuzzleDialog } from "@/components/ConfirmDeletePuzzleDialog"
 import { apiPuzzleToFormData, FormMode, PuzzleForm } from "@/components/PuzzleForm"
 import { useGoBack } from "@/hooks/useGoBack"
-import { trpc } from "@/trpc/client"
+import { useTRPC } from "@/trpc/client"
 
 export default function EditPuzzlePage() {
   const router = useRouter()
   const goBack = useGoBack("/puzzles")
   const params = useParams<{ id: string }>()
   const puzzleId = PuzzleId(Number(params.id))
-  const utils = trpc.useUtils()
+  const trpc = useTRPC()
+  const queryClient = useQueryClient()
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
-  const { data: puzzle, isLoading } = trpc.puzzles.get.useQuery(puzzleId)
+  const { data: puzzle, isLoading } = useQuery(trpc.puzzles.get.queryOptions(puzzleId))
 
-  const updateMutation = trpc.puzzles.update.useMutation({
-    onMutate: async (updatedPuzzle) => {
-      await utils.puzzles.list.cancel()
-      await utils.puzzles.get.cancel(updatedPuzzle.id)
-      const previousList = utils.puzzles.list.getData()
-      const previousGet = utils.puzzles.get.getData(updatedPuzzle.id)
-      const optimistic = { ...updatedPuzzle, imagesSynced: false }
-      utils.puzzles.list.setData(undefined, (old) => old?.map((p) => (p.id === updatedPuzzle.id ? optimistic : p)))
-      utils.puzzles.get.setData(updatedPuzzle.id, optimistic)
-      return { previousList, previousGet }
-    },
-    onError: (_err, updatedPuzzle, context) => {
-      if (context?.previousList) {
-        utils.puzzles.list.setData(undefined, context.previousList)
-      }
-      if (context?.previousGet) {
-        utils.puzzles.get.setData(updatedPuzzle.id, context.previousGet)
-      }
-    },
-  })
+  const listKey = trpc.puzzles.list.queryKey()
 
-  const deleteMutation = trpc.puzzles.delete.useMutation({
-    onMutate: async (id) => {
-      await utils.puzzles.list.cancel()
-      const previous = utils.puzzles.list.getData()
-      utils.puzzles.list.setData(undefined, (old) => old?.filter((p) => p.id !== id))
-      return { previous }
-    },
-    onError: (_err, _input, context) => {
-      if (context?.previous) {
-        utils.puzzles.list.setData(undefined, context.previous)
-      }
-    },
-    onSuccess: () => router.push("/puzzles"),
-  })
+  const updateMutation = useMutation(
+    trpc.puzzles.update.mutationOptions({
+      onMutate: async (updatedPuzzle) => {
+        const getKey = trpc.puzzles.get.queryKey(updatedPuzzle.id)
+        await queryClient.cancelQueries({ queryKey: listKey })
+        await queryClient.cancelQueries({ queryKey: getKey })
+        const previousList = queryClient.getQueryData(listKey)
+        const previousGet = queryClient.getQueryData(getKey)
+        const optimistic = { ...updatedPuzzle, imagesSynced: false }
+        queryClient.setQueryData(listKey, (old) => old?.map((p) => (p.id === updatedPuzzle.id ? optimistic : p)))
+        queryClient.setQueryData(getKey, optimistic)
+        return { previousList, previousGet }
+      },
+      onError: (_err, updatedPuzzle, context) => {
+        if (context?.previousList) {
+          queryClient.setQueryData(listKey, context.previousList)
+        }
+        if (context?.previousGet) {
+          queryClient.setQueryData(trpc.puzzles.get.queryKey(updatedPuzzle.id), context.previousGet)
+        }
+      },
+    }),
+  )
+
+  const deleteMutation = useMutation(
+    trpc.puzzles.delete.mutationOptions({
+      onMutate: async (id) => {
+        await queryClient.cancelQueries({ queryKey: listKey })
+        const previous = queryClient.getQueryData(listKey)
+        queryClient.setQueryData(listKey, (old) => old?.filter((p) => p.id !== id))
+        return { previous }
+      },
+      onError: (_err, _input, context) => {
+        if (context?.previous) {
+          queryClient.setQueryData(listKey, context.previous)
+        }
+      },
+      onSuccess: () => router.push("/puzzles"),
+    }),
+  )
 
   const confirmDelete = () => {
     deleteMutation.mutate(puzzleId)

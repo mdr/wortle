@@ -1,12 +1,13 @@
 "use client"
 
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useState, useMemo } from "react"
 import Link from "next/link"
 import { formatDate, Iso8601Date, PuzzleId, ScheduleEntry, TaxonId } from "@wortle/shared"
 import { Button, Card, CardContent, CardHeader, CardTitle, toast } from "@wortle/ui"
 import { Plus, Trash2 } from "lucide-react"
 
-import { trpc } from "@/trpc/client"
+import { useTRPC } from "@/trpc/client"
 
 interface ScheduleMap {
   byDate: Map<string, ScheduleEntry>
@@ -51,26 +52,31 @@ export const ScheduleCalendar = () => {
   })
   const [selectedDate, setSelectedDate] = useState<string | undefined>(undefined)
 
-  const utils = trpc.useUtils()
-  const { data: scheduleEntries = [] } = trpc.schedule.list.useQuery()
-  const { data: puzzles = [] } = trpc.puzzles.list.useQuery()
-  const { data: taxa = [] } = trpc.taxa.list.useQuery()
+  const trpc = useTRPC()
+  const queryClient = useQueryClient()
+  const { data: scheduleEntries = [] } = useQuery(trpc.schedule.list.queryOptions())
+  const { data: puzzles = [] } = useQuery(trpc.puzzles.list.queryOptions())
+  const { data: taxa = [] } = useQuery(trpc.taxa.list.queryOptions())
 
-  const setMutation = trpc.schedule.set.useMutation({
-    onSuccess: () => {
-      void utils.schedule.list.invalidate()
-      setSelectedDate(undefined)
-      toast.success("Schedule updated")
-    },
-  })
+  const setMutation = useMutation(
+    trpc.schedule.set.mutationOptions({
+      onSuccess: () => {
+        void queryClient.invalidateQueries({ queryKey: trpc.schedule.list.queryKey() })
+        setSelectedDate(undefined)
+        toast.success("Schedule updated")
+      },
+    }),
+  )
 
-  const removeMutation = trpc.schedule.remove.useMutation({
-    onSuccess: () => {
-      void utils.schedule.list.invalidate()
-      setSelectedDate(undefined)
-      toast.success("Schedule entry removed")
-    },
-  })
+  const removeMutation = useMutation(
+    trpc.schedule.remove.mutationOptions({
+      onSuccess: () => {
+        void queryClient.invalidateQueries({ queryKey: trpc.schedule.list.queryKey() })
+        setSelectedDate(undefined)
+        toast.success("Schedule entry removed")
+      },
+    }),
+  )
 
   const scheduleMap = useMemo(() => buildScheduleMap(scheduleEntries), [scheduleEntries])
 

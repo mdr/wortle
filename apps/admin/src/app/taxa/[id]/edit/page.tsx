@@ -1,5 +1,6 @@
 "use client"
 
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { TaxonId } from "@wortle/shared"
 import { Button, Card, CardContent, CardHeader, CardTitle } from "@wortle/ui"
 import { ArrowLeft } from "lucide-react"
@@ -10,50 +11,58 @@ import { useState } from "react"
 import { ConfirmDeleteTaxonDialog } from "@/components/ConfirmDeleteTaxonDialog"
 import { apiTaxonToFormData, TaxonForm } from "@/components/TaxonForm"
 import { useGoBack } from "@/hooks/useGoBack"
-import { trpc } from "@/trpc/client"
+import { useTRPC } from "@/trpc/client"
 
 export default function EditTaxonPage() {
   const router = useRouter()
   const goBack = useGoBack("/taxa")
   const params = useParams<{ id: string }>()
-  const utils = trpc.useUtils()
+  const trpc = useTRPC()
+  const queryClient = useQueryClient()
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
-  const { data: taxon, isLoading } = trpc.taxa.get.useQuery(TaxonId(params.id))
+  const { data: taxon, isLoading } = useQuery(trpc.taxa.get.queryOptions(TaxonId(params.id)))
 
-  const updateMutation = trpc.taxa.update.useMutation({
-    onMutate: async (updatedTaxon) => {
-      await utils.taxa.list.cancel()
-      await utils.taxa.get.cancel(updatedTaxon.id)
-      const previousList = utils.taxa.list.getData()
-      const previousGet = utils.taxa.get.getData(updatedTaxon.id)
-      utils.taxa.list.setData(undefined, (old) => old?.map((s) => (s.id === updatedTaxon.id ? updatedTaxon : s)))
-      utils.taxa.get.setData(updatedTaxon.id, updatedTaxon)
-      return { previousList, previousGet }
-    },
-    onError: (_err, updatedTaxon, context) => {
-      if (context?.previousList) {
-        utils.taxa.list.setData(undefined, context.previousList)
-      }
-      if (context?.previousGet) {
-        utils.taxa.get.setData(updatedTaxon.id, context.previousGet)
-      }
-    },
-  })
+  const listKey = trpc.taxa.list.queryKey()
 
-  const deleteMutation = trpc.taxa.delete.useMutation({
-    onMutate: async (taxonId) => {
-      await utils.taxa.list.cancel()
-      const previous = utils.taxa.list.getData()
-      utils.taxa.list.setData(undefined, (old) => old?.filter((s) => s.id !== taxonId))
-      return { previous }
-    },
-    onError: (_err, _input, context) => {
-      if (context?.previous) {
-        utils.taxa.list.setData(undefined, context.previous)
-      }
-    },
-    onSuccess: () => router.push("/taxa"),
-  })
+  const updateMutation = useMutation(
+    trpc.taxa.update.mutationOptions({
+      onMutate: async (updatedTaxon) => {
+        const getKey = trpc.taxa.get.queryKey(updatedTaxon.id)
+        await queryClient.cancelQueries({ queryKey: listKey })
+        await queryClient.cancelQueries({ queryKey: getKey })
+        const previousList = queryClient.getQueryData(listKey)
+        const previousGet = queryClient.getQueryData(getKey)
+        queryClient.setQueryData(listKey, (old) => old?.map((s) => (s.id === updatedTaxon.id ? updatedTaxon : s)))
+        queryClient.setQueryData(getKey, updatedTaxon)
+        return { previousList, previousGet }
+      },
+      onError: (_err, updatedTaxon, context) => {
+        if (context?.previousList) {
+          queryClient.setQueryData(listKey, context.previousList)
+        }
+        if (context?.previousGet) {
+          queryClient.setQueryData(trpc.taxa.get.queryKey(updatedTaxon.id), context.previousGet)
+        }
+      },
+    }),
+  )
+
+  const deleteMutation = useMutation(
+    trpc.taxa.delete.mutationOptions({
+      onMutate: async (taxonId) => {
+        await queryClient.cancelQueries({ queryKey: listKey })
+        const previous = queryClient.getQueryData(listKey)
+        queryClient.setQueryData(listKey, (old) => old?.filter((s) => s.id !== taxonId))
+        return { previous }
+      },
+      onError: (_err, _input, context) => {
+        if (context?.previous) {
+          queryClient.setQueryData(listKey, context.previous)
+        }
+      },
+      onSuccess: () => router.push("/taxa"),
+    }),
+  )
 
   const confirmDelete = () => {
     deleteMutation.mutate(TaxonId(params.id))
