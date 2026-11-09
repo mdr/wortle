@@ -263,13 +263,26 @@ tasks:
     cmds:
       - pnpm test {{.CLI_ARGS}}
 
+  admin:test:iwft:
+    desc: Run admin isolated whole frontend tests
+    dir: apps/admin
+    cmds:
+      - pnpm exec playwright test -c playwright-ct.config.ts {{.CLI_ARGS}}
+
+  admin:test:iwft:ui:
+    desc: Run admin isolated whole frontend tests with UI
+    dir: apps/admin
+    cmds:
+      - pnpm exec playwright test -c playwright-ct.config.ts --ui {{.CLI_ARGS}}
+
   admin:check:
-    desc: Run all checks for admin (tsc, lint, format, test)
+    desc: Run all checks for admin (tsc, lint, format, tests)
     cmds:
       - task: admin:tsc
       - task: admin:lint
       - task: admin:format:check
       - task: admin:test
+      - task: admin:test:iwft
 
   admin:db:generate:
     desc: Generate a new migration from schema changes

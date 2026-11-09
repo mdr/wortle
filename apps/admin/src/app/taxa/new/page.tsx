@@ -31,6 +31,7 @@ export default function NewTaxonPage() {
         }
       },
       onSuccess: (_data, variables) => router.push(`/taxa/${variables.id}/edit`),
+      onSettled: () => queryClient.invalidateQueries({ queryKey: listKey }),
     }),
   )
 

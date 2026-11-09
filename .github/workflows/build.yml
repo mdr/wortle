@@ -123,12 +123,17 @@ jobs:
         if: steps.check-us.outputs.update_screenshots == 'true' && steps.test-iwft.outcome == 'failure'
         run: task game:test:iwft
 
+      - name: Isolated whole frontend tests (admin)
+        run: task admin:test:iwft
+
       - name: Upload Playwright report
         if: failure()
         uses: actions/upload-artifact@v7
         with:
           name: playwright-report
-          path: apps/game/playwright-report/
+          path: |
+            apps/game/playwright-report/
+            apps/admin/playwright-report/
           retention-days: 7
 
       - name: Notify Vercel

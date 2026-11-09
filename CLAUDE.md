@@ -38,6 +38,7 @@ This project uses two testing styles:
 
 - **Unit tests** (`task test:unit`): Vitest tests for small functions, utilities, and larger pieces of logic like PuzzleService. These test code in isolation.
 - **IWFTs** (`task test:iwft`): Isolated Whole Frontend Tests using Playwright component tests that render the entire `<App />`. These check whole user journeys without needing an independent environment.
+  - In `apps/admin`, IWFTs render the real Next.js pages outside Next: `next/link` and `next/navigation` are aliased to test shims (`src/tests/playwright/nextShims/`), and `TrpcSimulator` serves `/api/trpc` from the real tRPC routers backed by fake repositories. Add routes to `TestApp.tsx` and routers to `TrpcSimulator` as tests need them.
 
 ## Task Commands
 
@@ -79,12 +80,14 @@ This project uses two testing styles:
 
 - `task admin:dev`: start admin development server.
 - `task admin:build`: build admin.
-- `task admin:check`: run all checks for admin (tsc, lint, format, test).
+- `task admin:check`: run all checks for admin (tsc, lint, format, unit tests, IWFTs).
 - `task admin:tsc`: type check admin.
 - `task admin:lint`: run ESLint on admin.
 - `task admin:format`: format admin files.
 - `task admin:format:check`: check formatting of admin files.
 - `task admin:test`: run admin unit tests.
+- `task admin:test:iwft`: run admin isolated whole frontend tests.
+- `task admin:test:iwft:ui`: run admin IWFTs with UI.
 - `task admin:copy-originals`: copy originals from prod to dev R2 bucket.
 - `task admin:db:generate`: generate a new migration from schema changes.
 - `task admin:db:migrate:dev`: run migrations on dev database.

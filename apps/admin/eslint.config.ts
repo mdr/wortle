@@ -2,7 +2,15 @@ import tseslint from "typescript-eslint"
 
 const config = [
   {
-    ignores: [".next/", "node_modules/", "*.config.*", "next-env.d.ts"],
+    ignores: [
+      ".next/",
+      "node_modules/",
+      "*.config.*",
+      "next-env.d.ts",
+      "playwright/.cache/",
+      "playwright-report/",
+      "test-results/",
+    ],
   },
   ...tseslint.configs.strictTypeChecked,
   {

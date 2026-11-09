@@ -1,6 +1,6 @@
 import { fetchRequestHandler } from "@trpc/server/adapters/fetch"
 
-import { createContext } from "@/trpc/init"
+import { createContext } from "@/trpc/context"
 import { appRouter } from "@/trpc/router"
 import { serverLogger } from "@/utils/logger"
 

@@ -46,6 +46,11 @@ export default function EditPuzzlePage() {
           queryClient.setQueryData(trpc.puzzles.get.queryKey(updatedPuzzle.id), context.previousGet)
         }
       },
+      onSettled: (_data, _err, updatedPuzzle) =>
+        Promise.all([
+          queryClient.invalidateQueries({ queryKey: listKey }),
+          queryClient.invalidateQueries({ queryKey: trpc.puzzles.get.queryKey(updatedPuzzle.id) }),
+        ]),
     }),
   )
 
@@ -63,6 +68,7 @@ export default function EditPuzzlePage() {
         }
       },
       onSuccess: () => router.push("/puzzles"),
+      onSettled: () => queryClient.invalidateQueries({ queryKey: listKey }),
     }),
   )
 

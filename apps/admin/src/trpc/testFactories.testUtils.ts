@@ -16,7 +16,7 @@ import { ApiTaxon } from "@/api/types"
 import { DbPuzzle } from "@/db/puzzleTypes"
 import { DbTaxon } from "@/db/types"
 
-import { Context } from "./init"
+import type { Context } from "./context"
 
 export const makeDbTaxon = (overrides: Partial<DbTaxon> = {}): DbTaxon => ({
   id: TestTaxonIds.daisy,

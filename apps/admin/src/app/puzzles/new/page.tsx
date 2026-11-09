@@ -31,6 +31,7 @@ export default function NewPuzzlePage() {
         }
       },
       onSuccess: (_data, variables) => router.push(`/puzzles/${variables.id}/edit`),
+      onSettled: () => queryClient.invalidateQueries({ queryKey: listKey }),
     }),
   )
 

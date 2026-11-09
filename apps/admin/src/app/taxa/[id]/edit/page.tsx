@@ -44,6 +44,11 @@ export default function EditTaxonPage() {
           queryClient.setQueryData(trpc.taxa.get.queryKey(updatedTaxon.id), context.previousGet)
         }
       },
+      onSettled: (_data, _err, updatedTaxon) =>
+        Promise.all([
+          queryClient.invalidateQueries({ queryKey: listKey }),
+          queryClient.invalidateQueries({ queryKey: trpc.taxa.get.queryKey(updatedTaxon.id) }),
+        ]),
     }),
   )
 
@@ -61,6 +66,7 @@ export default function EditTaxonPage() {
         }
       },
       onSuccess: () => router.push("/taxa"),
+      onSettled: () => queryClient.invalidateQueries({ queryKey: listKey }),
     }),
   )
 
